@@ -12,6 +12,8 @@ import { HABITS } from './data/habits';
 // Screens
 import MainScreen from './screens/HomeScreen';
 import HabitsScreen from './screens/HabitsScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import JourneyScreen from './screens/JourneyScreen';
 
 
 
@@ -243,22 +245,6 @@ const CozyQuestApp = () => {
 					{currentView === 'home' && (
 						<>
 							<MainScreen todayChallenge={todayChallenge} />
-							<div className="space-y-6">
-								{/* Progress Summary */}
-								<div className="bg-white rounded-2xl p-4 shadow-sm border border-amber-100">
-									<h3 className="text-sm font-medium text-amber-800 mb-3">Your Journey</h3>
-									<div className="grid grid-cols-2 gap-4">
-										<div>
-											<div className="text-2xl font-bold text-amber-900">{userProgress.completedChallenges.length}</div>
-											<div className="text-xs text-amber-600">Quests Completed</div>
-										</div>
-										<div>
-											<div className="text-2xl font-bold text-amber-900">{userProgress.logs.length}</div>
-											<div className="text-xs text-amber-600">Times You Tried</div>
-										</div>
-									</div>
-								</div>
-							</div>
 						</>
 					)}
 
@@ -402,60 +388,20 @@ const CozyQuestApp = () => {
 					)}
 
 					{currentView === 'settings' && (
-						<div className="space-y-6">
-							<button
-								onClick={() => setCurrentView('home')}
-								className="text-amber-600 text-sm hover:text-amber-700"
-							>
-								← Back
-							</button>
-
-							<div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-amber-100">
-								<h2 className="text-xl font-semibold text-amber-900 mb-4">Settings</h2>
-
-								<div className="space-y-4">
-									<div className="pb-4 border-b border-amber-100">
-										<h3 className="text-sm font-medium text-amber-800 mb-2">About This App</h3>
-										<p className="text-sm text-amber-600 leading-relaxed">
-											This app helps build social confidence gently, one tiny step at a time.
-											There are no streaks, no failures, just small moments of bravery.
-										</p>
-									</div>
-
-									<div className="pb-4 border-b border-amber-100">
-										<h3 className="text-sm font-medium text-amber-800 mb-2">Your Progress</h3>
-										<div className="space-y-2 text-sm text-amber-700">
-											<div>Level: {userProgress.level}</div>
-											<div>Total XP: {userProgress.totalXp}</div>
-											<div>Quests completed: {userProgress.completedChallenges.length}</div>
-											<div>Times you tried: {userProgress.logs.length}</div>
-										</div>
-									</div>
-
-									<div>
-										<h3 className="text-sm font-medium text-amber-800 mb-2">Need Support?</h3>
-										<p className="text-sm text-amber-600 leading-relaxed mb-3">
-											If you're feeling overwhelmed, that's okay. Take a deep breath.
-											You're doing great just by being here.
-										</p>
-										<div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-											<p className="text-sm text-blue-800">
-												💙 Remember: Progress isn't linear. Rest is part of the journey.
-											</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						<SettingsScreen />
 					)}
 				</div>
 
-				{currentView == 'habits' && (
+				{currentView === 'habits' && (
 					<HabitsScreen />
 				)}
 
+				{currentView === 'progress' && (
+					<JourneyScreen />
+				)}
+
 				{/* Bottom Nav */}
-				<div className="fixed  left-0 right-0 max-w-md mx-auto bg-white border-t-2 border-amber-100 rounded-t-3xl shadow-lg">
+				<div className="fixed left-0 right-0 max-w-md mx-auto bg-white border-t-2 border-amber-100 rounded-t-3xl shadow-lg -mt-10">
 					<div className="flex justify-around p-4">
 						<button
 							onClick={() => setCurrentView('home')}
