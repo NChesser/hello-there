@@ -3,8 +3,48 @@ import React, { useState } from 'react';
 // Sample Habits Data
 import { HABITS } from '../data/habits';
 
+interface HabitCompletion {
+    habitId: string;
+    count: number;
+}
+
+const HabitTrackingCard = ({ habit, completionCount, onAddCompletion, onRemoveCompletion }: {
+    habit: typeof HABITS[0];
+    completionCount: number;
+    onAddCompletion: (habitId: string) => void;
+    onRemoveCompletion: (habitId: string) => void;
+}) => {
+    return (
+        <div className="p-4 rounded-lg border-2 border-amber-200 bg-white hover:border-amber-400 transition-all">
+            <div className="flex items-start gap-3 justify-between">
+                <div>
+                    <h3 className="font-semibold text-amber-900">{habit.title}</h3>
+                    <p className="text-sm text-amber-700">{habit.description}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => onRemoveCompletion(habit.id)}
+                        disabled={completionCount === 0}
+                        className="px-2 py-1 rounded bg-amber-200 text-amber-900 hover:bg-amber-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                        −
+                    </button>
+                    <span className="text-lg font-semibold text-amber-900 w-8 text-center">{completionCount}</span>
+                    <button
+                        onClick={() => onAddCompletion(habit.id)}
+                        className="px-2 py-1 rounded bg-amber-600 text-white hover:bg-amber-700 transition-all"
+                    >
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
 const HabitsScreen = () => {
-    const [completedHabits, setCompletedHabits] = useState<string[]>([]);
+    const [completedHabits, setCompletedHabits] = useState < string[] > ([]);
 
     const habits = HABITS;
 
@@ -17,7 +57,7 @@ const HabitsScreen = () => {
     };
 
     return (
-        <div className="w-full p-6 pb-24">
+        <div className="w-full p-6 pb-24 -bg-amber-50 -mt-25 h-3/4 overflow-y-auto">
             <div className="space-y-6">
                 <div>
                     <h1 className="text-2xl font-semibold text-amber-900">Your Habits</h1>
@@ -26,31 +66,13 @@ const HabitsScreen = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                     {habits.map(habit => (
-                        <button
+                        <HabitTrackingCard
                             key={habit.id}
-                            onClick={() => toggleHabit(habit.id)}
-                            className={`p-4 rounded-lg border-2 text-left transition-all ${
-                                completedHabits.includes(habit.id)
-                                    ? 'border-amber-600 bg-amber-50'
-                                    : 'border-amber-200 bg-white hover:border-amber-400'
-                            }`}
-                        >
-                            <div className="flex items-start gap-3">
-                                <div className={`w-6 h-6 rounded border-2 mt-1 flex items-center justify-center flex-shrink-0 ${
-                                    completedHabits.includes(habit.id)
-                                        ? 'bg-amber-600 border-amber-600'
-                                        : 'border-amber-300'
-                                }`}>
-                                    {completedHabits.includes(habit.id) && (
-                                        <span className="text-white text-sm">✓</span>
-                                    )}
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-amber-900">{habit.title}</h3>
-                                    <p className="text-sm text-amber-700">{habit.description}</p>
-                                </div>
-                            </div>
-                        </button>
+                            habit={habit}
+                            completionCount={completedHabits.filter(id => id === habit.id).length}
+                            onAddCompletion={toggleHabit}
+                            onRemoveCompletion={toggleHabit}
+                        />
                     ))}
                 </div>
             </div>
