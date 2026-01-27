@@ -5,6 +5,7 @@ import DailyQuote from '../components/DailyQuote';
 
 // Icons
 import ChallengeCard from '../components/ChallengeCard';
+import { XPDisplay } from '../components/Header';
 
 
 const MainScreen = ({ todayChallenge }) => {
@@ -20,6 +21,11 @@ const MainScreen = ({ todayChallenge }) => {
                 {todayChallenge && (
                     <ChallengeCard challenge={todayChallenge} />
                 )}
+
+                {/* XP Display */}
+                <div className="pt-4 border-t border-amber-100">
+                    <XPDisplay />
+                </div>
             </div>
         </div>
     );

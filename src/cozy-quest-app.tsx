@@ -399,6 +399,14 @@ const CozyQuestApp = () => {
 							<Book size={20} />
 							<span className="text-xs">Journey</span>
 						</button>
+						<button
+							onClick={() => setCurrentView('settings')}
+							className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${currentView === 'settings' ? 'text-amber-600 bg-amber-50' : 'text-amber-400'
+								}`}
+						>
+							<Settings size={20} />
+							<span className="text-xs">Settings</span>
+						</button>
 					</div>
 				</div>
 			</div>

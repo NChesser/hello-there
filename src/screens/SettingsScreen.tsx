@@ -1,21 +1,9 @@
 
 import React from 'react';
 
-// Custom hook to manage navigation state
-import useNavigationContext from '../useNavigationContext';
-
 const SettingsScreen = () => {
-    const { setCurrentView } = useNavigationContext();
-
     return (
         <div className="space-y-6">
-            <button
-                onClick={() => setCurrentView('home')}
-                className="text-amber-600 text-sm hover:text-amber-700"
-            >
-                ← Back
-            </button>
-
             <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-amber-100">
                 <h2 className="text-xl font-semibold text-amber-900 mb-4">Settings</h2>
 
@@ -27,7 +15,7 @@ const SettingsScreen = () => {
                             There are no streaks, no failures, just small moments of bravery.
                         </p>
                     </div>
-                    
+
                     <div>
                         <h3 className="text-sm font-medium text-amber-800 mb-2">Need Support?</h3>
                         <p className="text-sm text-amber-600 leading-relaxed mb-3">
