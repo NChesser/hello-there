@@ -57,7 +57,7 @@ const HabitsScreen = () => {
     };
 
     return (
-        <div className="w-full p-6 pb-24 -bg-amber-50 -mt-25 h-3/4 overflow-y-auto">
+        <div className="w-full p-6 pb-24 -bg-amber-50 h-3/4 overflow-y-auto">
             <div className="space-y-6">
                 <div>
                     <h3 className="text-lg font-semibold text-amber-900">Your Habits</h3>

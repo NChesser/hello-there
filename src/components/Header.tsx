@@ -32,7 +32,7 @@ export const XPDisplay = () => {
 
 const Header = () => {
     return (
-        <div className="bg-gradient-to-r from-orange-200 to-amber-200 p-4 rounded-b-3xl shadow-sm">
+        <div className="bg-gradient-to-r from-orange-200 to-amber-200 p-4 rounded-t-3xl shadow-sm">
             <div className="flex items-center justify-center">
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-2xl">

@@ -13,7 +13,7 @@ const MainScreen = ({ todayChallenge }) => {
 
 
     return (
-        <div className="p-6 pb-24">
+        <div className="p-6 pb-24 h-full overflow-y-auto space-y-6">
             <div className="space-y-6">
                 <DailyQuote />
 
@@ -23,9 +23,7 @@ const MainScreen = ({ todayChallenge }) => {
                 )}
 
                 {/* XP Display */}
-                <div className="pt-4 border-t border-amber-100">
-                    <XPDisplay />
-                </div>
+                <XPDisplay />
             </div>
         </div>
     );

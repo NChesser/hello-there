@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Settings, Book, Sparkles, Flower2 } from 'lucide-react';
+import { Heart, Settings, Book, Sparkles, Flower2, Users } from 'lucide-react';
 
 // Types
 import type { Challenge, CompletionLog, UserProgress, Habit, HabitLog } from './types/types';
@@ -12,6 +12,7 @@ import { HABITS } from './data/habits';
 // Screens
 import MainScreen from './screens/HomeScreen';
 import HabitsScreen from './screens/HabitsScreen';
+import PeopleScreen from './screens/PeopleScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import JourneyScreen from './screens/JourneyScreen';
 import Header from './components/Header';
@@ -19,7 +20,7 @@ import Header from './components/Header';
 
 
 const CozyQuestApp = () => {
-	const [currentView, setCurrentView] = useState < 'home' | 'quest' | 'reflect' | 'settings' | 'progress' | 'habits' > ('home');
+	const [currentView, setCurrentView] = useState < 'home' | 'quest' | 'reflect' | 'settings' | 'progress' | 'habits' | 'people' > ('home');
 	const [userProgress, setUserProgress] = useState < UserProgress > ({
 		level: 1,
 		xp: 0,
@@ -213,7 +214,7 @@ const CozyQuestApp = () => {
 				<Header />
 
 				{/* Main Content */}
-				<div className="p-4 pb-24">
+				<div>
 					{currentView === 'home' && (
 						<>
 							<MainScreen todayChallenge={todayChallenge} />
@@ -359,13 +360,19 @@ const CozyQuestApp = () => {
 						</div>
 					)}
 
-					{currentView === 'settings' && (
-						<SettingsScreen />
-					)}
+
 				</div>
+
+				{currentView === 'settings' && (
+					<SettingsScreen />
+				)}
 
 				{currentView === 'habits' && (
 					<HabitsScreen />
+				)}
+
+				{currentView === 'people' && (
+					<PeopleScreen />
 				)}
 
 				{currentView === 'progress' && (
@@ -373,7 +380,7 @@ const CozyQuestApp = () => {
 				)}
 
 				{/* Bottom Nav */}
-				<div className="fixed left-0 right-0 max-w-md mx-auto bg-white border-t-2 border-amber-100 rounded-t-3xl shadow-lg -mt-10">
+				<div className="space-x-3 fixed left-0 right-0 max-w-md mx-auto bg-white border-2 border-amber-100 rounded-3xl shadow-lg -mt-10">
 					<div className="flex justify-around p-4">
 						<button
 							onClick={() => setCurrentView('home')}
@@ -385,11 +392,19 @@ const CozyQuestApp = () => {
 						</button>
 						<button
 							onClick={() => setCurrentView('habits')}
-							className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${currentView === 'habits' ? 'text-red-600 bg-amber-50' : 'text-amber-400'
+							className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${currentView === 'habits' ? 'text-amber-600 bg-amber-50' : 'text-amber-400'
 								}`}
 						>
 							<Flower2 size={20} />
 							<span className="text-xs">Habits</span>
+						</button>
+						<button
+							onClick={() => setCurrentView('people')}
+							className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${currentView === 'people' ? 'text-amber-600 bg-amber-50' : 'text-amber-400'
+								}`}
+						>
+							<Users size={20} />
+							<span className="text-xs">People</span>
 						</button>
 						<button
 							onClick={() => setCurrentView('progress')}
@@ -410,7 +425,7 @@ const CozyQuestApp = () => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</div >
 	);
 };
 

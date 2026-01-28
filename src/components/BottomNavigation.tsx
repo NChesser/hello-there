@@ -13,7 +13,7 @@ const BottomNav = () => {
     const { currentView, setCurrentView } = useNavigationContext();
 
     return (
-        <div className="fixed left-0 right-0 max-w-md mx-auto bg-white border-t-2 border-amber-100 rounded-t-3xl shadow-lg -mt-10">
+        <div className="fixed left-0 right-0 max-w-md mx-auto bg-white border-2 border-amber-100 rounded-3xl shadow-lg -mt-10">
             <div className="flex justify-around p-4">
                 <button
                     onClick={() => setCurrentView('home')}

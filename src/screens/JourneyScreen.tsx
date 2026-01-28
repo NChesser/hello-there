@@ -29,7 +29,7 @@ const JourneyScreen = () => {
     const last7Days = getLast7Days();
 
     return (
-        <div className="p-6 pb-24 -mt-25 h-3/4 overflow-y-auto bg-amber-50 space-y-6">
+        <div className="p-6 pb-24 h-3/4 overflow-y-auto bg-amber-50 space-y-6">
             
 
             {/* Day Chart */}
