@@ -19,9 +19,9 @@ const HabitTrackingCard = ({ habit, completionCount, onAddCompletion, onRemoveCo
             <div className="flex items-start gap-3 justify-between">
                 <div>
                     <h3 className="font-semibold text-amber-900">{habit.title}</h3>
-                    <p className="text-sm text-amber-700">{habit.description}</p>
+                    {/* <p className="text-sm text-amber-700">{habit.description}</p> */}
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <button
                         onClick={() => onRemoveCompletion(habit.id)}
                         disabled={completionCount === 0}
@@ -36,7 +36,7 @@ const HabitTrackingCard = ({ habit, completionCount, onAddCompletion, onRemoveCo
                     >
                         +
                     </button>
-                </div>
+                </div> */}
             </div>
         </div>
     );
@@ -64,7 +64,7 @@ const HabitsScreen = () => {
                     <p className="text-amber-700">Click on a habit to mark it as completed for today!</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4 max-h-[35vh] md:max-h-[35vh] lg:max-h-[35vh] overflow-auto">
                     {habits.map(habit => (
                         <HabitTrackingCard
                             key={habit.id}

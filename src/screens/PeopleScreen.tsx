@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 
+// Components
+import Button from './Button';
+
+// Types
 interface Person {
     id: string;
     name: string;
@@ -8,6 +12,7 @@ interface Person {
     somethingInteresting?: string;
 }
 
+// Screen Component
 const PeopleScreen = () => {
     const [people, setPeople] = useState < Person[] > ([]);
     const [name, setName] = useState('');
@@ -98,12 +103,13 @@ const PeopleScreen = () => {
                             onChange={(e) => setSomethingInteresting(e.target.value)}
                             className="w-full p-3 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300"
                         />
-                        <button
+
+                        <Button
                             onClick={addPerson}
-                            className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-3 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
+                            className="w-full mt-4"
                         >
                             Add Person
-                        </button>
+                        </Button>
                     </div>
                 </>
             )}
