@@ -1,6 +1,6 @@
-import create from "zustand";
+import { create } from "zustand";
 
-export type Screen = "home" | "list" | "detail" | "settings";
+export type Screen = "home" | "challenge" | "reflect" | "progress" | "people" | "habits" | "settings";
 
 interface Store {
     selectedScreen: Screen;

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Heart, Settings, Book, Sparkles, Flower2, Users } from "lucide-react";
+
+// Store
+import { useScreenStore } from "./store/store";
 
 // Types
 import type {
@@ -16,23 +18,31 @@ import { CHALLENGES } from "./data/challenges";
 import { HABITS } from "./data/habits";
 
 // Screens
-import MainScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/HomeScreen";
 import HabitsScreen from "./screens/HabitsScreen";
 import PeopleScreen from "./screens/PeopleScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import JourneyScreen from "./screens/JourneyScreen";
-import Header from "./components/Header";
+import ChallengeScreen from "./screens/ChallengeScreen";
 
-const CozyQuestApp = () => {
-    const [currentView, setCurrentView] = useState<
-        | "home"
-        | "quest"
-        | "reflect"
-        | "settings"
-        | "progress"
-        | "habits"
-        | "people"
-    >("home");
+// Components
+import Header from "./components/Header";
+import BottomNav from "./components/BottomNavigation";
+
+// Icons
+import { Heart, Settings, Book, Sparkles, Flower2, Users } from "lucide-react";
+import ReflectScreen from "./screens/ReflectScreen";
+
+const CozychallengeApp = () => {
+    // Global screen store Navication state
+    const selectedScreen = useScreenStore((state) => {
+        return state.selectedScreen;
+    });
+    const setSelectedScreen = useScreenStore(
+        (state) => state.setSelectedScreen,
+    );
+
+    // Navigation state
     const [userProgress, setUserProgress] = useState<UserProgress>({
         level: 1,
         xp: 0,
@@ -125,13 +135,13 @@ const CozyQuestApp = () => {
         return level * 200; // Simple: level 1 = 200xp, level 2 = 400xp, etc
     };
 
-    const handleStartQuest = () => {
-        setCurrentView("quest");
+    const handleStartchallenge = () => {
+        setSelectedScreen("challenge");
     };
 
     const handleAttempt = (type: "complete" | "attempted") => {
         setAttemptType(type);
-        setCurrentView("reflect");
+        setSelectedScreen("reflect");
     };
 
     const handleReflect = async () => {
@@ -183,52 +193,13 @@ const CozyQuestApp = () => {
         setAfterFeeling(3);
         setAttemptType(null);
 
-        setCurrentView("home");
+        setSelectedScreen("home");
     };
 
     const handleSkip = async () => {
         // Generate new challenge for tomorrow
         generateTodayChallenge();
-        setCurrentView("home");
-    };
-
-    const handleLogHabit = async (habit: Habit) => {
-        setSelectedHabit(habit);
-    };
-
-    const handleSaveHabit = async () => {
-        if (!selectedHabit) return;
-
-        const habitLog: HabitLog = {
-            habitId: selectedHabit.id,
-            date: new Date().toISOString(),
-            note: habitNote,
-        };
-
-        const newProgress: UserProgress = {
-            ...userProgress,
-            habitLogs: [...userProgress.habitLogs, habitLog],
-        };
-
-        await saveProgress(newProgress);
-        setSelectedHabit(null);
-        setHabitNote("");
-    };
-
-    const getTodayHabitCount = () => {
-        const today = new Date().toDateString();
-        return userProgress.habitLogs.filter(
-            (log) => new Date(log.date).toDateString() === today,
-        ).length;
-    };
-
-    const getHabitCountForToday = (habitId: string) => {
-        const today = new Date().toDateString();
-        return userProgress.habitLogs.filter(
-            (log) =>
-                log.habitId === habitId &&
-                new Date(log.date).toDateString() === today,
-        ).length;
+        setSelectedScreen("home");
     };
 
     if (isLoading) {
@@ -244,242 +215,38 @@ const CozyQuestApp = () => {
             {/* Mobile container */}
             <div className="fixed top-0 left-0 right-0 max-w-md mx-auto max-w-md w-full bg-amber-50 shadow-xl mt-20">
                 {/* Header */}
-                <Header title={currentView} />
+                <Header title={selectedScreen} />
 
                 {/* Main Content */}
                 <div>
-                    {currentView === "home" && (
+                    {selectedScreen === "home" && (
                         <>
-                            <MainScreen todayChallenge={todayChallenge} />
+                            <HomeScreen todayChallenge={todayChallenge} />
                         </>
                     )}
 
-                    {currentView === "quest" && todayChallenge && (
-                        <div className="space-y-6">
-                            <button
-                                onClick={() => setCurrentView("home")}
-                                className="text-amber-600 text-sm hover:text-amber-700"
-                            >
-                                ← Back
-                            </button>
-
-                            <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-amber-100">
-                                <h2 className="text-xl font-semibold text-amber-900 mb-4">
-                                    {todayChallenge.title}
-                                </h2>
-
-                                <p className="text-amber-700 mb-6 leading-relaxed">
-                                    {todayChallenge.description}
-                                </p>
-
-                                {todayChallenge.exampleScript && (
-                                    <div className="bg-amber-50 rounded-lg p-4 mb-6 border border-amber-200">
-                                        <p className="text-xs text-amber-600 mb-2 font-medium">
-                                            You could say:
-                                        </p>
-                                        <p className="text-sm text-amber-700 italic">
-                                            "{todayChallenge.exampleScript}"
-                                        </p>
-                                    </div>
-                                )}
-
-                                <div className="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-200">
-                                    <p className="text-sm text-blue-800">
-                                        💙 Remember: You can stop anytime.
-                                        Showing up is what matters.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => handleAttempt("complete")}
-                                    className="w-full bg-gradient-to-r from-green-400 to-emerald-400 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
-                                >
-                                    I Did It! 🎉
-                                </button>
-
-                                <button
-                                    onClick={() => handleAttempt("attempted")}
-                                    className="w-full bg-gradient-to-r from-blue-300 to-cyan-300 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
-                                >
-                                    I Tried But Backed Out
-                                </button>
-
-                                <button
-                                    onClick={() => setCurrentView("home")}
-                                    className="w-full text-amber-600 py-2 text-sm hover:text-amber-700"
-                                >
-                                    Not ready yet
-                                </button>
-                            </div>
-                        </div>
+                    {selectedScreen === "challenge" && todayChallenge && (
+                        <ChallengeScreen todayChallenge={todayChallenge} />
                     )}
 
-                    {currentView === "reflect" && (
-                        <div className="space-y-6">
-                            <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-amber-100">
-                                <div className="flex gap-4 mb-6">
-                                    <div className="text-4xl">🐨</div>
-                                    <div className="flex-1">
-                                        <p className="text-amber-900 leading-relaxed">
-                                            {attemptType === "complete"
-                                                ? "That was brave! How did it feel?"
-                                                : "Stopping is still information. You showed up. How did it feel?"}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-amber-800 mb-3">
-                                            Before you tried (1 = calm, 5 = very
-                                            nervous)
-                                        </label>
-                                        <div className="flex gap-2">
-                                            {[1, 2, 3, 4, 5].map((val) => (
-                                                <button
-                                                    key={val}
-                                                    onClick={() =>
-                                                        setBeforeFeling(val)
-                                                    }
-                                                    className={`flex-1 py-3 rounded-lg border-2 transition-all ${
-                                                        beforeFeeling === val
-                                                            ? "border-amber-400 bg-amber-50 text-amber-900 font-medium"
-                                                            : "border-amber-200 text-amber-600 hover:border-amber-300"
-                                                    }`}
-                                                >
-                                                    {val}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-amber-800 mb-3">
-                                            After (1 = calm, 5 = very nervous)
-                                        </label>
-                                        <div className="flex gap-2">
-                                            {[1, 2, 3, 4, 5].map((val) => (
-                                                <button
-                                                    key={val}
-                                                    onClick={() =>
-                                                        setAfterFeeling(val)
-                                                    }
-                                                    className={`flex-1 py-3 rounded-lg border-2 transition-all ${
-                                                        afterFeeling === val
-                                                            ? "border-amber-400 bg-amber-50 text-amber-900 font-medium"
-                                                            : "border-amber-200 text-amber-600 hover:border-amber-300"
-                                                    }`}
-                                                >
-                                                    {val}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-amber-800 mb-2">
-                                            Any thoughts? (optional)
-                                        </label>
-                                        <textarea
-                                            value={note}
-                                            onChange={(e) =>
-                                                setNote(e.target.value)
-                                            }
-                                            placeholder="How it went, what you noticed, how you feel..."
-                                            className="w-full p-3 border-2 border-amber-200 rounded-lg focus:border-amber-400 focus:outline-none resize-none bg-white text-amber-900"
-                                            rows={4}
-                                        />
-                                        {note.length > 0 && (
-                                            <p className="text-xs text-amber-600 mt-1">
-                                                +25 XP bonus for reflecting
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={handleReflect}
-                                className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
-                            >
-                                Save & Continue
-                            </button>
-                        </div>
+                    {selectedScreen === "reflect" && (
+                        <ReflectScreen todayChallenge={todayChallenge} />
                     )}
                 </div>
 
-                {currentView === "settings" && <SettingsScreen />}
+                {selectedScreen === "settings" && <SettingsScreen />}
 
-                {currentView === "habits" && <HabitsScreen />}
+                {selectedScreen === "habits" && <HabitsScreen />}
 
-                {currentView === "people" && <PeopleScreen />}
+                {selectedScreen === "people" && <PeopleScreen />}
 
-                {currentView === "progress" && <JourneyScreen />}
+                {selectedScreen === "progress" && <JourneyScreen />}
 
                 {/* Bottom Nav */}
-                <div className="space-x-3 max-w-md mx-auto bg-white border-4 border-amber-100 rounded-3xl shadow-lg -mt-5">
-                    <div className="flex justify-around p-4">
-                        <button
-                            onClick={() => setCurrentView("home")}
-                            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                                currentView === "home"
-                                    ? "text-amber-600 bg-amber-50"
-                                    : "text-amber-400"
-                            }`}
-                        >
-                            <Sparkles size={20} />
-                            <span className="text-xs">Home</span>
-                        </button>
-                        <button
-                            onClick={() => setCurrentView("habits")}
-                            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                                currentView === "habits"
-                                    ? "text-amber-600 bg-amber-50"
-                                    : "text-amber-400"
-                            }`}
-                        >
-                            <Flower2 size={20} />
-                            <span className="text-xs">Habits</span>
-                        </button>
-                        <button
-                            onClick={() => setCurrentView("people")}
-                            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                                currentView === "people"
-                                    ? "text-amber-600 bg-amber-50"
-                                    : "text-amber-400"
-                            }`}
-                        >
-                            <Users size={20} />
-                            <span className="text-xs">People</span>
-                        </button>
-                        <button
-                            onClick={() => setCurrentView("progress")}
-                            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                                currentView === "progress"
-                                    ? "text-amber-600 bg-amber-50"
-                                    : "text-amber-400"
-                            }`}
-                        >
-                            <Book size={20} />
-                            <span className="text-xs">Journey</span>
-                        </button>
-                        <button
-                            onClick={() => setCurrentView("settings")}
-                            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${currentView === "settings"
-                                ? "text-amber-600 bg-amber-50"
-                                : "text-amber-400"
-                            }`}
-                        >
-                            <Settings size={20} />
-                            <span className="text-xs">Settings</span>
-                        </button>
-                    </div>
-                </div>
+                <BottomNav />
             </div>
         </div>
     );
 };
 
-export default CozyQuestApp;
+export default CozychallengeApp;

@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 // Sample Habits Data
-import { HABITS } from '../data/habits';
+import { HABITS } from "../data/habits";
+
+// Components
+import ScreenContainer from "../components/ScreenContainer";
+
+// Icons
+import { ClipboardCheck } from "lucide-react";
+
+// Types
+import type { Habit, HabitLog, UserProgress } from "../types/types";
+
 
 interface HabitCompletion {
     habitId: string;
     count: number;
 }
 
-const HabitTrackingCard = ({ habit, completionCount, onAddCompletion, onRemoveCompletion }: {
-    habit: typeof HABITS[0];
+const HabitTrackingCard = ({
+    habit,
+    completionCount,
+    onAddCompletion,
+    onRemoveCompletion,
+}: {
+    habit: (typeof HABITS)[0];
     completionCount: number;
     onAddCompletion: (habitId: string) => void;
     onRemoveCompletion: (habitId: string) => void;
@@ -18,7 +33,10 @@ const HabitTrackingCard = ({ habit, completionCount, onAddCompletion, onRemoveCo
         <div className="p-4 rounded-lg border-2 border-amber-200 bg-white hover:border-amber-400 transition-all">
             <div className="flex items-start gap-3 justify-between">
                 <div>
-                    <h3 className="font-semibold text-amber-900">{habit.title}</h3>
+                    <h3 className="font-semibold text-amber-900">
+                        {habit.title}
+                    </h3>
+                    <p className="font-semibold text-amber-600">0/1</p>
                     {/* <p className="text-sm text-amber-700">{habit.description}</p> */}
                 </div>
                 {/* <div className="flex items-center gap-2">
@@ -37,47 +55,95 @@ const HabitTrackingCard = ({ habit, completionCount, onAddCompletion, onRemoveCo
                         +
                     </button>
                 </div> */}
+
+                <button>
+                    <ClipboardCheck size={10} />
+                </button>
             </div>
         </div>
     );
 };
 
-
 const HabitsScreen = () => {
-    const [completedHabits, setCompletedHabits] = useState < string[] > ([]);
+    const [completedHabits, setCompletedHabits] = useState<string[]>([]);
 
     const habits = HABITS;
 
+    // Functions
     const toggleHabit = (habitId: string) => {
-        setCompletedHabits(prev =>
+        setCompletedHabits((prev) =>
             prev.includes(habitId)
-                ? prev.filter(id => id !== habitId)
-                : [...prev, habitId]
+                ? prev.filter((id) => id !== habitId)
+                : [...prev, habitId],
         );
     };
 
-    return (
-        <div className="w-full p-6 pb-24 -bg-amber-50 h-3/4 overflow-y-auto">
-            <div className="space-y-6">
-                <div>
-                    <h3 className="text-lg font-semibold text-amber-900">Your Habits</h3>
-                    <p className="text-amber-700">Click on a habit to mark it as completed for today!</p>
-                </div>
+    const handleLogHabit = async (habit: Habit) => {
+        setSelectedHabit(habit);
+    };
 
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4 max-h-[35vh] md:max-h-[35vh] lg:max-h-[35vh] overflow-auto">
-                    {habits.map(habit => (
-                        <HabitTrackingCard
-                            key={habit.id}
-                            habit={habit}
-                            completionCount={completedHabits.filter(id => id === habit.id).length}
-                            onAddCompletion={toggleHabit}
-                            onRemoveCompletion={toggleHabit}
-                        />
-                    ))}
-                </div>
+    const handleSaveHabit = async () => {
+        if (!selectedHabit) return;
+
+        const habitLog: HabitLog = {
+            habitId: selectedHabit.id,
+            date: new Date().toISOString(),
+            note: habitNote,
+        };
+
+        const newProgress: UserProgress = {
+            ...userProgress,
+            habitLogs: [...userProgress.habitLogs, habitLog],
+        };
+
+        await saveProgress(newProgress);
+        setSelectedHabit(null);
+        setHabitNote("");
+    };
+
+    const getTodayHabitCount = () => {
+        const today = new Date().toDateString();
+        return userProgress.habitLogs.filter(
+            (log) => new Date(log.date).toDateString() === today,
+        ).length;
+    };
+
+    const getHabitCountForToday = (habitId: string) => {
+        const today = new Date().toDateString();
+        return userProgress.habitLogs.filter(
+            (log) =>
+                log.habitId === habitId &&
+                new Date(log.date).toDateString() === today,
+        ).length;
+    };
+
+    return (
+        <ScreenContainer>
+            <div>
+                <h3 className="text-lg font-semibold text-amber-900">
+                    Your Habits
+                </h3>
+                <p className="text-amber-700">
+                    Click on a habit to mark it as completed for today!
+                </p>
             </div>
-        </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                {habits.map((habit) => (
+                    <HabitTrackingCard
+                        key={habit.id}
+                        habit={habit}
+                        completionCount={
+                            completedHabits.filter((id) => id === habit.id)
+                                .length
+                        }
+                        onAddCompletion={toggleHabit}
+                        onRemoveCompletion={toggleHabit}
+                    />
+                ))}
+            </div>
+        </ScreenContainer>
     );
-}
+};
 
 export default HabitsScreen;

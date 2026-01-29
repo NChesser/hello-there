@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // Components
+import ScreenContainer from '../components/ScreenContainer';
 import Button from './Button';
 
 // Types
@@ -62,7 +63,7 @@ const PeopleScreen = () => {
     );
 
     return (
-        <div className="w-full p-6 pb-24 bg-amber-50 h-3/4 overflow-y-auto">
+        <ScreenContainer>
             <div className="flex space-x-4 mb-4">
                 <button
                     onClick={() => setActiveTab('add')}
@@ -129,7 +130,7 @@ const PeopleScreen = () => {
                     }
                 </div>
             )}
-        </div>
+        </ScreenContainer>
     );
 };
 

@@ -1,9 +1,9 @@
-
-import React from 'react';
+// Components
+import ScreenContainer from '../components/ScreenContainer';
 
 const SettingsScreen = () => {
     return (
-        <div className="p-6 pb-24 h-full overflow-y-auto space-y-6">
+        <ScreenContainer>
             <div className="space-y-6">
                 <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-amber-100">
                     <h2 className="text-xl font-semibold text-amber-900 mb-4">Settings</h2>
@@ -32,7 +32,7 @@ const SettingsScreen = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </ScreenContainer>
     )
 };
 

@@ -1,32 +1,37 @@
-import React from 'react';
+import React from "react";
 
 // Components
-import DailyQuote from '../components/DailyQuote';
+import DailyQuote from "../components/DailyQuote";
 
 // Icons
-import ChallengeCard from '../components/ChallengeCard';
-import { XPDisplay } from '../components/Header';
+import ChallengeCard from "../components/ChallengeCard";
+import { XPDisplay } from "../components/Header";
+import { ProgressSummaryCard } from "./JourneyScreen";
+import ScreenContainer from "../components/ScreenContainer";
 
-
-const MainScreen = ({ todayChallenge }) => {
-
-
+const HomeScreen = ({ todayChallenge }) => {
+    const userProgress = {
+        level: 5,
+        totalXp: 1200,
+        completedChallenges: Array(34).fill(null),
+        logs: Array(50).fill(null),
+    };
 
     return (
-        <div className="p-6 pb-24 h-full overflow-y-auto space-y-6">
+        <ScreenContainer>
             <div className="space-y-6">
                 <DailyQuote />
 
                 {/* Today's Quest Card */}
-                {todayChallenge && (
-                    <ChallengeCard challenge={todayChallenge} />
-                )}
+                {todayChallenge && <ChallengeCard challenge={todayChallenge} />}
 
                 {/* XP Display */}
                 <XPDisplay />
-            </div>
-        </div>
-    );
-}
 
-export default MainScreen;
+                <ProgressSummaryCard userProgress={userProgress} />
+            </div>
+        </ScreenContainer>
+    );
+};
+
+export default HomeScreen;

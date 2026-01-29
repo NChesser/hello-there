@@ -1,28 +1,52 @@
+import React from "react";
 
-import React from 'react';
+// Store
+import { useScreenStore } from "../store/store";
+
 // Types
-import type { Challenge } from '../types/types';
+import type { Challenge } from "../types/types";
 
 // Icons
-import { Heart, Sparkles } from 'lucide-react';
+import { Heart, Sparkles } from "lucide-react";
 
-
-
+// Component
 const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
+    const selectedScreen = useScreenStore((state) => {
+        return state.selectedScreen;
+    });
+    console.log("🚀 ~ CozychallengeApp ~ selectedScreen:", selectedScreen);
+    const setSelectedScreen = useScreenStore(
+        (state) => state.setSelectedScreen,
+    );
+
     const handleStartQuest = () => {
-        alert(`Starting quest: ${challenge.title}`);
+        setSelectedScreen("challenge");
     };
 
     const handleSkip = () => {
-        alert('Quest skipped for today.');
+        setSelectedScreen("home");
     };
-
 
     return (
         <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl p-6 shadow-md border-2 border-amber-200">
-            <div className="flex items-start justify-between mb-3">
-                <h2 className="text-xl font-semibold text-amber-900">Today's Challenge</h2>
-                <Sparkles size={20} className="text-amber-500" />
+            <div className="flex items-start justify-between mb-3 border-b border-amber-200 pb-3">
+                <h2 className="text-xl font-semibold text-amber-900">
+                    Today's Challenge
+                </h2>
+                {/* <Sparkles size={20} className="text-amber-500" /> */}
+                <div className="flex gap-2 mt-2 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                        <Heart
+                            key={i}
+                            size={16}
+                            className={
+                                i < challenge.discomfortRating
+                                    ? "fill-orange-300 text-orange-300"
+                                    : "text-amber-200"
+                            }
+                        />
+                    ))}
+                </div>
             </div>
 
             <h3 className="text-lg font-medium text-amber-800 mb-2">
@@ -33,10 +57,14 @@ const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
                 {challenge.description}
             </p>
 
-            {challenge.exampleScript && (
+            {/* {challenge.exampleScript && (
                 <div className="bg-amber-50 rounded-lg p-3 mb-4 border border-amber-200">
-                    <p className="text-xs text-amber-600 mb-1 font-medium">Example:</p>
-                    <p className="text-sm text-amber-700 italic">"{challenge.exampleScript}"</p>
+                    <p className="text-xs text-amber-600 mb-1 font-medium">
+                        Example:
+                    </p>
+                    <p className="text-sm text-amber-700 italic">
+                        "{challenge.exampleScript}"
+                    </p>
                 </div>
             )}
 
@@ -45,11 +73,17 @@ const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
                     <Heart
                         key={i}
                         size={16}
-                        className={i < challenge.discomfortRating ? 'fill-orange-300 text-orange-300' : 'text-amber-200'}
+                        className={
+                            i < challenge.discomfortRating
+                                ? "fill-orange-300 text-orange-300"
+                                : "text-amber-200"
+                        }
                     />
                 ))}
-                <span className="text-xs text-amber-600 ml-1">gentle stretch</span>
-            </div>
+                <span className="text-xs text-amber-600 ml-1">
+                    gentle stretch
+                </span>
+            </div> */}
 
             <button
                 onClick={handleStartQuest}
