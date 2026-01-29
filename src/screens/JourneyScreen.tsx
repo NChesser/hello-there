@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 // Components
 import ScreenContainer from "../components/ScreenContainer";
 
@@ -10,9 +8,10 @@ export const ProgressSummaryCard = ({
 }) => {
     return (
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-amber-100">
-            <h3 className="text-sm font-medium text-amber-800 mb-3">
+            <h3 className="text-sm font-medium text-amber-800 mb-2">
                 Your Journey
             </h3>
+            <div className="border border-amber-100 mb-4" />
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <div className="text-2xl font-bold text-amber-900">
@@ -29,6 +28,12 @@ export const ProgressSummaryCard = ({
                     <div className="text-xs text-amber-600">
                         Completed Habits
                     </div>
+                </div>
+                <div>
+                    <div className="text-2xl font-bold text-amber-900">
+                        {userProgress.peopleMet || 0}
+                    </div>
+                    <div className="text-xs text-amber-600">People Met</div>
                 </div>
             </div>
         </div>
@@ -64,9 +69,10 @@ const JourneyScreen = () => {
         <ScreenContainer>
             {/* Day Chart */}
             <div className="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 mb-4 ">
-                <h3 className="text-sm font-medium text-amber-800 mb-4">
+                <h3 className="text-sm font-medium text-amber-800 mb-2">
                     Completion Streak
                 </h3>
+                <div className="border border-amber-100 mb-4" />
                 <div className="flex gap-2 justify-between">
                     {last7Days.map((day, index) => (
                         <div
@@ -95,9 +101,10 @@ const JourneyScreen = () => {
 
             {/* Completed Challenges */}
             <div className="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 mt-4 h-70 overflow-y-auto">
-                <h3 className="text-sm font-medium text-amber-800 mb-4">
+                <h3 className="text-sm font-medium text-amber-800 mb-2">
                     Completed Challenges
                 </h3>
+                <div className="border border-amber-100 mb-4" />
                 <div className="space-y-2">
                     {userProgress.completedChallenges.map((_, index) => (
                         <div

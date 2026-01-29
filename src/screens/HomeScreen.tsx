@@ -1,5 +1,3 @@
-import React from "react";
-
 // Components
 import DailyQuote from "../components/DailyQuote";
 
@@ -9,7 +7,7 @@ import { XPDisplay } from "../components/Header";
 import { ProgressSummaryCard } from "./JourneyScreen";
 import ScreenContainer from "../components/ScreenContainer";
 
-const HomeScreen = ({ todayChallenge }) => {
+const HomeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
     const userProgress = {
         level: 5,
         totalXp: 1200,

@@ -7,11 +7,10 @@ import { HABITS } from "../data/habits";
 import ScreenContainer from "../components/ScreenContainer";
 
 // Icons
-import { ClipboardCheck } from "lucide-react";
+import { CheckCircle, PlusCircle } from "lucide-react";
 
 // Types
 import type { Habit, HabitLog, UserProgress } from "../types/types";
-
 
 interface HabitCompletion {
     habitId: string;
@@ -30,13 +29,13 @@ const HabitTrackingCard = ({
     onRemoveCompletion: (habitId: string) => void;
 }) => {
     return (
-        <div className="p-4 rounded-lg border-2 border-amber-200 bg-white hover:border-amber-400 transition-all">
+        <div className="p-3 rounded-lg border-2 border-amber-200 bg-white hover:border-amber-400 transition-all">
             <div className="flex items-start gap-3 justify-between">
                 <div>
                     <h3 className="font-semibold text-amber-900">
                         {habit.title}
                     </h3>
-                    <p className="font-semibold text-amber-600">0/1</p>
+                    {/* <p className="text-sm font-semibold text-amber-600">0/1</p> */}
                     {/* <p className="text-sm text-amber-700">{habit.description}</p> */}
                 </div>
                 {/* <div className="flex items-center gap-2">
@@ -56,9 +55,11 @@ const HabitTrackingCard = ({
                     </button>
                 </div> */}
 
-                <button>
-                    <ClipboardCheck size={10} />
-                </button>
+                {/* <button onClick={() => onAddCompletion(habit.id)} className="rounded-full shadow-md hover:shadow-lg transition-all elevation-none p-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white">
+                </button> */}
+                <div className="mt-1 mr-3">
+                    <CheckCircle size={20} />
+                </div>
             </div>
         </div>
     );
@@ -83,6 +84,8 @@ const HabitsScreen = () => {
     };
 
     const handleSaveHabit = async () => {
+        return;
+
         if (!selectedHabit) return;
 
         const habitLog: HabitLog = {
@@ -103,31 +106,11 @@ const HabitsScreen = () => {
 
     const getTodayHabitCount = () => {
         const today = new Date().toDateString();
-        return userProgress.habitLogs.filter(
-            (log) => new Date(log.date).toDateString() === today,
-        ).length;
-    };
-
-    const getHabitCountForToday = (habitId: string) => {
-        const today = new Date().toDateString();
-        return userProgress.habitLogs.filter(
-            (log) =>
-                log.habitId === habitId &&
-                new Date(log.date).toDateString() === today,
-        ).length;
+        return 5;
     };
 
     return (
         <ScreenContainer>
-            <div>
-                <h3 className="text-lg font-semibold text-amber-900">
-                    Your Habits
-                </h3>
-                <p className="text-amber-700">
-                    Click on a habit to mark it as completed for today!
-                </p>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 {habits.map((habit) => (
                     <HabitTrackingCard
@@ -141,6 +124,58 @@ const HabitsScreen = () => {
                         onRemoveCompletion={toggleHabit}
                     />
                 ))}
+            </div>
+
+            <div className="flex flex-col items-right mt-6">
+                {/* <p className="text-sm text-amber-700 mt-4">
+                    Habits completed today: {getTodayHabitCount()}
+                </p> */}
+
+                <PlusCircle size={40} className="float-right text-amber-600" />
+
+
+                {/* <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        const form = e.target as HTMLFormElement;
+                        const title = (form.elements.namedItem("title") as HTMLInputElement)
+                            .value.trim();
+                        const description = (
+                            form.elements.namedItem("description") as HTMLInputElement
+                        ).value.trim();
+                        if (!title) return;
+                        const newHabit = {
+                            id: Date.now().toString(),
+                            title,
+                            description,
+                        } as any;
+                        (HABITS as any).push(newHabit);
+                        // force re-render by updating existing state
+                        setCompletedHabits((prev) => [...prev]);
+                        form.reset();
+                    }}
+                    className="mt-4 p-4 rounded bg-amber-50 border border-amber-100"
+                >
+                    <h4 className="font-semibold text-amber-900 mb-2">Add new habit</h4>
+                    <div className="flex gap-2">
+                        <input
+                            name="title"
+                            placeholder="Habit title"
+                            className="flex-1 p-2 rounded border border-amber-200"
+                        />
+                        <input
+                            name="description"
+                            placeholder="Description (optional)"
+                            className="flex-1 p-2 rounded border border-amber-200"
+                        />
+                        <button
+                            type="submit"
+                            className="px-3 py-2 bg-amber-600 text-white rounded"
+                        >
+                            Add
+                        </button>
+                    </div>
+                </form> */}
             </div>
         </ScreenContainer>
     );

@@ -4,13 +4,15 @@ export type Screen = "home" | "challenge" | "reflect" | "progress" | "people" | 
 
 interface Store {
     selectedScreen: Screen;
+    previouslySelectedScreen: Screen;
     setSelectedScreen: (screen: Screen) => void;
     resetSelectedScreen: () => void;
 }
 
 export const useScreenStore = create<Store>((set) => ({
     selectedScreen: "home",
-    setSelectedScreen: (screen: Screen) => set({ selectedScreen: screen }),
+    previouslySelectedScreen: "home",
+    setSelectedScreen: (screen: Screen) => set({ selectedScreen: screen, previouslySelectedScreen: screen }),
     resetSelectedScreen: () => set({ selectedScreen: "home" }),
 }));
 

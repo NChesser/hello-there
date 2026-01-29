@@ -29,7 +29,7 @@ const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
 
     return (
         <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl p-6 shadow-md border-2 border-amber-200">
-            <div className="flex items-start justify-between mb-3 border-b border-amber-200 pb-3">
+            <div className="flex items-start justify-between pb-3">
                 <h2 className="text-xl font-semibold text-amber-900">
                     Today's Challenge
                 </h2>
@@ -48,6 +48,8 @@ const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
                     ))}
                 </div>
             </div>
+
+            <div className="border border-amber-200 mb-4" />
 
             <h3 className="text-lg font-medium text-amber-800 mb-2">
                 {challenge.title}

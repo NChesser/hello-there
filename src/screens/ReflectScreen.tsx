@@ -9,9 +9,7 @@ import type { CompletionLog } from "../types/types";
 // Components
 import ScreenContainer from "../components/ScreenContainer";
 
-
-
-const ReflectScreen = ({ todayChallenge}) => {
+const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
     // Store
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,

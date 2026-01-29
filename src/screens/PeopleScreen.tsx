@@ -81,8 +81,8 @@ const PeopleScreen = () => {
             <div className="mb-6"></div>
             {activeTab === 'add' && (
                 <>
-                    <div className="mb-6 space-y-4">
-                        <h3 className="text-lg font-semibold text-amber-900">Add a New Person</h3>
+                    <div className="mb-6 space-y-4 bg-white p-6 rounded-2xl border-2 border-amber-100 shadow-sm">
+                        <h2 className="text-xl font-semibold text-amber-900 mb-4">Add a New Person</h2>
                         <input
                             type="text"
                             placeholder="Name"

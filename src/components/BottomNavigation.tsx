@@ -1,5 +1,3 @@
-import React from "react";
-
 // Store
 import { useScreenStore } from "../store/store";
 
