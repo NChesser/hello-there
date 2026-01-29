@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // Store
-import { useScreenStore } from "../store/store";
+import { useScreenStore, useUserStore } from "../store/store";
 
 // Types
 import type { CompletionLog } from "../types/types";
@@ -14,6 +14,7 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );
+    const logChallengeCompletion = useUserStore((state) => state.logChallengeCompletion);
 
     // Local state
     const [beforeFeeling, setBeforeFeling] = useState<number>(3);
@@ -47,28 +48,7 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
             xpEarned,
         };
 
-        // const newTotalXp = userProgress.totalXp + xpEarned;
-        // let newLevel = userProgress.level;
-        // let newXp = userProgress.xp + xpEarned;
-
-        // // Check for level up
-        // while (newXp >= calculateXpForLevel(newLevel)) {
-        //     newXp -= calculateXpForLevel(newLevel);
-        //     newLevel++;
-        // }
-
-        // const newProgress: UserProgress = {
-        //     level: newLevel,
-        //     xp: newXp,
-        //     totalXp: newTotalXp,
-        //     completedChallenges:
-        //         attemptType === "complete"
-        //             ? [...userProgress.completedChallenges, todayChallenge.id]
-        //             : userProgress.completedChallenges,
-        //     logs: [...userProgress.logs, log],
-        // };
-
-        // await saveProgress(newProgress);
+        await logChallengeCompletion(log);
 
         // Reset for next time
         setNote("");
