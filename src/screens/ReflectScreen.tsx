@@ -154,15 +154,14 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                                 </p>
                             )}
                         </div>
+                        <button
+                            onClick={handleReflect}
+                            className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
+                        >
+                            Save & Continue
+                        </button>
                     </div>
                 </div>
-
-                <button
-                    onClick={handleReflect}
-                    className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
-                >
-                    Save & Continue
-                </button>
             </div>
         </ScreenContainer>
     );

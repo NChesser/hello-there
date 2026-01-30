@@ -22,9 +22,10 @@ export type CompletionLog = {
 
 export type UserProgress = {
   level: number;
-  xp: number;
   totalXp: number;
   completedChallenges: string[];
+  completedHabits: string[];
+  peopleMet: string[];
   logs: CompletionLog[];
   habitLogs: HabitLog[];
 };

@@ -25,11 +25,13 @@ const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
 
     const handleSkip = () => {
         setSelectedScreen("home");
+        // Update store to mark challenge as skipped for today
+        // Update logic to skip challenge
     };
 
     return (
         <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl p-6 shadow-md border-2 border-amber-200">
-            <div className="flex items-start justify-between pb-3">
+            <div className="flex items-start justify-between pb-2">
                 <h2 className="text-xl font-semibold text-amber-900">
                     Today's Challenge
                 </h2>
@@ -49,7 +51,7 @@ const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
                 </div>
             </div>
 
-            <div className="border border-amber-200 mb-4" />
+            <div className="border border-amber-100 mb-4" />
 
             <h3 className="text-lg font-medium text-amber-800 mb-2">
                 {challenge.title}

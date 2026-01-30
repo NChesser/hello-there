@@ -1,7 +1,6 @@
-// Daily Quote Component
-import React from 'react';
 import { DAILY_QUOTES } from '../data/quotes';
 
+// Daily Quote Component
 const DailyQuote = () => {
     // Select a random quote
     const randomIndex = Math.floor(Math.random() * DAILY_QUOTES.length);

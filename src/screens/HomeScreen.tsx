@@ -1,11 +1,12 @@
+// Screens
+import ScreenContainer from "../components/ScreenContainer";
+
 // Components
 import DailyQuote from "../components/DailyQuote";
-
-// Icons
+import XPDisplay from "../components/XPDisplay";
 import ChallengeCard from "../components/ChallengeCard";
-import { XPDisplay } from "../components/Header";
 import { ProgressSummaryCard } from "./JourneyScreen";
-import ScreenContainer from "../components/ScreenContainer";
+
 
 const HomeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
     const userProgress = {
@@ -18,10 +19,11 @@ const HomeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
     return (
         <ScreenContainer>
             <div className="space-y-6">
-                <DailyQuote />
 
                 {/* Today's Quest Card */}
                 {todayChallenge && <ChallengeCard challenge={todayChallenge} />}
+
+                <DailyQuote />
 
                 {/* XP Display */}
                 <XPDisplay />
