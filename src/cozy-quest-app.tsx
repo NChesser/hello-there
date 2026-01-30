@@ -1,16 +1,10 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 // Store
-import {
-    useSelectedScreen,
-    useSetSelectedScreen,
-    useUserProgress,
-} from "./store/store";
+import { useScreenStore, useUserStore, useUserLoading } from "./store/store";
 
 // Types
-import type {
-    Challenge
-} from "./types/types";
+import type { Challenge } from "./types/types";
 
 // Data Imports
 import { CHALLENGES } from "./data/challenges";
@@ -41,11 +35,10 @@ const CozychallengeApp = () => {
     const [isLoading, setIsLoading] = useState(true);
 
 
-    const generateTodayChallenge = () => {
-        // Simple selection: pick a random challenge
-        const randomChallenge =
-            CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
-        setTodayChallenge(randomChallenge);
+	// Initialize user on mount
+	useEffect(() => {
+		initializeUser();
+	}, [initializeUser]);
 
         const today = new Date().toDateString();
         // window.storage.set("today-challenge", JSON.stringify(randomChallenge));
