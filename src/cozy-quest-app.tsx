@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 
 // Store
-import { useScreenStore, useUserStore, useUserLoading } from "./store/store";
+import { useSelectedScreen, useSetSelectedScreen, useUserProgress } from "./store/store";
 
 // Types
 import type { Challenge } from "./types/types";
@@ -31,19 +31,14 @@ const CozychallengeApp = () => {
     const userProgress = useUserProgress();
 
 	// Local State
-    const [todayChallenge, setTodayChallenge] = useState<Challenge | null>(null,);
+    const [todayChallenge, setTodayChallenge] = useState<Challenge | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-
-	// Initialize user on mount
-	useEffect(() => {
-		initializeUser();
-	}, [initializeUser]);
-
-        const today = new Date().toDateString();
-        // window.storage.set("today-challenge", JSON.stringify(randomChallenge));
-        // window.storage.set("today-date", today);
-    };
+	const generateTodayChallenge = () => {
+		// For simplicity, pick a random challenge from the list
+		const randomIndex = Math.floor(Math.random() * CHALLENGES.length);
+		setTodayChallenge(CHALLENGES[randomIndex]);
+	};	
 
 	useEffect(() => {
 		// Simulate loading delay

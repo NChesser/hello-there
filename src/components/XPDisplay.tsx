@@ -1,5 +1,5 @@
 // Store
-import { useUserProgress, useUserProgressStore } from "../store/store";
+import { useUserProgress } from "../store/store";
 
 //  XP Display Component
 const XPDisplay = () => {
@@ -22,8 +22,16 @@ const XPDisplay = () => {
                             {calculateXpForLevel(userProgress.level)} XP
                         </div>
                     </div>
-                    <div className="ml-4 text-3xl font-bold text-amber-900">
-                        ⭐ {userProgress.totalXp}
+                    <div className="ml-3 text-xs text-amber-800 opacity-60">
+                        {" "}
+                        {userProgress.completedChallenges.length}
+                    </div>
+                    <div className="ml-3 text-xs text-amber-800 opacity-60">
+                        🏆 {" "}
+                        {userProgress.completedHabits.length}
+                    </div>
+                    <div className="ml-3 text-xs text-amber-800 opacity-60">
+                        🤝 {userProgress.peopleMet.length}
                     </div>
                 </div>
             </div>
