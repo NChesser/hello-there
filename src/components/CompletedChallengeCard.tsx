@@ -1,10 +1,10 @@
 import React from 'react';
 
 // Types
-import { Challenge } from '../types';
+import type { CompletedChallenge } from '../types/types';
 
 
-const CompletedChallengeCard = ({ challenge }: { challenge: Challenge }) => {
+const CompletedChallengeCard = ({ challenge }: { challenge: CompletedChallenge }) => {
     return (
         <div className="border border-amber-200 rounded-lg p-4 mb-4 bg-amber-50">
             <h3 className="text-lg font-semibold text-amber-800 mb-2">{challenge.title}</h3>

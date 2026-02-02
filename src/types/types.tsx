@@ -3,10 +3,20 @@ export type Challenge = {
   id: string;
   title: string;
   description: string;
-  exampleScript?: string;
+  exampleScript?: string[];
   discomfortRating: 1 | 2 | 3 | 4 | 5;
-  category: 'micro-social' | 'interaction' | 'vulnerability' | 'rejection';
+  category: 'micro-social' | 'interaction' | 'vulnerability' | 'rejection' | 'exposure' | 'wellbeing' | 'growth' | 'assertiveness';
   xpReward: number;
+};
+
+export type CompletedChallenge = {
+  id: string;
+  title: string;
+  description: string;
+  beforeFeeling: number;
+  afterFeeling: number;
+  note?: string;
+  completedAt: string;
 };
 
 export type CompletionLog = {

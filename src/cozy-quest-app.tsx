@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 // Store
-import { useSelectedScreen, useSetSelectedScreen, useUserProgress } from "./store/store";
+import { useSelectedScreen, useSetSelectedScreen, useSetTodayChallenge, useTodayChallenge, useUserProgress } from "./store/store";
 
 // Types
 import type { Challenge } from "./types/types";
@@ -17,27 +17,30 @@ import SettingsScreen from "./screens/SettingsScreen";
 import JourneyScreen from "./screens/JourneyScreen";
 import ChallengeScreen from "./screens/ChallengeScreen";
 import ReflectScreen from "./screens/ReflectScreen";
+import HabitOverviewScreen from "./components/HabitOverview";
 
 // Components
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNavigation";
+import { HABITS } from "./data/habits";
 
 const CozychallengeApp = () => {
     // Global screen store Navication state
     const selectedScreen = useSelectedScreen();
     const setSelectedScreen = useSetSelectedScreen();
+	const setTodayChallenge = useSetTodayChallenge();
+	const todayChallenge = useTodayChallenge();
 
     // User Progress Store
     const userProgress = useUserProgress();
 
 	// Local State
-    const [todayChallenge, setTodayChallenge] = useState<Challenge | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
 	const generateTodayChallenge = () => {
 		// For simplicity, pick a random challenge from the list
 		const randomIndex = Math.floor(Math.random() * CHALLENGES.length);
-		setTodayChallenge(CHALLENGES[randomIndex]);
+		setTodayChallenge(CHALLENGES);
 	};	
 
 	useEffect(() => {
@@ -88,6 +91,8 @@ const CozychallengeApp = () => {
                 {selectedScreen === "people" && <PeopleScreen />}
 
                 {selectedScreen === "progress" && <JourneyScreen />}
+
+				{selectedScreen === "habit-overview" && <HabitOverviewScreen habit={HABITS[0]} habitLogs={[]} />}
 
                 {/* Bottom Nav */}
                 <BottomNav />

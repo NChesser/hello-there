@@ -38,9 +38,29 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                             <p className="text-xs text-amber-600 mb-2 font-medium">
                                 You could say:
                             </p>
-                            <p className="text-sm text-amber-700 italic">
-                                "{todayChallenge.exampleScript}"
-                            </p>
+                            {Array.isArray(todayChallenge.exampleScript)
+                                ? todayChallenge.exampleScript.map(
+                                      (ex: string, i: number) => (
+                                          <p
+                                              key={i}
+                                              className="text-sm text-amber-700 italic mb-1"
+                                          >
+                                              {ex}
+                                          </p>
+                                      ),
+                                  )
+                                : todayChallenge.exampleScript
+                                      .split(/\r?\n|\|/)
+                                      .map((ex: string) => ex.trim())
+                                      .filter(Boolean)
+                                      .map((ex: string, i: number) => (
+                                          <p
+                                              key={i}
+                                              className="text-sm text-amber-700 italic mb-1"
+                                          >
+                                              "{ex}"
+                                          </p>
+                                      ))}
                         </div>
                     </div>
                 )}
@@ -50,7 +70,7 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                         onClick={() => handleAttempt("complete")}
                         className="w-full bg-gradient-to-r from-green-400 to-emerald-400 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
                     >
-                        I Did It! 🎉
+                        I Did It!
                     </button>
 
                     <button
@@ -61,10 +81,39 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                     </button>
                 </div>
             </div>
-            <div className="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-200">
+            <div className="rounded-lg p-3 mt-4 border-2 border-amber-100">
+                <div className="flex flex-col space-y-1">
+                    <div>
+                        <span className="font-medium text-amber-800">
+                            Category:
+                        </span>{" "}
+                        <span className="text-amber-600">
+                            {todayChallenge.category ?? "General"}
+                        </span>
+                    </div>
+                    <div>
+                        <span className="font-medium text-amber-800">
+                            Discomfort Level:
+                        </span>{" "}
+                        <span className="text-amber-600">
+                            {todayChallenge.discomfort ?? "Unknown"}
+                        </span>
+                    </div>
+                    <div>
+                        <span className="font-medium text-amber-800">
+                            XP Reward:
+                        </span>{" "}
+                        <span className="text-emerald-500 font-semibold">
+                            {todayChallenge.xp ?? 0} XP
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div className="bg-blue-50 rounded-lg p-4 mb-6 border-2 border-blue-200">
                 <p className="text-sm text-blue-800">
-                    💙 Remember: You can stop anytime. Showing up is what
-                    matters.
+                    {todayChallenge?.remember
+                        ? `💙 ${todayChallenge.remember}`
+                        : `💙 Remember: You can stop anytime while working on ${todayChallenge?.title ?? "this challenge"}. Showing up is what matters.`}
                 </p>
             </div>
         </ScreenContainer>

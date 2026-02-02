@@ -4,7 +4,7 @@ import * as userService from "./userService";
 
 
 // Screen store for navigation state
-export type Screen = "home" | "challenge" | "reflect" | "progress" | "people" | "habits" | "settings";
+export type Screen = string;
 
 interface ScreenStore {
     selectedScreen: Screen;
@@ -217,6 +217,34 @@ export const useUserStore = create<UserStore>((set) => ({
 export const useSelectedScreen = () => useScreenStore((s) => s.selectedScreen);
 export const useSetSelectedScreen = () => useScreenStore((s) => s.setSelectedScreen);
 export const usePreviouslySelectedScreen = () => useScreenStore((s) => s.previouslySelectedScreen);
+
+// Today's Challenge store
+import type { Challenge } from "../types/types";
+import { CHALLENGES } from "../data/challenges";
+
+export const useTodayChallengeStore = create<{ todayChallenge: Challenge | null; setTodayChallenge: (challenge: Challenge | null) => void }>((set) => ({
+    todayChallenge: null,
+    setTodayChallenge: (challenge: Challenge | null) => set({ todayChallenge: challenge }),
+}));
+
+// Convenience selectors
+export const useTodayChallenge = () => useTodayChallengeStore((s) => s.todayChallenge);
+
+export const useSetTodayChallenge = () => {
+    const set = useTodayChallengeStore((s) => s.setTodayChallenge);
+
+    const challenges: Challenge[] = CHALLENGES; // Assume CHALLENGES is imported or available in this scope
+    console.log("🚀 ~ useSetTodayChallenge ~ challenges:", challenges)
+
+    return () => {
+        if (!challenges || challenges.length === 0) {
+            set(null);
+            return;
+        }
+        const idx = Math.floor(Math.random() * challenges.length);
+        set(challenges[idx]);
+    };
+};
 
 
 // User progress store

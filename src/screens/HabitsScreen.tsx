@@ -3,11 +3,15 @@ import React, { useState } from "react";
 // Sample Habits Data
 import { HABITS } from "../data/habits";
 
+// Store
+import { useSetSelectedScreen } from "../store/store";
+
 // Components
 import ScreenContainer from "../components/ScreenContainer";
+import DateComplete from "../components/DateComplete";
 
 // Icons
-import { CheckCircle, PlusCircle } from "lucide-react";
+import { CheckCircle, PercentCircle, PlusCircle } from "lucide-react";
 
 // Types
 import type { Habit, HabitLog, UserProgress } from "../types/types";
@@ -28,14 +32,33 @@ const HabitTrackingCard = ({
     onAddCompletion: (habitId: string) => void;
     onRemoveCompletion: (habitId: string) => void;
 }) => {
+    // 
+    // Determine if habit is completed
+    const isCompleted = completionCount > 0;
+    const color = isCompleted ? "text-green-600" : "text-amber-600";
+
+    // 
+    const setScreen = useSetSelectedScreen();
+
+    // Function to display habit overview
+    const displayHabitOverview = () => {
+        // Logic to display habit overview can be added here
+        setScreen("habit-overview");
+    };
+
+    // Render
     return (
-        <div className="p-3 rounded-lg border-2 border-amber-200 bg-white hover:border-amber-400 transition-all">
-            <div className="flex items-start gap-3 justify-between">
-                <div>
-                    <h3 className="font-semibold text-amber-900">
-                        {habit.title}
-                    </h3>
-                    {/* <p className="text-sm font-semibold text-amber-600">0/1</p> */}
+        <div
+            className={`p-3 rounded-lg border-2 border-amber-200 bg-white ${isCompleted ? "border-green-200 bg-green-50 hover:border-green-400 transition-all" : "hover:border-amber-400 transition-all"}`}
+        >
+            <div className="cursor-pointer flex items-start gap-3 justify-between">
+                <div className="flex" onClick={() => displayHabitOverview()}>
+                    <div>
+                        {/* {habit.icon} */}
+                        <h3 className={`font-semibold ${color}`}>
+                            {habit.title}
+                        </h3>
+                    </div>
                     {/* <p className="text-sm text-amber-700">{habit.description}</p> */}
                 </div>
                 {/* <div className="flex items-center gap-2">
@@ -57,8 +80,19 @@ const HabitTrackingCard = ({
 
                 {/* <button onClick={() => onAddCompletion(habit.id)} className="rounded-full shadow-md hover:shadow-lg transition-all elevation-none p-2 bg-gradient-to-r from-green-400 to-emerald-400 text-white">
                 </button> */}
-                <div className="mt-1 mr-3">
-                    <CheckCircle size={20} />
+                <div
+                    className="mt-1 mr-3 flex items-center justify-center gap-2"
+                    onClick={() => onAddCompletion(habit.id)}
+                >
+                    <div className="flex items-center gap-2">
+                        <p className={`text-sm ${color}`}>
+                            {completionCount}/1
+                        </p>
+                        <CheckCircle
+                            size={20}
+                            className={`cursor-pointer ${color} hover:text-${color.replace("text-", "text-")}-600`}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,6 +145,7 @@ const HabitsScreen = () => {
 
     return (
         <ScreenContainer>
+            {/* <DateComplete /> */}
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 {habits.map((habit) => (
                     <HabitTrackingCard
@@ -126,56 +161,16 @@ const HabitsScreen = () => {
                 ))}
             </div>
 
-            <div className="flex flex-col items-right mt-6">
-                {/* <p className="text-sm text-amber-700 mt-4">
-                    Habits completed today: {getTodayHabitCount()}
-                </p> */}
-
-                <PlusCircle size={40} className="float-right text-amber-600" />
-
-
-                {/* <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        const form = e.target as HTMLFormElement;
-                        const title = (form.elements.namedItem("title") as HTMLInputElement)
-                            .value.trim();
-                        const description = (
-                            form.elements.namedItem("description") as HTMLInputElement
-                        ).value.trim();
-                        if (!title) return;
-                        const newHabit = {
-                            id: Date.now().toString(),
-                            title,
-                            description,
-                        } as any;
-                        (HABITS as any).push(newHabit);
-                        // force re-render by updating existing state
-                        setCompletedHabits((prev) => [...prev]);
-                        form.reset();
-                    }}
-                    className="mt-4 p-4 rounded bg-amber-50 border border-amber-100"
-                >
-                    <h4 className="font-semibold text-amber-900 mb-2">Add new habit</h4>
-                    <div className="flex gap-2">
-                        <input
-                            name="title"
-                            placeholder="Habit title"
-                            className="flex-1 p-2 rounded border border-amber-200"
-                        />
-                        <input
-                            name="description"
-                            placeholder="Description (optional)"
-                            className="flex-1 p-2 rounded border border-amber-200"
-                        />
-                        <button
-                            type="submit"
-                            className="px-3 py-2 bg-amber-600 text-white rounded"
-                        >
-                            Add
-                        </button>
-                    </div>
-                </form> */}
+            <div className="flex flex-col items-right">
+                <div className="mt-2 flex items-center justify-end gap-2 cursor-pointer">
+                    <span className="text-amber-600 font-medium">
+                        Add New Habit
+                    </span>
+                    <PlusCircle
+                        size={30}
+                        className="float-right text-amber-600"
+                    />
+                </div>
             </div>
         </ScreenContainer>
     );
