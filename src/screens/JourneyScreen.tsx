@@ -65,7 +65,7 @@ const JourneyScreen = () => {
             <ProgressSummaryCard userProgress={userProgress} />
 
             {/* Completed Challenges */}
-            <CompletedChallenges userProgress={userProgress} />
+            <CompletedChallenges />
 
         </ScreenContainer>
     );

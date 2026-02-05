@@ -1,4 +1,12 @@
-const CompletedChallenges = ({ userProgress }: { userProgress: any }) => {
+import { useUserProgress } from "../store/store";
+
+
+
+const CompletedChallenges = () => {
+
+    const userProgress = useUserProgress();
+    console.log("🚀 ~ CompletedChallenges ~ userProgress:", userProgress)
+
     return (
         <div>
             {/* List of completed challenges would go here */}
@@ -8,7 +16,7 @@ const CompletedChallenges = ({ userProgress }: { userProgress: any }) => {
                 </h3>
                 <div className="border border-amber-100 mb-4" />
                 <div className="space-y-2">
-                    {userProgress.completedChallenges.map((_, index) => (
+                    {userProgress.habitLogs.map((_, index) => (
                         <div
                             key={index}
                             className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg"

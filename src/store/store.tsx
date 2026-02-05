@@ -222,9 +222,49 @@ export const usePreviouslySelectedScreen = () => useScreenStore((s) => s.previou
 import type { Challenge } from "../types/types";
 import { CHALLENGES } from "../data/challenges";
 
+const TODAY_CHALLENGE_KEY = 'cozy-quest-today-challenge';
+const LAST_CHALLENGE_DATE_KEY = 'cozy-quest-last-challenge-date';
+
+// Load today's challenge from localStorage
+const loadTodayChallenge = (): Challenge | null => {
+    try {
+        const lastDate = localStorage.getItem(LAST_CHALLENGE_DATE_KEY);
+        const today = new Date().toDateString();
+        
+        // Check if we have a challenge for today
+        if (lastDate === today) {
+            const saved = localStorage.getItem(TODAY_CHALLENGE_KEY);
+            if (saved) {
+                return JSON.parse(saved);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load today\'s challenge from localStorage:', error);
+    }
+    return null;
+};
+
+// Save today's challenge to localStorage
+const saveTodayChallenge = (challenge: Challenge | null) => {
+    try {
+        if (challenge) {
+            localStorage.setItem(TODAY_CHALLENGE_KEY, JSON.stringify(challenge));
+            localStorage.setItem(LAST_CHALLENGE_DATE_KEY, new Date().toDateString());
+        } else {
+            localStorage.removeItem(TODAY_CHALLENGE_KEY);
+            localStorage.removeItem(LAST_CHALLENGE_DATE_KEY);
+        }
+    } catch (error) {
+        console.error('Failed to save today\'s challenge to localStorage:', error);
+    }
+};
+
 export const useTodayChallengeStore = create<{ todayChallenge: Challenge | null; setTodayChallenge: (challenge: Challenge | null) => void }>((set) => ({
-    todayChallenge: null,
-    setTodayChallenge: (challenge: Challenge | null) => set({ todayChallenge: challenge }),
+    todayChallenge: loadTodayChallenge(),
+    setTodayChallenge: (challenge: Challenge | null) => {
+        saveTodayChallenge(challenge);
+        set({ todayChallenge: challenge });
+    },
 }));
 
 // Convenience selectors
@@ -250,18 +290,67 @@ export const useSetTodayChallenge = () => {
 // User progress store
 import type { UserProgress } from "../types/types";
 
-export const useUserProgressStore = create<UserProgress>((set) => ({
-    level: 1,
-    totalXp: 0,
-    completedChallenges: [],
-    completedHabits: [],
-    peopleMet: [],
-    logs: [],
-    habitLogs: [],
-    setUserProgress: (progress: Partial<UserProgress>) => set((state) => ({
-        ...state,
-        ...progress,
-    })),
+interface UserProgressStore extends UserProgress {
+    setUserProgress: (progress: Partial<UserProgress>) => void;
+}
+
+// LocalStorage key
+const USER_PROGRESS_KEY = 'cozy-quest-user-progress';
+
+// Load initial state from localStorage
+const loadUserProgress = (): UserProgress => {
+    try {
+        const saved = localStorage.getItem(USER_PROGRESS_KEY);
+        if (saved) {
+            return JSON.parse(saved);
+        }
+    } catch (error) {
+        console.error('Failed to load user progress from localStorage:', error);
+    }
+    // Default state
+    return {
+        level: 1,
+        totalXp: 0,
+        completedChallenges: [],
+        completedHabits: [],
+        peopleMet: [],
+        logs: [],
+        habitLogs: [],
+    };
+};
+
+// Save to localStorage
+const saveUserProgress = (state: UserProgress) => {
+    console.log("🚀 ~ saveUserProgress ~ state:", state)
+    try {
+        const { level, totalXp, completedChallenges, completedHabits, peopleMet, logs, habitLogs } = state;
+        localStorage.setItem(USER_PROGRESS_KEY, JSON.stringify({
+            level,
+            totalXp,
+            completedChallenges,
+            completedHabits,
+            peopleMet,
+            logs,
+            habitLogs,
+        }));
+    } catch (error) {
+        console.error('Failed to save user progress to localStorage:', error);
+    }
+};
+
+const initialProgress = loadUserProgress();
+
+export const useUserProgressStore = create<UserProgressStore>((set) => ({
+    ...initialProgress,
+    setUserProgress: (progress: Partial<UserProgress>) => set((state) => {
+        const newState = {
+            ...state,
+            ...progress,
+        };
+        // Save to localStorage whenever state changes
+        saveUserProgress(newState);
+        return newState;
+    }),
 }));
 
 // Convenience selectors

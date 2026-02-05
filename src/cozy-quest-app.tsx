@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 // Store
-import { useSelectedScreen, useSetSelectedScreen, useSetTodayChallenge, useTodayChallenge, useUserProgress } from "./store/store";
+import { useSelectedScreen, useSetSelectedScreen, useTodayChallenge, useUserProgress, useSetUserProgressStore, useTodayChallengeStore } from "./store/store";
 
 // Types
 import type { Challenge } from "./types/types";
@@ -12,6 +12,7 @@ import { CHALLENGES } from "./data/challenges";
 // Screens
 import HomeScreen from "./screens/HomeScreen";
 import HabitsScreen from "./screens/HabitsScreen";
+import HabitDetailScreen from "./screens/HabitDetailScreen";
 import PeopleScreen from "./screens/PeopleScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import JourneyScreen from "./screens/JourneyScreen";
@@ -28,27 +29,27 @@ const CozychallengeApp = () => {
     // Global screen store Navication state
     const selectedScreen = useSelectedScreen();
     const setSelectedScreen = useSetSelectedScreen();
-	const setTodayChallenge = useSetTodayChallenge();
 	const todayChallenge = useTodayChallenge();
 
     // User Progress Store
     const userProgress = useUserProgress();
+    const setUserProgress = useSetUserProgressStore();
 
 	// Local State
     const [isLoading, setIsLoading] = useState(true);
 
-	const generateTodayChallenge = () => {
-		// For simplicity, pick a random challenge from the list
-		const randomIndex = Math.floor(Math.random() * CHALLENGES.length);
-		setTodayChallenge(CHALLENGES);
-	};	
-
 	useEffect(() => {
+		// Only generate a new challenge if one doesn't exist
+		if (!todayChallenge && CHALLENGES.length > 0) {
+			const randomIndex = Math.floor(Math.random() * CHALLENGES.length);
+			const challengeStore = useTodayChallengeStore.getState();
+			challengeStore.setTodayChallenge(CHALLENGES[randomIndex]);
+		}
+		
 		// Simulate loading delay
 		setTimeout(() => {
-			generateTodayChallenge();
 			setIsLoading(false);
-		}, 1000);
+		}, 500);
 	}, []);
 
 
@@ -93,6 +94,31 @@ const CozychallengeApp = () => {
                 {selectedScreen === "progress" && <JourneyScreen />}
 
 				{selectedScreen === "habit-overview" && <HabitOverviewScreen habit={HABITS[0]} habitLogs={[]} />}
+
+                {/* Habit Detail Screens */}
+                {selectedScreen.startsWith("habit-detail-") && (() => {
+                    const habitId = selectedScreen.replace("habit-detail-", "");
+                    const habit = HABITS.find(h => h.id === habitId);
+                    if (habit) {
+                        const completedHabits = userProgress.completedHabits || [];
+                        return (
+                            <HabitDetailScreen
+                                habit={habit}
+                                isCompleted={completedHabits.includes(habitId)}
+                                onComplete={() => {
+                                    if (!completedHabits.includes(habitId)) {
+                                        // Update the user progress store with the new completed habit
+                                        setUserProgress({
+                                            completedHabits: [...completedHabits, habitId]
+                                        });
+                                    }
+                                }}
+                                onBack={() => setSelectedScreen("habits")}
+                            />
+                        );
+                    }
+                    return null;
+                })()}
 
                 {/* Bottom Nav */}
                 <BottomNav />

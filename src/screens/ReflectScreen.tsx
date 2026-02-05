@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // Store
-import { useScreenStore, useUserStore } from "../store/store";
+import { useScreenStore, useUserProgress, useSetUserProgressStore } from "../store/store";
 
 // Types
 import type { CompletionLog } from "../types/types";
@@ -14,24 +14,24 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );
-    const logChallengeCompletion = useUserStore((state) => state.logChallengeCompletion);
+    const userProgress = useUserProgress();
+    const setUserProgress = useSetUserProgressStore();
 
     // Local state
     const [beforeFeeling, setBeforeFeling] = useState<number>(3);
     const [afterFeeling, setAfterFeeling] = useState<number>(3);
     const [note, setNote] = useState<string>("");
-    const [attemptType, setAttemptType] = useState<
-        "complete" | "attempted" | null
-    >(null);
 
     // Functions
     const handleReflect = async () => {
-        if (!todayChallenge || !attemptType) {
+        if (!todayChallenge) {
             setSelectedScreen("home");
             return;
         }
 
-        const xpMultiplier = attemptType === "complete" ? 1 : 0.5;
+        console.warn("🚀 ~ handleReflect ~ todayChallenge:", todayChallenge);
+
+        const xpMultiplier = 1;
         const reflectionBonus = note.length > 0 ? 25 : 0;
         const xpEarned =
             Math.floor(todayChallenge.xpReward * xpMultiplier) +
@@ -43,18 +43,26 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
             beforeFeeling,
             afterFeeling,
             note,
-            completed: attemptType === "complete",
+            completed: true,
             attempted: true,
             xpEarned,
         };
 
-        await logChallengeCompletion(log);
+        // Update user progress with the new log and XP
+        const newTotalXp = userProgress.totalXp + xpEarned;
+        const newLevel = Math.floor(newTotalXp / 100) + 1; // Simple leveling: 100 XP per level
+        
+        setUserProgress({
+            totalXp: newTotalXp,
+            level: newLevel,
+            logs: [...userProgress.logs, log],
+            completedChallenges: [...userProgress.completedChallenges, todayChallenge.id],
+        });
 
         // Reset for next time
         setNote("");
         setBeforeFeling(3);
         setAfterFeeling(3);
-        setAttemptType(null);
 
         setSelectedScreen("home");
     };
@@ -67,9 +75,7 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                         <div className="text-4xl">🐨</div>
                         <div className="flex-1">
                             <p className="text-amber-900 leading-relaxed">
-                                {attemptType === "complete"
-                                    ? "That was brave! How did it feel?"
-                                    : "Stopping is still information. You showed up. How did it feel?"}
+                                That was brave! How did it feel?
                             </p>
                         </div>
                     </div>

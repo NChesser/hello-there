@@ -30,7 +30,7 @@ const HomeScreen = () => {
                 {/* Today's Quest Card */}
                 <ChallengeCard />
 
-                {/* <XPDisplay /> */}
+                <XPDisplay />
                 {/* XP Display
 
                 <ProgressSummaryCard userProgress={userProgress} /> */}

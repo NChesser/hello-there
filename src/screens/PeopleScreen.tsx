@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// Store
+import { useUserProgress, useSetUserProgressStore } from '../store/store';
 
 // Components
 import ScreenContainer from '../components/ScreenContainer';
@@ -15,11 +18,39 @@ interface Person {
 
 // Screen Component
 const PeopleScreen = () => {
-    const [people, setPeople] = useState < Person[] > ([]);
+    const userProgress = useUserProgress();
+    const setUserProgress = useSetUserProgressStore();
+    
+    // Convert peopleMet string[] to Person[] for backwards compatibility
+    const peopleFromProgress: Person[] = (userProgress.peopleMet || []).map(personId => {
+        // Try to parse if it's JSON, otherwise create simple object
+        try {
+            const parsed = JSON.parse(personId);
+            return parsed;
+        } catch {
+            return {
+                id: personId,
+                name: personId,
+                date: new Date().toLocaleDateString(),
+                notes: '',
+                somethingInteresting: ''
+            };
+        }
+    });
+    
+    const [people, setPeople] = useState<Person[]>(peopleFromProgress);
     const [name, setName] = useState('');
     const [notes, setNotes] = useState('');
     const [somethingInteresting, setSomethingInteresting] = useState('');
-    const [activeTab, setActiveTab] = useState < 'add' | 'list' > ('add');
+    const [activeTab, setActiveTab] = useState<'add' | 'list'>('add');
+    
+    // Sync people to userProgress whenever it changes
+    useEffect(() => {
+        const serializedPeople = people.map(person => JSON.stringify(person));
+        setUserProgress({
+            peopleMet: serializedPeople
+        });
+    }, [people]);
 
     const addPerson = () => {
         if (name.trim() === '') return;
@@ -35,6 +66,7 @@ const PeopleScreen = () => {
         setPeople([newPerson, ...people]);
         setName('');
         setNotes('');
+        setSomethingInteresting('');
     };
 
     const removePerson = (id: string) => {
