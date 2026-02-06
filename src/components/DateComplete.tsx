@@ -3,7 +3,7 @@ const DateComplete = () => {
     const last7Days = getLast7Days();
 
     return (
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 mb-4 ">
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-amber-100">
             <h3 className="text-sm font-medium text-amber-800 mb-2">
                 Completion Streak
             </h3>

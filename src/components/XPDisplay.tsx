@@ -8,7 +8,7 @@ const XPDisplayCompact = () => {
         (userProgress.totalXp / calculateXpForLevel(userProgress.level)) * 100;
 
     return (
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-lg shadow-sm border border-amber-200">
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-amber-200">
             {/* Level and XP in one row */}
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">

@@ -9,6 +9,9 @@ import type { Challenge } from "../types/types";
 // Icons
 import { Heart } from "lucide-react";
 
+// Utils
+import { capitalizeFirstLetter } from "../utils/helpers";
+
 // Component
 const ChallengeCard = () => {
     // Store
@@ -37,7 +40,7 @@ const ChallengeCard = () => {
         <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl p-6 shadow-md border-2 border-amber-200">
             <div className="flex items-start justify-between pb-2">
                 <h2 className="text-xl font-semibold text-amber-900">
-                    Today's Challenge
+                    {capitalizeFirstLetter(challenge.category)} Challenge
                 </h2>
                 <div className="flex gap-2 mt-2 mb-2">
                     {[...Array(5)].map((_, i) => (

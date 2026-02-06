@@ -1,7 +1,9 @@
 // Components
+import { X } from "lucide-react";
 import CompletedChallenges from "../components/CompletedChallenges";
 import DateComplete from "../components/DateComplete";
 import ScreenContainer from "../components/ScreenContainer";
+import XPDisplay from "../components/XPDisplay";
 
 export const ProgressSummaryCard = ({
     userProgress,
@@ -19,7 +21,9 @@ export const ProgressSummaryCard = ({
                     <div className="text-2xl font-bold text-amber-900">
                         Level {userProgress.level}
                     </div>
-                    <div className="text-xs text-amber-600">{userProgress.totalXp} XP</div>
+                    <div className="text-xs text-amber-600">
+                        {userProgress.totalXp} XP
+                    </div>
                 </div>
                 <div>
                     <div className="text-2xl font-bold text-amber-900">
@@ -49,24 +53,19 @@ export const ProgressSummaryCard = ({
 };
 
 const JourneyScreen = () => {
-    const userProgress = {
-        level: 5,
-        totalXp: 1200,
-        completedChallenges: Array(34).fill(null),
-        logs: Array(50).fill(null),
-    };
 
     return (
         <ScreenContainer>
+            <XPDisplay />
+
             {/* Day Chart */}
             <DateComplete />
 
-            {/* Progress Summary */}
-            <ProgressSummaryCard userProgress={userProgress} />
+            {/* Progress Summary
+            <ProgressSummaryCard userProgress={userProgress} /> */}
 
             {/* Completed Challenges */}
             <CompletedChallenges />
-
         </ScreenContainer>
     );
 };

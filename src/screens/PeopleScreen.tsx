@@ -42,7 +42,7 @@ const PeopleScreen = () => {
     const [name, setName] = useState('');
     const [notes, setNotes] = useState('');
     const [somethingInteresting, setSomethingInteresting] = useState('');
-    const [activeTab, setActiveTab] = useState<'add' | 'list'>('add');
+    const [activeTab, setActiveTab] = useState<'add' | 'list'>('list');
     
     // Sync people to userProgress whenever it changes
     useEffect(() => {
@@ -98,16 +98,16 @@ const PeopleScreen = () => {
         <ScreenContainer>
             <div className="flex space-x-4 mb-4">
                 <button
+                    onClick={() => setActiveTab('list')}
+                    className={`flex-1 px-4 py-2 rounded-lg font-medium ${activeTab === 'list' ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-white' : 'bg-gray-200 text-gray-700'}`}
+                >
+                    People Met
+                </button>
+                <button
                     onClick={() => setActiveTab('add')}
                     className={`flex-1 px-4 py-2 rounded-lg font-medium ${activeTab === 'add' ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-white' : 'bg-gray-200 text-gray-700'}`}
                 >
                     Add Person
-                </button>
-                <button
-                    onClick={() => setActiveTab('list')}
-                    className={`flex-1 px-4 py-2 rounded-lg font-medium ${activeTab === 'list' ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-white' : 'bg-gray-200 text-gray-700'}`}
-                >
-                    List People
                 </button>
             </div>
             <div className="mb-6"></div>
