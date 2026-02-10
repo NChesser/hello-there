@@ -38,6 +38,8 @@ export type UserProgress = {
   peopleMet: string[];
   logs: CompletionLog[];
   habitLogs: HabitLog[];
+  excludedChallenges?: string[];
+  preferredCategories?: ('micro-social' | 'interaction' | 'vulnerability' | 'rejection' | 'exposure' | 'wellbeing' | 'growth' | 'assertiveness')[];
 };
 
 export type Habit = {

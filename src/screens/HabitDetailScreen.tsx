@@ -1,6 +1,7 @@
 import { ArrowLeft, CheckCircle, Info } from "lucide-react";
 import ScreenContainer from "../components/ScreenContainer";
 import type { Habit } from "../types/types";
+import { useTheme } from "../context/ThemeContext";
 
 interface HabitDetailScreenProps {
     habit: Habit;
@@ -15,11 +16,13 @@ const HabitDetailScreen = ({
     onComplete,
     onBack,
 }: HabitDetailScreenProps) => {
-    console.log("🚀 ~ HabitDetailScreen ~ onComplete:", onComplete)
-    const color = isCompleted ? "text-green-600" : "text-amber-600";
+    const { isDark } = useTheme();
+    const color = isCompleted
+        ? "text-green-600"
+        : isDark ? "text-amber-400" : "text-amber-600";
     const bgColor = isCompleted
-        ? "bg-green-50 border-green-200"
-        : "bg-white border-amber-200";
+        ? isDark ? "bg-green-900/20 border-green-700" : "bg-green-50 border-green-200"
+        : isDark ? "bg-gray-800 border-gray-700" : "bg-white border-amber-200";
 
     return (
         <ScreenContainer>
@@ -27,7 +30,10 @@ const HabitDetailScreen = ({
             <div className="mb-6">
                 <button
                     onClick={onBack}
-                    className="flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium mb-4 transition-all"
+                    className={`flex items-center gap-2 font-medium mb-4 transition-all ${
+                        isDark ? 'text-amber-400 hover:text-amber-300' : 'text-amber-600 hover:text-amber-700'
+                    }`}
+                    aria-label="Go back to habits"
                 >
                     <ArrowLeft size={20} />
                     Back to Habits
@@ -40,19 +46,19 @@ const HabitDetailScreen = ({
                     <span className="text-xl">{habit.icon}</span>
                     <h2 className={`text-xl font-semibold ${color}`}>{habit.title}</h2>
                 </div>
-                <div className="border border-amber-100 mb-4" />
+                <div className={`border mb-4 ${isDark ? 'border-gray-600' : 'border-amber-100'}`} />
                 <div className="mb-4 mt-2">
                     <div className="flex items-center gap-2 mb-2">
-                        <Info size={16} className="text-amber-600" />
-                        <h3 className="font-semibold text-sm text-amber-800">
+                        <Info size={16} className={isDark ? 'text-amber-400' : 'text-amber-600'} />
+                        <h3 className={`font-semibold text-sm ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
                             Why this matters:
                         </h3>
                     </div>
-                    <p className="text-gray-700 ml-6">{habit.description}</p>
+                    <p className={`ml-6 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{habit.description}</p>
                 </div>
 
                 <div className="mb-4">
-                    <p className="text-sm text-gray-600">
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         Category:{" "}
                         <span className="font-medium capitalize">
                             {habit.category}
@@ -64,11 +70,14 @@ const HabitDetailScreen = ({
                 <button
                     onClick={onComplete}
                     disabled={isCompleted}
-                    className={`flex items-center justify-center gap-2 w-full p-4 rounded-lg transition-all ${
+                    className={`flex items-center justify-center gap-2 w-full p-4 rounded-lg transition-all active:scale-[0.98] ${
                         isCompleted
-                            ? "bg-green-100 text-green-700 cursor-not-allowed"
+                            ? isDark
+                                ? "bg-green-900/30 text-green-400 cursor-not-allowed"
+                                : "bg-green-100 text-green-700 cursor-not-allowed"
                             : "bg-amber-500 hover:bg-amber-600 text-amber-50"
                     }`}
+                    aria-label={isCompleted ? "Already completed today" : "Mark habit as complete"}
                 >
                     <CheckCircle
                         size={20}

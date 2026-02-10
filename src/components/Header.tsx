@@ -1,38 +1,54 @@
-import { useUserProgress } from "../store/store";
+import { useScreenStore } from "../store/store";
+import { useTheme } from "../context/ThemeContext";
+import { ArrowLeft } from "lucide-react";
 
 interface HeaderProps {
     title?: string;
 }
 
-const Header = ({ title }: HeaderProps) => {
-    const userProgress = useUserProgress();
+// Screens accessible from the bottom nav — these are "top-level" and don't need a back button
+const MAIN_SCREENS = ["home", "habits", "people", "progress", "settings"];
 
-    function calculateXpForLevel(level: number): number {
-        return level * 1000; // Example: each level requires 1000 more XP
-    }
+const Header = ({ title }: HeaderProps) => {
+    const { isDark } = useTheme();
+    const selectedScreen = useScreenStore((s) => s.selectedScreen);
+    const previousScreen = useScreenStore((s) => s.previouslySelectedScreen);
+    const setSelectedScreen = useScreenStore((s) => s.setSelectedScreen);
+
+    const showBack = !MAIN_SCREENS.includes(selectedScreen);
+
+    const handleBack = () => {
+        // Go to the previous screen, or fall back to home
+        const target = previousScreen && previousScreen !== selectedScreen ? previousScreen : "home";
+        setSelectedScreen(target);
+    };
 
     return (
-        <div className="bg-gradient-to-r from-orange-200 to-amber-200 p-4 rounded-t-3xl shadow-sm">
+        <div className={`p-4 rounded-t-3xl shadow-sm transition-colors duration-300 ${
+            isDark
+                ? 'bg-gradient-to-r from-gray-800 to-gray-700'
+                : 'bg-gradient-to-r from-orange-200 to-amber-200'
+        }`}>
             <div className="flex items-center justify-between px-4">
-                <div className="w-6 h-6" /> {/* Placeholder for alignment */}
-                <h3 className="text-xl font-semibold text-amber-900">
-                    {capitalizeFirstLetter(title || "Home")}
+                {showBack ? (
+                    <button
+                        onClick={handleBack}
+                        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                            isDark
+                                ? 'text-gray-300 hover:bg-gray-600'
+                                : 'text-amber-700 hover:bg-amber-300/50'
+                        }`}
+                        aria-label="Go back"
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
+                ) : (
+                    <div className="w-8 h-8" />
+                )}
+                <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-100' : 'text-amber-900'}`}>
+                    {formatScreenTitle(title || "Home")}
                 </h3>
-                <div className="w-6 h-6" /> {/* Placeholder for alignment */}
-                {/* <div className="flex items-center justify-between">
-                    <div className="ml-2 mr-2">
-                        <div className="text-sm text-amber-900 opacity-75">
-                            Level {userProgress.level}
-                        </div>
-                        <div className="text-xs text-amber-800 opacity-60">
-                            {userProgress.totalXp} /{" "}
-                            {calculateXpForLevel(userProgress.level)} XP
-                        </div>
-                    </div>
-                    <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-2xl">
-                        🐨
-                    </div>
-                </div> */}
+                <div className="w-8 h-8" />
             </div>
         </div>
     );
@@ -40,8 +56,14 @@ const Header = ({ title }: HeaderProps) => {
 
 export default Header;
 
-const capitalizeFirstLetter = (text: string) => {
-    if (text.length === 0) return text;
+/** Turns a screen key like "habit-detail-morning" into a readable title */
+const formatScreenTitle = (screen: string) => {
+    // Strip prefixes for sub-screens
+    if (screen.startsWith("habit-detail-")) return "Habit Details";
+    if (screen === "habit-overview") return "Habit Overview";
+    if (screen === "reflect") return "Reflect";
+    if (screen === "challenge") return "Challenge";
 
-    return text.charAt(0).toUpperCase() + text.slice(1);
+    // Default: capitalise first letter
+    return screen.charAt(0).toUpperCase() + screen.slice(1);
 };

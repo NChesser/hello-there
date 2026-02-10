@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Store
-import { useScreenStore, useSetTodayChallenge, useTodayChallenge } from "../store/store";
+import { useScreenStore, useSetTodayChallenge, useTodayChallenge, useUserProgress } from "../store/store";
+import { useTheme } from "../context/ThemeContext";
 
 // Types
 import type { Challenge } from "../types/types";
 
+// Data
+import { CHALLENGES } from "../data/challenges";
+
 // Icons
-import { Heart } from "lucide-react";
+import { Heart, RefreshCw } from "lucide-react";
 
 // Utils
 import { capitalizeFirstLetter } from "../utils/helpers";
@@ -17,10 +21,15 @@ const ChallengeCard = () => {
     // Store
     const selectedScreen = useScreenStore((state) => state.selectedScreen);
     const setSelectedScreen = useScreenStore((state) => state.setSelectedScreen);
+    const userProgress = useUserProgress();
+    const { isDark } = useTheme();
 
     // Challenge Store
     const challenge = useTodayChallenge();
     const setTodayChallenge = useSetTodayChallenge();
+
+    // Local state for skip animation
+    const [isSkipping, setIsSkipping] = useState(false);
 
     // Functions
     const handleStartQuest = () => {
@@ -28,8 +37,11 @@ const ChallengeCard = () => {
     };
 
     const handleSkip = () => {
-        setSelectedScreen("home");
-        setTodayChallenge();
+        setIsSkipping(true);
+        setTimeout(() => {
+            setTodayChallenge();
+            setIsSkipping(false);
+        }, 300);
     };
 
     if (!challenge) {
@@ -37,50 +49,71 @@ const ChallengeCard = () => {
     }
 
     return (
-        <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl p-6 shadow-md border-2 border-amber-200">
-            <div className="flex items-start justify-between pb-2">
-                <h2 className="text-xl font-semibold text-amber-900">
-                    {capitalizeFirstLetter(challenge.category)} Challenge
-                </h2>
-                <div className="flex gap-2 mt-2 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                        <Heart
-                            key={i}
-                            size={16}
-                            className={
-                                i < challenge.discomfortRating
-                                    ? "fill-orange-300 text-orange-300"
-                                    : "text-amber-200"
-                            }
-                        />
-                    ))}
+        <div style={{ perspective: "1500px" }}>
+            <div
+                className={`rounded-2xl p-6 shadow-md border-2 ${isDark
+                    ? 'bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600'
+                    : 'bg-gradient-to-br from-white to-amber-50 border-amber-200'
+                    }`}
+                style={{
+                    transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease",
+                    transformStyle: "preserve-3d",
+                    transformOrigin: "center center",
+                    transform: isSkipping ? "rotateY(-180deg) scale(0.97)" : "rotateY(0deg) scale(1)",
+                    opacity: isSkipping ? 0 : 1,
+                    willChange: "transform, opacity",
+                }}
+            >
+                <div style={{ backfaceVisibility: "hidden" }}>
+                    <div className="flex items-start justify-between pb-2">
+                        <h2 className={`text-xl font-semibold ${isDark ? 'text-gray-100' : 'text-amber-900'}`}>
+                            {capitalizeFirstLetter(challenge.category)} Challenge
+                        </h2>
+                        <div className="flex gap-2 mt-2 mb-2" role="group" aria-label="Discomfort rating - tap to filter by difficulty">
+                            {[...Array(5)].map((_, i) => (
+
+                                <Heart
+                                    key={i}
+
+                                    size={16}
+                                    className={
+                                        i < challenge.discomfortRating
+                                            ? "fill-orange-300 text-orange-300"
+                                            : isDark ? "text-gray-600" : "text-amber-200"
+                                    }
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className={`border mb-4 ${isDark ? 'border-gray-600' : 'border-amber-100'}`} />
+
+                    <h3 className={`text-lg font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-amber-800'}`}>
+                        {challenge.title}
+                    </h3>
+                    <p className={`mb-4 leading-relaxed ${isDark ? 'text-gray-300' : 'text-amber-700'}`}>
+                        {challenge.description}
+                    </p>
+                    <button
+                        onClick={handleStartQuest}
+                        className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-3 rounded-xl font-medium shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                        aria-label="Start this challenge"
+                    >
+                        I'll Try This
+                    </button>
+
+                    <button
+                        onClick={handleSkip}
+                        disabled={isSkipping}
+                        className={`w-full mt-2 py-2 text-sm transition-all flex items-center justify-center gap-2 ${isDark ? 'text-gray-400 hover:text-gray-300' : 'text-amber-600 hover:text-amber-700'
+                            } disabled:opacity-50`}
+                        aria-label="Skip this challenge and get another one"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isSkipping ? 'animate-spin' : ''}`} />
+                        Not feeling this one? Try another
+                    </button>
                 </div>
             </div>
-
-
-            <div className="border border-amber-100 mb-4" />
-
-            <h3 className="text-lg font-medium text-amber-800 mb-2">
-                {challenge.title}
-            </h3>
-
-            <p className="text-amber-700 mb-4 leading-relaxed">
-                {challenge.description}
-            </p>
-
-            <button
-                onClick={handleStartQuest}
-                className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-3 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
-            >
-                I'll Try This
-            </button>
-
-            <button
-                onClick={handleSkip}
-                className="w-full mt-2 text-amber-600 py-2 text-sm hover:text-amber-700 transition-colors"
-            >
-                Maybe later
-            </button>
         </div>
     );
 };

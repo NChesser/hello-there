@@ -1,5 +1,6 @@
 // Store
 import { useScreenStore } from "../store/store";
+import { useTheme } from "../context/ThemeContext";
 
 // Icons from lucide-react
 import { Sparkles, Flower2, Book, Users, Settings } from "lucide-react";
@@ -8,69 +9,44 @@ const BottomNav = () => {
     const selectedScreen = useScreenStore((state) => {
         return state.selectedScreen;
     });
-    console.log("🚀 ~ BottomNav ~ selectedScreen:", selectedScreen)
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );
+    const { isDark } = useTheme();
+
+    const navItems = [
+        { id: 'home', label: 'Home', icon: Sparkles },
+        { id: 'habits', label: 'Habits', icon: Flower2 },
+        { id: 'people', label: 'People', icon: Users },
+        { id: 'progress', label: 'Journey', icon: Book },
+        { id: 'settings', label: 'Settings', icon: Settings },
+    ];
 
     return (
-        <div className="space-x-3 max-w-md mx-auto bg-white border-4 border-amber-100 rounded-3xl shadow-lg">
+        <div className={`space-x-3 max-w-md mx-auto border-4 rounded-3xl shadow-lg transition-colors duration-300 ${
+            isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-amber-100'
+        }`}>
             <div className="flex justify-around p-4">
-                <button
-                    onClick={() => setSelectedScreen("home")}
-                    className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                        selectedScreen === "home"
-                            ? "text-amber-600 bg-amber-50"
-                            : "text-amber-400"
-                    }`}
-                >
-                    <Sparkles size={20} />
-                    <span className="text-xs">Home</span>
-                </button>
-                <button
-                    onClick={() => setSelectedScreen("habits")}
-                    className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                        selectedScreen === "habits"
-                            ? "text-amber-600 bg-amber-50"
-                            : "text-amber-400"
-                    }`}
-                >
-                    <Flower2 size={20} />
-                    <span className="text-xs">Habits</span>
-                </button>
-                <button
-                    onClick={() => setSelectedScreen("people")}
-                    className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                        selectedScreen === "people"
-                            ? "text-amber-600 bg-amber-50"
-                            : "text-amber-400"
-                    }`}
-                >
-                    <Users size={20} />
-                    <span className="text-xs">People</span>
-                </button>
-                <button
-                    onClick={() => setSelectedScreen("progress")}
-                    className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                        selectedScreen === "progress"
-                            ? "text-amber-600 bg-amber-50"
-                            : "text-amber-400"
-                    }`}
-                >
-                    <Book size={20} />
-                    <span className="text-xs">Journey</span>
-                </button>
-                <button
-                    onClick={() => setSelectedScreen("settings")}
-                    className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                        selectedScreen === "settings"
-                            ? "text-amber-600 bg-amber-50"
-                            : "text-amber-400"
-                    }`}
-                >
-                    <Settings size={20} />
-                    <span className="text-xs">Settings</span>
-                </button>
+                {navItems.map(({ id, label, icon: Icon }) => (
+                    <button
+                        key={id}
+                        onClick={() => setSelectedScreen(id)}
+                        className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-all duration-200 ${
+                            selectedScreen === id
+                                ? isDark
+                                    ? 'text-amber-400 bg-amber-400/10 scale-105'
+                                    : 'text-amber-600 bg-amber-50 scale-105'
+                                : isDark
+                                    ? 'text-gray-500 hover:text-gray-300'
+                                    : 'text-amber-400 hover:text-amber-500'
+                        }`}
+                        aria-label={`Navigate to ${label}`}
+                        aria-current={selectedScreen === id ? 'page' : undefined}
+                    >
+                        <Icon size={20} />
+                        <span className="text-xs">{label}</span>
+                    </button>
+                ))}
             </div>
         </div>
     );

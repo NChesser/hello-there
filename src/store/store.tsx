@@ -38,11 +38,11 @@ interface UserStore {
     removePersonMet: (personId: string) => Promise<void>;
 }
 
-export const useScreenStore = create<ScreenStore>((set) => ({
+export const useScreenStore = create<ScreenStore>((set, get) => ({
     selectedScreen: "home",
     previouslySelectedScreen: "home",
-    setSelectedScreen: (screen: Screen) => set({ selectedScreen: screen, previouslySelectedScreen: screen }),
-    resetSelectedScreen: () => set({ selectedScreen: "home" }),
+    setSelectedScreen: (screen: Screen) => set({ selectedScreen: screen, previouslySelectedScreen: get().selectedScreen }),
+    resetSelectedScreen: () => set({ selectedScreen: "home", previouslySelectedScreen: "home" }),
 }));
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -272,17 +272,33 @@ export const useTodayChallenge = () => useTodayChallengeStore((s) => s.todayChal
 
 export const useSetTodayChallenge = () => {
     const set = useTodayChallengeStore((s) => s.setTodayChallenge);
-
-    const challenges: Challenge[] = CHALLENGES; // Assume CHALLENGES is imported or available in this scope
-    console.log("🚀 ~ useSetTodayChallenge ~ challenges:", challenges)
+    const userProgress = useUserProgress();
 
     return () => {
-        if (!challenges || challenges.length === 0) {
-            set(null);
-            return;
+        // Get user preferences
+        const excludedChallenges = userProgress.excludedChallenges || [];
+        const preferredCategories = userProgress.preferredCategories || [];
+
+        // Filter challenges based on user preferences
+        let availableChallenges = CHALLENGES.filter(challenge => 
+            !excludedChallenges.includes(challenge.id)
+        );
+
+        // If user has preferred categories, filter by those
+        if (preferredCategories.length > 0) {
+            availableChallenges = availableChallenges.filter(challenge => 
+                preferredCategories.includes(challenge.category)
+            );
         }
-        const idx = Math.floor(Math.random() * challenges.length);
-        set(challenges[idx]);
+
+        // If no challenges available after filtering, fall back to all challenges
+        if (availableChallenges.length === 0) {
+            availableChallenges = CHALLENGES;
+        }
+
+        // Select random challenge
+        const idx = Math.floor(Math.random() * availableChallenges.length);
+        set(availableChallenges[idx]);
     };
 };
 
@@ -316,6 +332,8 @@ const loadUserProgress = (): UserProgress => {
         peopleMet: [],
         logs: [],
         habitLogs: [],
+        excludedChallenges: [],
+        preferredCategories: [],
     };
 };
 
@@ -323,7 +341,7 @@ const loadUserProgress = (): UserProgress => {
 const saveUserProgress = (state: UserProgress) => {
     console.log("🚀 ~ saveUserProgress ~ state:", state)
     try {
-        const { level, totalXp, completedChallenges, completedHabits, peopleMet, logs, habitLogs } = state;
+        const { level, totalXp, completedChallenges, completedHabits, peopleMet, logs, habitLogs, excludedChallenges, preferredCategories } = state;
         localStorage.setItem(USER_PROGRESS_KEY, JSON.stringify({
             level,
             totalXp,
@@ -332,6 +350,8 @@ const saveUserProgress = (state: UserProgress) => {
             peopleMet,
             logs,
             habitLogs,
+            excludedChallenges,
+            preferredCategories,
         }));
     } catch (error) {
         console.error('Failed to save user progress to localStorage:', error);
