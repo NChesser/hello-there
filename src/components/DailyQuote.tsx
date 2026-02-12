@@ -14,7 +14,7 @@ const DailyQuote = () => {
         }`}>
             <div className="flex gap-4 items-center">
                 <span className="text-4xl">🐨</span>
-                <p className={`flex-1 leading-relaxed mb-0 ${isDark ? 'text-gray-200' : 'text-amber-900'}`}>
+                <p className={`flex-1 leading-relaxed italic mb-0 ${isDark ? 'text-gray-200' : 'text-amber-900'}`}>
                     {dailyQuote}
                 </p>
             </div>

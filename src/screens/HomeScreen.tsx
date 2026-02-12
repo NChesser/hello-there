@@ -1,54 +1,54 @@
-import { useState } from "react";
-
-// Screens
-import ScreenContainer from "../components/ScreenContainer";
-
 // Components
-import DailyQuote from "../components/DailyQuote";
-import XPProgressBar from "../components/XPProgressBar";
-import WeeklyInsights from "../components/WeeklyInsights";
+import ScreenContainer from "../components/ScreenContainer";
 import ChallengeCard from "../components/ChallengeCard";
-import MoodCheckIn from "../components/MoodCheckIn";
-import Tooltip from "../components/Tooltip";
-import type { Mood } from "../components/MoodCheckIn";
+import DailyQuote from "../components/DailyQuote";
 
 // Store
 import { useUserProgress } from "../store/store";
 
+// Context
+import { useTheme } from "../context/ThemeContext";
+
+
+
 const HomeScreen = () => {
     const userProgress = useUserProgress();
-    const [mood, setMood] = useState<Mood | null>(null);
+    const { isDark } = useTheme();
+
+    const completedToday = userProgress.logs.filter(
+        (l) => l.completed && new Date(l.date).toDateString() === new Date().toDateString()
+    ).length;
+
 
     return (
         <ScreenContainer>
-            <div className="space-y-6">
-                {/* Mood Check-in */}
-                {/* <MoodCheckIn onMoodSelected={setMood} selectedMood={mood} /> */}
-
-                {/* Daily Quote */}
+            <div className="space-y-5">
                 <DailyQuote />
 
-                {/* Today's Quest Card */}
-                {mood !== 'overwhelmed' ? (
-                    <Tooltip id="challenge-card" text="This is your daily challenge! Skip it anytime or tap to start.">
-                        <ChallengeCard />
-                    </Tooltip>
-                ) : (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800 text-center">
-                        <p className="text-4xl mb-3">🫂</p>
-                        <p className="text-sm text-blue-800 dark:text-blue-300">
-                            Take it easy today. Your challenge will be here when you're ready.
-                        </p>
-                    </div>
-                )}
+                {/* The hero — today's challenge */}
+                <ChallengeCard />
 
-                {/* XP Progress Bar */}
-                <Tooltip id="xp-bar" text="This shows your progress to the next level. Complete challenges to earn XP!">
-                    <XPProgressBar currentXP={userProgress.xp} level={userProgress.level} />
-                </Tooltip>
-                
-                {/* Weekly Insights */}
-                <WeeklyInsights userProgress={userProgress} />
+                {/* Compact stat pills */}
+                <div className="flex gap-2">
+                    <div className={`flex-1 rounded-xl px-4 py-3 text-center ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-amber-100 shadow-sm'}`}>
+                        <p className={`text-lg font-bold ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
+                            {userProgress.level}
+                        </p>
+                        <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-amber-600'}`}>Level</p>
+                    </div>
+                    <div className={`flex-1 rounded-xl px-4 py-3 text-center ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-amber-100 shadow-sm'}`}>
+                        <p className={`text-lg font-bold ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
+                            {userProgress.completedChallenges.length}
+                        </p>
+                        <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-amber-600'}`}>Completed</p>
+                    </div>
+                    <div className={`flex-1 rounded-xl px-4 py-3 text-center ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-amber-100 shadow-sm'}`}>
+                        <p className={`text-lg font-bold ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
+                            {completedToday}
+                        </p>
+                        <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-amber-600'}`}>Today</p>
+                    </div>
+                </div>
             </div>
         </ScreenContainer>
     );

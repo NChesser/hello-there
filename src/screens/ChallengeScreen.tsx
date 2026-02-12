@@ -5,114 +5,102 @@ import { useTheme } from "../context/ThemeContext";
 // Components
 import ScreenContainer from "../components/ScreenContainer";
 
+// Icons
+import { Heart, MessageCircle, Sparkles } from "lucide-react";
+
+// Helpers
+import { capitalizeFirstLetter } from "../utils/helpers";
+
 const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );
     const { isDark } = useTheme();
 
-    const handleAttempt = (status: "complete") => {
-        setSelectedScreen("reflect");
-    };
-
     return (
         <ScreenContainer>
-            <div className={`rounded-2xl p-6 shadow-sm border-2 ${
-                isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-amber-100'
-            }`}>
-                <h2 className={`text-xl font-semibold mb-2 ${isDark ? 'text-gray-100' : 'text-amber-900'}`}>
-                    {todayChallenge.title}
-                </h2>
-                <div className={`border mb-4 ${isDark ? 'border-gray-700' : 'border-amber-100'}`} />
+            <div className="space-y-5">
+                {/* Category + difficulty tag line */}
+                <div className="flex items-center justify-between">
+                    <span className={`text-xs font-semibold uppercase tracking-wide ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                        {capitalizeFirstLetter(todayChallenge.category?.replace("-", " ") ?? "General")}
+                    </span>
+                    <div className="flex items-center gap-1" aria-label={`Difficulty ${todayChallenge.discomfortRating} out of 5`}>
+                        {[...Array(5)].map((_, i) => (
+                            <Heart
+                                key={i}
+                                size={14}
+                                className={
+                                    i < todayChallenge.discomfortRating
+                                        ? "fill-orange-400 text-orange-400"
+                                        : isDark ? "text-gray-600" : "text-amber-200"
+                                }
+                            />
+                        ))}
+                    </div>
+                </div>
 
-                <p className={`mb-6 leading-relaxed ${isDark ? 'text-gray-300' : 'text-amber-700'}`}>
-                    {todayChallenge.description}
-                </p>
+                {/* Title + description */}
+                <div>
+                    <h2 className={`text-2xl font-bold tracking-tight mb-2 ${isDark ? 'text-gray-100' : 'text-amber-900'}`}>
+                        {todayChallenge.title}
+                    </h2>
+                    <p className={`leading-relaxed ${isDark ? 'text-gray-300' : 'text-amber-700'}`}>
+                        {todayChallenge.description}
+                    </p>
+                </div>
 
+                {/* Example scripts */}
                 {todayChallenge.exampleScript && (
-                    <div className={`rounded-lg p-4 mb-6 border ${isDark ? 'bg-gray-700 border-gray-600' : 'bg-amber-50 border-amber-200'}`}>
-                        <div>
-                            <p className={`text-xs mb-2 font-medium ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                                You could say:
+                    <div className={`rounded-xl p-4 border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-amber-50/70 border-amber-200'}`}>
+                        <div className="flex items-center gap-2 mb-2.5">
+                            <MessageCircle size={14} className={isDark ? 'text-amber-400' : 'text-amber-600'} />
+                            <p className={`text-xs font-semibold uppercase tracking-wide ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                                You could say
                             </p>
-                            {Array.isArray(todayChallenge.exampleScript)
-                                ? todayChallenge.exampleScript.map(
-                                      (ex: string, i: number) => (
-                                          <p
-                                              key={i}
-                                              className="text-sm text-amber-700 italic mb-1"
-                                          >
-                                              {ex}
-                                          </p>
-                                      ),
-                                  )
+                        </div>
+                        <div className="space-y-1.5">
+                            {(Array.isArray(todayChallenge.exampleScript)
+                                ? todayChallenge.exampleScript
                                 : todayChallenge.exampleScript
                                       .split(/\r?\n|\|/)
-                                      .map((ex: string) => ex.trim())
+                                      .map((s: string) => s.trim())
                                       .filter(Boolean)
-                                      .map((ex: string, i: number) => (
-                                          <p
-                                              key={i}
-                                              className={`text-sm italic mb-1 ${isDark ? 'text-gray-300' : 'text-amber-700'}`}
-                                          >
-                                              "{ex}"
-                                          </p>
-                                      ))}
+                            ).map((ex: string, i: number) => (
+                                <p key={i} className={`text-sm italic ${isDark ? 'text-gray-300' : 'text-amber-700'}`}>
+                                    "{ex.replace(/^[""]|[""]$/g, "")}"
+                                </p>
+                            ))}
                         </div>
                     </div>
                 )}
 
-                <div className="space-y-3">
+                {/* Encouragement */}
+                <div className={`rounded-xl p-4 border ${isDark ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'}`}>
+                    <p className={`text-sm leading-relaxed ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
+                        💙{" "}
+                        {todayChallenge?.remember
+                            ? todayChallenge.remember
+                            : `You can stop anytime. Showing up is what matters.`}
+                    </p>
+                </div>
+
+                {/* Action area */}
+                <div className="pt-1 space-y-3">
                     <button
-                        onClick={() => handleAttempt("complete")}
-                        className="w-full bg-gradient-to-r from-green-400 to-emerald-400 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all active:scale-95"
+                        onClick={() => setSelectedScreen("reflect")}
+                        className="w-full bg-gradient-to-r from-green-400 to-emerald-500 text-white py-4 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-[0.97] flex items-center justify-center gap-2"
                         aria-label="Mark challenge as completed"
                     >
+                        <Sparkles size={18} />
                         I Did It!
                     </button>
 
-                    <button
-                        onClick={() => setSelectedScreen("home")}
-                        className={`w-full py-2 text-sm ${isDark ? 'text-gray-400 hover:text-gray-300' : 'text-amber-600 hover:text-amber-700'}`}
-                    >
-                        Not ready yet
-                    </button>
+                    {/* XP reward hint */}
+                    <p className={`text-center text-xs ${isDark ? 'text-gray-500' : 'text-amber-400'}`}>
+                        +{todayChallenge.xpReward ?? 0} XP on completion
+                    </p>
                 </div>
-            </div>
-            <div className={`rounded-lg p-3 mt-4 border-2 ${isDark ? 'border-gray-700' : 'border-amber-100'}`}>
-                <div className="flex flex-col space-y-1">
-                    <div>
-                        <span className={`font-medium ${isDark ? 'text-gray-300' : 'text-amber-800'}`}>
-                            Category:
-                        </span>{" "}
-                        <span className={isDark ? 'text-gray-400' : 'text-amber-600'}>
-                            {todayChallenge.category ?? "General"}
-                        </span>
-                    </div>
-                    <div>
-                        <span className={`font-medium ${isDark ? 'text-gray-300' : 'text-amber-800'}`}>
-                            Discomfort Level:
-                        </span>{" "}
-                        <span className={isDark ? 'text-gray-400' : 'text-amber-600'}>
-                            {todayChallenge.discomfortRating ?? "Unknown"}/5
-                        </span>
-                    </div>
-                    <div>
-                        <span className={`font-medium ${isDark ? 'text-gray-300' : 'text-amber-800'}`}>
-                            XP Reward:
-                        </span>{" "}
-                        <span className="text-emerald-500 font-semibold">
-                            {todayChallenge.xpReward ?? 0} XP
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div className={`rounded-lg p-4 mb-6 border-2 ${isDark ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'}`}>
-                <p className={`text-sm ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
-                    {todayChallenge?.remember
-                        ? `💙 ${todayChallenge.remember}`
-                        : `💙 Remember: You can stop anytime while working on ${todayChallenge?.title ?? "this challenge"}. Showing up is what matters.`}
-                </p>
             </div>
         </ScreenContainer>
     );
