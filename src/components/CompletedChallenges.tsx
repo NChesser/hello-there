@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { useUserProgress } from "../store/store";
 import { CHALLENGES } from "../data/challenges";
 import { useTheme } from "../context/ThemeContext";
@@ -5,17 +6,35 @@ import { useTheme } from "../context/ThemeContext";
 const CompletedChallenges = () => {
     const { isDark } = useTheme();
     const userProgress = useUserProgress();
+    const [searchTerm, setSearchTerm] = useState("");
 
     // Get completed challenge logs (most recent first)
-    const completedLogs = (userProgress.logs || [])
-        .filter((log) => log.completed)
-        .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-        );
+    const completedLogs = useMemo(() => {
+        return (userProgress.logs || [])
+            .filter((log) => log.completed)
+            .sort(
+                (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+            );
+    }, [userProgress.logs]);
+
+    const filteredLogs = useMemo(() => {
+        const normalizedTerm = searchTerm.trim().toLowerCase();
+        if (!normalizedTerm) {
+            return completedLogs;
+        }
+
+        return completedLogs.filter((log) => {
+            const challenge = CHALLENGES.find((c) => c.id === log.challengeId);
+            const challengeTitle = challenge?.title || `Challenge ${log.challengeId}`;
+            const noteText = log.note || "";
+            const haystack = `${challengeTitle} ${noteText}`.toLowerCase();
+            return haystack.includes(normalizedTerm);
+        });
+    }, [completedLogs, searchTerm]);
 
     const dates = [
         ...new Set(
-            completedLogs.map((log) => new Date(log.date).toLocaleDateString()),
+            filteredLogs.map((log) => new Date(log.date).toLocaleDateString()),
         ),
     ];
 
@@ -28,10 +47,28 @@ const CompletedChallenges = () => {
                     Completed Challenges
                 </h3>
                 <div className={`border mb-4 ${isDark ? 'border-gray-700' : 'border-amber-100'}`} />
+                <div className="mb-3">
+                    <input
+                        type="search"
+                        value={searchTerm}
+                        onChange={(event) => setSearchTerm(event.target.value)}
+                        placeholder="Search completed challenges"
+                        className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300/60 ${
+                            isDark
+                                ? "bg-gray-900 border-gray-700 text-amber-100 placeholder:text-amber-500/70"
+                                : "bg-white border-amber-200 text-amber-900 placeholder:text-amber-500"
+                        }`}
+                        aria-label="Search completed challenges"
+                    />
+                </div>
                 <div>
                     {completedLogs.length === 0 ? (
                         <p className={`text-sm text-center py-4 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
                             No completed challenges yet. Start your journey!
+                        </p>
+                    ) : filteredLogs.length === 0 ? (
+                        <p className={`text-sm text-center py-4 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                            No matches. Try a different search.
                         </p>
                     ) : (
                         dates.map((date) => (
@@ -40,7 +77,7 @@ const CompletedChallenges = () => {
                                     Completed on {date}
                                 </div>
                                 <>
-                                    {completedLogs
+                                    {filteredLogs
                                         .filter(
                                             (log) =>
                                                 new Date(

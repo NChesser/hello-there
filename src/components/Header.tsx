@@ -19,33 +19,34 @@ const Header = ({ title }: HeaderProps) => {
 
     const handleBack = () => {
         // Go to the previous screen, or fall back to home
-        const target = previousScreen && previousScreen !== selectedScreen ? previousScreen : "home";
+        const target =
+            previousScreen && previousScreen !== selectedScreen
+                ? previousScreen
+                : "home";
         setSelectedScreen(target);
     };
 
     return (
-        <div className={`p-4 rounded-t-3xl shadow-sm transition-colors duration-300 ${
-            isDark
-                ? 'bg-gradient-to-r from-gray-800 to-gray-700'
-                : 'bg-gradient-to-r from-orange-200 to-amber-200'
-        }`}>
+        <div
+            className={`p-4 rounded-t-3xl shadow-sm transition-colors duration-300 ${
+                isDark
+                    ? "bg-gradient-to-r from-gray-800 to-gray-700"
+                    : "bg-gradient-to-r from-orange-200 to-amber-200"
+            }`}
+        >
             <div className="flex items-center justify-between px-4">
                 {showBack ? (
-                    <button
+                    <ArrowLeft
                         onClick={handleBack}
-                        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                            isDark
-                                ? 'text-gray-300 hover:bg-gray-600'
-                                : 'text-amber-700 hover:bg-amber-300/50'
-                        }`}
-                        aria-label="Go back"
-                    >
-                        <ArrowLeft size={20} />
-                    </button>
+                        size={20}
+                        className={`hover:cursor-pointer ${isDark ? "text-amber-400" : "text-amber-600"}`}
+                    />
                 ) : (
                     <div className="w-8 h-8" />
                 )}
-                <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-100' : 'text-amber-900'}`}>
+                <h3
+                    className={`text-xl font-semibold ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                >
                     {formatScreenTitle(title || "Home")}
                 </h3>
                 <div className="w-8 h-8" />
