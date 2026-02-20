@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { User, CompletionLog, HabitLog, CreatedChallenge, CreatedHabit, PersonMet } from "../types/types";
+import type { User, CompletionLog, PracticeLog, CreatedChallenge, CreatedPractice, PersonMet } from "../types/types";
 import * as userService from "./userService";
 
 
@@ -26,12 +26,12 @@ interface UserStore {
     createChallenge: (challenge: Omit<CreatedChallenge, "id" | "createdAt">) => Promise<void>;
     deleteCreatedChallenge: (challengeId: string) => Promise<void>;
     
-    // Habit operations
-    logHabitCompletion: (habitLog: HabitLog) => Promise<void>;
-    chooseHabit: (habitId: string) => Promise<void>;
-    unchooseHabit: (habitId: string) => Promise<void>;
-    createHabit: (habit: Omit<CreatedHabit, "id" | "createdAt">) => Promise<void>;
-    deleteCreatedHabit: (habitId: string) => Promise<void>;
+    // Practice operations
+    logPracticeCompletion: (practiceLog: PracticeLog) => Promise<void>;
+    choosePractice: (practiceId: string) => Promise<void>;
+    unchoosePractice: (practiceId: string) => Promise<void>;
+    createPractice: (practice: Omit<CreatedPractice, "id" | "createdAt">) => Promise<void>;
+    deleteCreatedPractice: (practiceId: string) => Promise<void>;
     
     // People operations
     addPersonMet: (person: Omit<PersonMet, "id">) => Promise<void>;
@@ -107,77 +107,77 @@ export const useUserStore = create<UserStore>((set) => ({
         }
     },
 
-    logHabitCompletion: async (habitLog: HabitLog) => {
+    logPracticeCompletion: async (practiceLog: PracticeLog) => {
         try {
             set((state) => {
                 if (!state.user) return state;
-                userService.logHabitCompletion(state.user, habitLog).then((user) => {
+                userService.logPracticeCompletion(state.user, practiceLog).then((user) => {
                     set({ user });
                 });
                 return state;
             });
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to log habit completion";
+            const message = error instanceof Error ? error.message : "Failed to log practice completion";
             set({ error: message });
         }
     },
 
-    chooseHabit: async (habitId: string) => {
+    choosePractice: async (practiceId: string) => {
         try {
             set((state) => {
                 if (!state.user) return state;
-                userService.chooseHabit(state.user, habitId).then((user) => {
+                userService.choosePractice(state.user, practiceId).then((user) => {
                     set({ user });
                 });
                 return state;
             });
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to choose habit";
+            const message = error instanceof Error ? error.message : "Failed to choose practice";
             set({ error: message });
         }
     },
 
-    unchooseHabit: async (habitId: string) => {
+    unchoosePractice: async (practiceId: string) => {
         try {
             set((state) => {
                 if (!state.user) return state;
-                userService.unchooseHabit(state.user, habitId).then((user) => {
+                userService.unchoosePractice(state.user, practiceId).then((user) => {
                     set({ user });
                 });
                 return state;
             });
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to unchoose habit";
+            const message = error instanceof Error ? error.message : "Failed to unchoose practice";
             set({ error: message });
         }
     },
 
-    createHabit: async (habit: Omit<CreatedHabit, "id" | "createdAt">) => {
+    createPractice: async (practice: Omit<CreatedPractice, "id" | "createdAt">) => {
         try {
             set((state) => {
                 if (!state.user) return state;
-                userService.createHabit(state.user, habit).then((user) => {
+                userService.createPractice(state.user, practice).then((user) => {
                     set({ user });
                 });
                 return state;
             });
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to create habit";
+            const message = error instanceof Error ? error.message : "Failed to create practice";
             set({ error: message });
         }
     },
 
-    deleteCreatedHabit: async (habitId: string) => {
+    deleteCreatedPractice: async (practiceId: string) => {
         try {
             set((state) => {
                 if (!state.user) return state;
-                userService.deleteCreatedHabit(state.user, habitId).then((user) => {
+                userService.deleteCreatedPractice(state.user, practiceId).then((user) => {
                     set({ user });
                 });
                 return state;
             });
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to delete habit";
+            const message = error instanceof Error ? error.message : "Failed to delete practice";
             set({ error: message });
         }
     },
@@ -318,7 +318,29 @@ const loadUserProgress = (): UserProgress => {
     try {
         const saved = localStorage.getItem(USER_PROGRESS_KEY);
         if (saved) {
-            return JSON.parse(saved);
+            const parsed = JSON.parse(saved) as Partial<UserProgress> & {
+                completedHabits?: string[];
+                habitLogs?: { habitId: string; date: string; note?: string }[];
+            };
+
+            const completedPractices = parsed.completedPractices || parsed.completedHabits || [];
+            const practiceLogs = parsed.practiceLogs || (parsed.habitLogs || []).map((log) => ({
+                practiceId: log.habitId,
+                date: log.date,
+                note: log.note,
+            }));
+
+            return {
+                level: parsed.level ?? 1,
+                totalXp: parsed.totalXp ?? 0,
+                completedChallenges: parsed.completedChallenges || [],
+                completedPractices,
+                peopleMet: parsed.peopleMet || [],
+                logs: parsed.logs || [],
+                practiceLogs,
+                excludedChallenges: parsed.excludedChallenges || [],
+                preferredCategories: parsed.preferredCategories || [],
+            };
         }
     } catch (error) {
         console.error('Failed to load user progress from localStorage:', error);
@@ -328,10 +350,10 @@ const loadUserProgress = (): UserProgress => {
         level: 1,
         totalXp: 0,
         completedChallenges: [],
-        completedHabits: [],
+        completedPractices: [],
         peopleMet: [],
         logs: [],
-        habitLogs: [],
+        practiceLogs: [],
         excludedChallenges: [],
         preferredCategories: [],
     };
@@ -341,15 +363,15 @@ const loadUserProgress = (): UserProgress => {
 const saveUserProgress = (state: UserProgress) => {
     console.log("🚀 ~ saveUserProgress ~ state:", state)
     try {
-        const { level, totalXp, completedChallenges, completedHabits, peopleMet, logs, habitLogs, excludedChallenges, preferredCategories } = state;
+        const { level, totalXp, completedChallenges, completedPractices, peopleMet, logs, practiceLogs, excludedChallenges, preferredCategories } = state;
         localStorage.setItem(USER_PROGRESS_KEY, JSON.stringify({
             level,
             totalXp,
             completedChallenges,
-            completedHabits,
+            completedPractices,
             peopleMet,
             logs,
-            habitLogs,
+            practiceLogs,
             excludedChallenges,
             preferredCategories,
         }));
@@ -379,11 +401,11 @@ export const useUserTotalXp = () => useUserProgressStore((s) => s.totalXp);
 export const useUserCompletedChallenges = () => useUserProgressStore((s) => s.completedChallenges);
 export const useUserLogs = () => useUserProgressStore((s) => s.logs);
 export const useSetUserProgress = () => useUserProgressStore((s) => s.setUserProgress);
-export const useUserCompletedHabits = () => useUserProgressStore((s) => s.completedHabits);
-export const useUserHabitLogs = () => useUserProgressStore((s) => s.habitLogs);
-export const useSetUserHabitLogs = () => useUserProgressStore((s) => s.habitLogs);
+export const useUserCompletedPractices = () => useUserProgressStore((s) => s.completedPractices);
+export const useUserPracticeLogs = () => useUserProgressStore((s) => s.practiceLogs);
+export const useSetUserPracticeLogs = () => useUserProgressStore((s) => s.practiceLogs);
 export const useSetUserCompletedChallenges = () => useUserProgressStore((s) => s.completedChallenges);
-export const useSetUserCompletedHabits = () => useUserProgressStore((s) => s.completedHabits);
+export const useSetUserCompletedPractices = () => useUserProgressStore((s) => s.completedPractices);
 export const useSetUserLogs = () => useUserProgressStore((s) => s.logs);
 export const useSetUserTotalXp = () => useUserProgressStore((s) => s.totalXp);
 export const useSetUserLevel = () => useUserProgressStore((s) => s.level);
@@ -393,8 +415,8 @@ export const useResetUserProgressStore = () => useUserProgressStore((s) => s.set
     level: 1,
     totalXp: 0,
     completedChallenges: [],
-    completedHabits: [],
+    completedPractices: [],
     logs: [],
-    habitLogs: [],
+    practiceLogs: [],
 }));
 

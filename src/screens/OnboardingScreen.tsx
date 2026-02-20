@@ -22,7 +22,7 @@ const STEPS = [
     {
         icon: <Shield size={48} className="text-blue-400" />,
         title: "Your Pace, Your Journey",
-        description: "Track habits, log people you meet, and reflect on how you feel.",
+        description: "Track practices, log people you meet, and reflect on how you feel.",
         detail: "Every step counts, even the small ones. You're already brave for being here. 💛",
     },
 ];

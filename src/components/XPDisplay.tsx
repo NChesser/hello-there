@@ -56,10 +56,10 @@ const XPDisplayCompact = () => {
                     isDark ? 'bg-green-900/20 border-green-800' : 'bg-green-50 border-green-200'
                 }`}>
                     <Trophy size={16} className={`mx-auto mb-1 ${isDark ? 'text-green-400' : 'text-green-600'}`} />
-                    <p className={`text-lg font-bold ${isDark ? 'text-green-300' : 'text-green-900'}`}>
-                        {userProgress.completedHabits.length}
+                        <p className={`text-lg font-bold ${isDark ? 'text-green-300' : 'text-green-900'}`}>
+                            {userProgress.completedPractices.length}
                     </p>
-                    <p className={`text-xs ${isDark ? 'text-green-400' : 'text-green-700'}`}>Habits</p>
+                        <p className={`text-xs ${isDark ? 'text-green-400' : 'text-green-700'}`}>Practices</p>
                 </div>
 
                 <div className={`rounded-lg p-2 border text-center ${

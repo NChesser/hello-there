@@ -1,21 +1,21 @@
 import { ArrowLeft, CheckCircle, Info } from "lucide-react";
 import ScreenContainer from "../components/ScreenContainer";
-import type { Habit } from "../types/types";
+import type { Practice } from "../types/types";
 import { useTheme } from "../context/ThemeContext";
 
-interface HabitDetailScreenProps {
-    habit: Habit;
+interface PracticeDetailScreenProps {
+    practice: Practice;
     isCompleted: boolean;
     onComplete: () => void;
     onBack: () => void;
 }
 
-const HabitDetailScreen = ({
-    habit,
+const PracticeDetailScreen = ({
+    practice,
     isCompleted,
     onComplete,
     onBack,
-}: HabitDetailScreenProps) => {
+}: PracticeDetailScreenProps) => {
     const { isDark } = useTheme();
     const color = isCompleted
         ? "text-green-600"
@@ -24,13 +24,15 @@ const HabitDetailScreen = ({
         ? isDark ? "bg-green-900/20 border-green-700" : "bg-green-50 border-green-200"
         : isDark ? "bg-gray-800 border-gray-700" : "bg-white border-amber-200";
 
+    const Icon = practice.icon;
+
     return (
         <ScreenContainer>
-            {/* Habit Card */}
+            {/* Practice Card */}
             <div className={`rounded-lg border-2 ${bgColor} p-6 mb-6`}>
                 <div className="flex items-center gap-4 mb-2">
-                    <span className="text-xl">{habit.icon}</span>
-                    <h2 className={`text-xl font-semibold ${color}`}>{habit.title}</h2>
+                    <Icon size={20} className={color} aria-hidden="true" />
+                    <h2 className={`text-xl font-semibold ${color}`}>{practice.title}</h2>
                 </div>
                 <div className={`border mb-4 ${isDark ? 'border-gray-600' : 'border-amber-100'}`} />
                 <div className="mb-4 mt-2">
@@ -40,14 +42,14 @@ const HabitDetailScreen = ({
                             Helpful Information:
                         </h3>
                     </div>
-                    <p className={`ml-6 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{habit.description}</p>
+                    <p className={`ml-6 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{practice.description}</p>
                 </div>
 
                 <div className="mb-4">
                     <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         Category:{" "}
                         <span className="font-medium capitalize">
-                            {habit.category}
+                            {practice.category}
                         </span>
                     </p>
                 </div>
@@ -63,7 +65,7 @@ const HabitDetailScreen = ({
                                 : "bg-green-100 text-green-700 cursor-not-allowed"
                             : "bg-amber-500 hover:bg-amber-600 text-amber-50"
                     }`}
-                    aria-label={isCompleted ? "Already completed today" : "Mark habit as complete"}
+                    aria-label={isCompleted ? "Already completed today" : "Mark practice as complete"}
                 >
                     <CheckCircle
                         size={20}
@@ -80,4 +82,4 @@ const HabitDetailScreen = ({
     );
 };
 
-export default HabitDetailScreen;
+export default PracticeDetailScreen;

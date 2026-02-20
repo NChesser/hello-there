@@ -1,34 +1,34 @@
 import React from "react";
 import ScreenContainer from "./ScreenContainer";
 import { CheckCircle } from "lucide-react";
-import type { Habit, HabitLog } from "../types/types";
+import type { Practice, PracticeLog } from "../types/types";
 import { useTheme } from "../context/ThemeContext";
 
-interface HabitOverviewProps {
-    habit: Habit;
-    habitLogs: HabitLog[];
+interface PracticeOverviewProps {
+    practice: Practice;
+    practiceLogs: PracticeLog[];
 }
 
-const HabitOverview: React.FC<HabitOverviewProps> = ({ habit, habitLogs }) => {
+const PracticeOverview: React.FC<PracticeOverviewProps> = ({ practice, practiceLogs }) => {
     const { isDark } = useTheme();
 
     return (
         <ScreenContainer>
             <h2 className={`text-2xl font-bold mb-2 text-center ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>
-                {habit.title}
+                {practice.title}
             </h2>
-            <p className={`text-md mb-4 ${isDark ? 'text-amber-200' : 'text-amber-900'}`}>{habit.description}</p>
+            <p className={`text-md mb-4 ${isDark ? 'text-amber-200' : 'text-amber-900'}`}>{practice.description}</p>
             <div className="mb-6">
                 <span className={`font-semibold ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>
                     Completions:
                 </span>
                 <div className="mt-2 flex flex-col gap-2">
-                    {habitLogs.length === 0 && (
+                    {practiceLogs.length === 0 && (
                         <span className={isDark ? 'text-amber-500' : 'text-amber-400'}>
                             No completions yet.
                         </span>
                     )}
-                    {habitLogs.map((log) => (
+                    {practiceLogs.map((log) => (
                         <div
                             key={log.date}
                             className={`flex items-center gap-2 rounded px-3 py-2 border ${
@@ -52,4 +52,4 @@ const HabitOverview: React.FC<HabitOverviewProps> = ({ habit, habitLogs }) => {
     );
 };
 
-export default HabitOverview;
+export default PracticeOverview;

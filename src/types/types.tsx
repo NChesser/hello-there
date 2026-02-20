@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+
 // Types
 export type Challenge = {
   id: string;
@@ -34,24 +36,24 @@ export type UserProgress = {
   level: number;
   totalXp: number;
   completedChallenges: string[];
-  completedHabits: string[];
+  completedPractices: string[];
   peopleMet: string[];
   logs: CompletionLog[];
-  habitLogs: HabitLog[];
+  practiceLogs: PracticeLog[];
   excludedChallenges?: string[];
   preferredCategories?: ('micro-social' | 'interaction' | 'vulnerability' | 'rejection' | 'exposure' | 'wellbeing' | 'growth' | 'assertiveness')[];
 };
 
-export type Habit = {
+export type Practice = {
   id: string;
   title: string;
   description: string;
-  icon: string;
+  icon: LucideIcon;
   category: 'social' | 'wellbeing' | 'growth';
 };
 
-export type HabitLog = {
-  habitId: string;
+export type PracticeLog = {
+  practiceId: string;
   date: string;
   note?: string;
 };
@@ -67,8 +69,8 @@ export type CreatedChallenge = {
   createdAt: string;
 };
 
-/** Created habit by user */
-export type CreatedHabit = {
+/** Created practice by user */
+export type CreatedPractice = {
   id: string;
   title: string;
   description: string;
@@ -92,12 +94,12 @@ export type User = {
   totalXp: number;
   completedChallenges: string[];
   createdChallenges: CreatedChallenge[];
-  completedHabits: string[];
-  createdHabits: CreatedHabit[];
-  chosenHabits: string[];
+  completedPractices: string[];
+  createdPractices: CreatedPractice[];
+  chosenPractices: string[];
   peopleMet: PersonMet[];
   logs: CompletionLog[];
-  habitLogs: HabitLog[];
+  practiceLogs: PracticeLog[];
 };
 
 /**
@@ -109,7 +111,7 @@ export type UserProgress = {
   totalXp: number;
   completedChallenges: string[];
   logs: CompletionLog[];
-  habitLogs: HabitLog[];
+  practiceLogs: PracticeLog[];
 };
 
 

@@ -43,7 +43,7 @@ export const ProgressSummaryCard = ({
                         {userProgress.logs.length}
                     </div>
                     <div className={`text-xs ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                        Completed Habits
+                        Completed Practices
                     </div>
                 </div>
                 <div>

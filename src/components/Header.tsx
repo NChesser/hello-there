@@ -7,7 +7,7 @@ interface HeaderProps {
 }
 
 // Screens accessible from the bottom nav — these are "top-level" and don't need a back button
-const MAIN_SCREENS = ["home", "habits", "people", "progress", "settings"];
+const MAIN_SCREENS = ["home", "practice", "people", "progress", "settings"];
 
 const Header = ({ title }: HeaderProps) => {
     const { isDark } = useTheme();
@@ -57,11 +57,11 @@ const Header = ({ title }: HeaderProps) => {
 
 export default Header;
 
-/** Turns a screen key like "habit-detail-morning" into a readable title */
+/** Turns a screen key like "practice-detail-morning" into a readable title */
 const formatScreenTitle = (screen: string) => {
     // Strip prefixes for sub-screens
-    if (screen.startsWith("habit-detail-")) return "Habit Details";
-    if (screen === "habit-overview") return "Habit Overview";
+    if (screen.startsWith("practice-detail-")) return "Practice Details";
+    if (screen === "practice-overview") return "Practice Overview";
     if (screen === "reflect") return "Reflect";
     if (screen === "challenge") return "Challenge";
 

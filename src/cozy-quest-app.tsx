@@ -11,21 +11,21 @@ import { CHALLENGES } from "./data/challenges";
 
 // Screens
 import HomeScreen from "./screens/HomeScreen";
-import HabitsScreen from "./screens/HabitsScreen";
-import HabitDetailScreen from "./screens/HabitDetailScreen";
+import PracticesScreen from "./screens/PracticesScreen";
+import PracticeDetailScreen from "./screens/PracticeDetailScreen";
 import PeopleScreen from "./screens/PeopleScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import JourneyScreen from "./screens/JourneyScreen";
 import ChallengeScreen from "./screens/ChallengeScreen";
 import ReflectScreen from "./screens/ReflectScreen";
-import HabitOverviewScreen from "./components/HabitOverview";
+import PracticeOverviewScreen from "./components/PracticeOverview";
 import OnboardingScreen from "./screens/OnboardingScreen";
 
 // Components
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNavigation";
 import ScreenTransition from "./components/ScreenTransition";
-import { HABITS } from "./data/habits";
+import { PRACTICES } from "./data/practices";
 
 // Theme & Hooks
 import { useTheme } from "./context/ThemeContext";
@@ -106,8 +106,8 @@ const CozychallengeApp = () => {
         if (selectedScreen === "settings") {
             return <SettingsScreen />;
         }
-        if (selectedScreen === "habits") {
-            return <HabitsScreen />;
+        if (selectedScreen === "practice") {
+            return <PracticesScreen />;
         }
         if (selectedScreen === "people") {
             return <PeopleScreen />;
@@ -115,26 +115,26 @@ const CozychallengeApp = () => {
         if (selectedScreen === "progress") {
             return <JourneyScreen />;
         }
-        if (selectedScreen === "habit-overview") {
-            return <HabitOverviewScreen habit={HABITS[0]} habitLogs={[]} />;
+        if (selectedScreen === "practice-overview") {
+            return <PracticeOverviewScreen practice={PRACTICES[0]} practiceLogs={[]} />;
         }
-        if (selectedScreen.startsWith("habit-detail-")) {
-            const habitId = selectedScreen.replace("habit-detail-", "");
-            const habit = HABITS.find(h => h.id === habitId);
-            if (habit) {
-                const completedHabits = userProgress.completedHabits || [];
+        if (selectedScreen.startsWith("practice-detail-")) {
+            const practiceId = selectedScreen.replace("practice-detail-", "");
+            const practice = PRACTICES.find(p => p.id === practiceId);
+            if (practice) {
+                const completedPractices = userProgress.completedPractices || [];
                 return (
-                    <HabitDetailScreen
-                        habit={habit}
-                        isCompleted={completedHabits.includes(habitId)}
+                    <PracticeDetailScreen
+                        practice={practice}
+                        isCompleted={completedPractices.includes(practiceId)}
                         onComplete={() => {
-                            if (!completedHabits.includes(habitId)) {
+                            if (!completedPractices.includes(practiceId)) {
                                 setUserProgress({
-                                    completedHabits: [...completedHabits, habitId]
+                                    completedPractices: [...completedPractices, practiceId]
                                 });
                             }
                         }}
-                        onBack={() => setSelectedScreen("habits")}
+                        onBack={() => setSelectedScreen("practices")}
                     />
                 );
             }

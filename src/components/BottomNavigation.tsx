@@ -16,7 +16,7 @@ const BottomNav = () => {
 
     const navItems = [
         { id: 'home', label: 'Home', icon: Sparkles },
-        { id: 'habits', label: 'Habits', icon: Flower2 },
+        { id: 'practice', label: 'Practice', icon: Flower2 },
         { id: 'people', label: 'People', icon: Users },
         { id: 'progress', label: 'Journey', icon: Book },
         { id: 'settings', label: 'Settings', icon: Settings },

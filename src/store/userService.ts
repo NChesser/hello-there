@@ -1,9 +1,9 @@
 import type {
     User,
     CompletionLog,
-    HabitLog,
+    PracticeLog,
     CreatedChallenge,
-    CreatedHabit,
+    CreatedPractice,
     PersonMet,
 } from "../types/types";
 
@@ -35,12 +35,12 @@ function createNewUser(): User {
         totalXp: 0,
         completedChallenges: [],
         createdChallenges: [],
-        completedHabits: [],
-        createdHabits: [],
-        chosenHabits: [],
+        completedPractices: [],
+        createdPractices: [],
+        chosenPractices: [],
         peopleMet: [],
         logs: [],
-        habitLogs: [],
+        practiceLogs: [],
     };
 }
 
@@ -66,7 +66,24 @@ export async function loadUser(): Promise<User> {
             );
         }
 
-        return stored.data;
+        const data = stored.data as User & {
+            completedHabits?: string[];
+            createdHabits?: CreatedPractice[];
+            chosenHabits?: string[];
+            habitLogs?: { habitId: string; date: string; note?: string }[];
+        };
+
+        return {
+            ...data,
+            completedPractices: data.completedPractices || data.completedHabits || [],
+            createdPractices: data.createdPractices || data.createdHabits || [],
+            chosenPractices: data.chosenPractices || data.chosenHabits || [],
+            practiceLogs: data.practiceLogs || (data.habitLogs || []).map((log) => ({
+                practiceId: log.habitId,
+                date: log.date,
+                note: log.note,
+            })),
+        };
     } catch (error) {
         console.error("Error loading user data:", error);
         const newUser = createNewUser();
@@ -126,15 +143,15 @@ export async function logChallengeCompletion(
 }
 
 /**
- * Log a completed habit
+ * Log a completed practice
  */
-export async function logHabitCompletion(
+export async function logPracticeCompletion(
     user: User,
-    habitLog: HabitLog
+    practiceLog: PracticeLog
 ): Promise<User> {
     const updatedUser: User = {
         ...user,
-        habitLogs: [...user.habitLogs, habitLog],
+        practiceLogs: [...user.practiceLogs, practiceLog],
     };
 
     await saveUser(updatedUser);
@@ -142,16 +159,16 @@ export async function logHabitCompletion(
 }
 
 /**
- * Add a habit to user's chosen habits
+ * Add a practice to user's chosen practices
  */
-export async function chooseHabit(user: User, habitId: string): Promise<User> {
-    if (user.chosenHabits.includes(habitId)) {
+export async function choosePractice(user: User, practiceId: string): Promise<User> {
+    if (user.chosenPractices.includes(practiceId)) {
         return user; // Already chosen
     }
 
     const updatedUser: User = {
         ...user,
-        chosenHabits: [...user.chosenHabits, habitId],
+        chosenPractices: [...user.chosenPractices, practiceId],
     };
 
     await saveUser(updatedUser);
@@ -159,15 +176,15 @@ export async function chooseHabit(user: User, habitId: string): Promise<User> {
 }
 
 /**
- * Remove a habit from user's chosen habits
+ * Remove a practice from user's chosen practices
  */
-export async function unchooseHabit(
+export async function unchoosePractice(
     user: User,
-    habitId: string
+    practiceId: string
 ): Promise<User> {
     const updatedUser: User = {
         ...user,
-        chosenHabits: user.chosenHabits.filter((id) => id !== habitId),
+        chosenPractices: user.chosenPractices.filter((id) => id !== practiceId),
     };
 
     await saveUser(updatedUser);
@@ -215,21 +232,21 @@ export async function deleteCreatedChallenge(
 }
 
 /**
- * Create a new habit by user
+ * Create a new practice by user
  */
-export async function createHabit(
+export async function createPractice(
     user: User,
-    habit: Omit<CreatedHabit, "id" | "createdAt">
+    practice: Omit<CreatedPractice, "id" | "createdAt">
 ): Promise<User> {
-    const newHabit: CreatedHabit = {
-        ...habit,
-        id: `custom-habit-${Date.now()}`,
+    const newPractice: CreatedPractice = {
+        ...practice,
+        id: `custom-practice-${Date.now()}`,
         createdAt: new Date().toISOString(),
     };
 
     const updatedUser: User = {
         ...user,
-        createdHabits: [...user.createdHabits, newHabit],
+        createdPractices: [...user.createdPractices, newPractice],
     };
 
     await saveUser(updatedUser);
@@ -237,16 +254,16 @@ export async function createHabit(
 }
 
 /**
- * Delete a habit created by user
+ * Delete a practice created by user
  */
-export async function deleteCreatedHabit(
+export async function deleteCreatedPractice(
     user: User,
-    habitId: string
+    practiceId: string
 ): Promise<User> {
     const updatedUser: User = {
         ...user,
-        createdHabits: user.createdHabits.filter((h) => h.id !== habitId),
-        chosenHabits: user.chosenHabits.filter((id) => id !== habitId),
+        createdPractices: user.createdPractices.filter((p) => p.id !== practiceId),
+        chosenPractices: user.chosenPractices.filter((id) => id !== practiceId),
     };
 
     await saveUser(updatedUser);
@@ -300,8 +317,8 @@ export function getUserStats(user: User) {
         totalXp: user.totalXp,
         completedChallengeCount: user.completedChallenges.length,
         createdChallengeCount: user.createdChallenges.length,
-        completedHabitCount: user.completedHabits.length,
-        chosenHabitCount: user.chosenHabits.length,
+        completedPracticeCount: user.completedPractices.length,
+        chosenPracticeCount: user.chosenPractices.length,
         peopleMet: user.peopleMet.length,
         totalCompletionLogs: user.logs.length,
     };
@@ -332,9 +349,9 @@ export function getLogsInDateRange(
 }
 
 /**
- * Get habit logs for a specific date
+ * Get practice logs for a specific date
  */
-export function getHabitLogsForDate(user: User, date: Date): HabitLog[] {
+export function getPracticeLogsForDate(user: User, date: Date): PracticeLog[] {
     const dateString = date.toISOString().split("T")[0];
-    return user.habitLogs.filter((log) => log.date.startsWith(dateString));
+    return user.practiceLogs.filter((log) => log.date.startsWith(dateString));
 }
