@@ -79,6 +79,7 @@ const HomeScreen = () => {
                 <MoodCheckIn
                     selectedMood={selectedMood}
                     onMoodSelected={setSelectedMood}
+                    variant="popup"
                 />
             </div>
         </ScreenContainer>

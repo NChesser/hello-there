@@ -2,7 +2,7 @@ import { PRACTICES } from "../data/practices";
 import { useScreenStore, useUserProgress, useSetUserProgressStore } from "../store/store";
 import ScreenContainer from "../components/ScreenContainer";
 import PracticeCard from "../components/PracticeCard";
-import { PlusCircle, ArrowLeft, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { PracticeLog } from "../types/types";
 import { useTheme } from "../context/ThemeContext";
 
@@ -11,8 +11,8 @@ const PracticesScreen = () => {
     const setScreen = useScreenStore((state) => state.setSelectedScreen);
     const userProgress = useUserProgress();
     const setUserProgress = useSetUserProgressStore();
-    
-    const practices = PRACTICES;
+    const excludedPractices = userProgress.excludedPractices || [];
+    const practices = PRACTICES.filter((practice) => !excludedPractices.includes(practice.id));
 
     // Get today's date string for comparison
     const today = new Date().toDateString();
@@ -74,13 +74,8 @@ const PracticesScreen = () => {
 
     return (
         <ScreenContainer>
-            <div className="mb-6">
-                <p className={`text-sm mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Track your progress • {completedTodayCount}/{practices.length} completed today
-                </p>
-                <p className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-                    {daysTracked} days with practices completed
-                </p>
+            <div className={`mb-5 text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                Daily tracker • {completedTodayCount}/{practices.length} today • {daysTracked} days tracked
             </div>
 
             {/* Empty state for no practices tracked yet */}
@@ -115,20 +110,6 @@ const PracticesScreen = () => {
                         onClick={() => handlePracticeClick(practice.id)}
                     />
                 ))}
-            </div>
-
-            {/* Add New Practice */}
-            <div className="mt-6">
-                <button className={`flex items-center justify-center gap-2 w-full p-4 rounded-lg border-2 border-dashed transition-all ${
-                    isDark 
-                        ? 'border-gray-600 hover:border-gray-500 hover:bg-gray-800' 
-                        : 'border-amber-300 hover:border-amber-400 hover:bg-amber-50'
-                }`}>
-                    <PlusCircle size={20} className={isDark ? 'text-amber-400' : 'text-amber-600'} />
-                    <p className={`text-sm ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
-                        Add New Practice
-                    </p>
-                </button>
             </div>
         </ScreenContainer>
     );

@@ -41,6 +41,7 @@ export type UserProgress = {
   logs: CompletionLog[];
   practiceLogs: PracticeLog[];
   excludedChallenges?: string[];
+  excludedPractices?: string[];
   preferredCategories?: ('micro-social' | 'interaction' | 'vulnerability' | 'rejection' | 'exposure' | 'wellbeing' | 'growth' | 'assertiveness')[];
 };
 
@@ -112,6 +113,7 @@ export type UserProgress = {
   completedChallenges: string[];
   logs: CompletionLog[];
   practiceLogs: PracticeLog[];
+  excludedPractices?: string[];
 };
 
 

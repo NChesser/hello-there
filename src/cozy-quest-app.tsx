@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSelectedScreen, useSetSelectedScreen, useTodayChallenge, useUserProgress, useSetUserProgressStore, useTodayChallengeStore } from "./store/store";
 
 // Types
-import type { Challenge } from "./types/types";
+import type { Challenge, PracticeLog } from "./types/types";
 
 // Data Imports
 import { CHALLENGES } from "./data/challenges";
@@ -122,17 +122,33 @@ const CozychallengeApp = () => {
             const practiceId = selectedScreen.replace("practice-detail-", "");
             const practice = PRACTICES.find(p => p.id === practiceId);
             if (practice) {
-                const completedPractices = userProgress.completedPractices || [];
+                const today = new Date().toDateString();
+                const practiceLogs = userProgress.practiceLogs || [];
+                const todaysLogIndex = practiceLogs.findIndex((log) => {
+                    const logDate = new Date(log.date).toDateString();
+                    return log.practiceId === practiceId && logDate === today;
+                });
+                const isCompletedToday = todaysLogIndex !== -1;
                 return (
                     <PracticeDetailScreen
                         practice={practice}
-                        isCompleted={completedPractices.includes(practiceId)}
-                        onComplete={() => {
-                            if (!completedPractices.includes(practiceId)) {
-                                setUserProgress({
-                                    completedPractices: [...completedPractices, practiceId]
-                                });
+                        isCompleted={isCompletedToday}
+                        onComplete={(note) => {
+                            if (isCompletedToday) {
+                                const updatedLogs = practiceLogs.map((log, index) =>
+                                    index === todaysLogIndex ? { ...log, note } : log
+                                );
+                                setUserProgress({ practiceLogs: updatedLogs });
+                                return;
                             }
+                            const newLog: PracticeLog = {
+                                practiceId,
+                                date: new Date().toISOString(),
+                                note,
+                            };
+                            setUserProgress({
+                                practiceLogs: [...practiceLogs, newLog],
+                            });
                         }}
                         onBack={() => setSelectedScreen("practices")}
                     />

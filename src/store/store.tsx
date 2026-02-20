@@ -339,6 +339,7 @@ const loadUserProgress = (): UserProgress => {
                 logs: parsed.logs || [],
                 practiceLogs,
                 excludedChallenges: parsed.excludedChallenges || [],
+                excludedPractices: parsed.excludedPractices || [],
                 preferredCategories: parsed.preferredCategories || [],
             };
         }
@@ -355,6 +356,7 @@ const loadUserProgress = (): UserProgress => {
         logs: [],
         practiceLogs: [],
         excludedChallenges: [],
+        excludedPractices: [],
         preferredCategories: [],
     };
 };
@@ -363,7 +365,7 @@ const loadUserProgress = (): UserProgress => {
 const saveUserProgress = (state: UserProgress) => {
     console.log("🚀 ~ saveUserProgress ~ state:", state)
     try {
-        const { level, totalXp, completedChallenges, completedPractices, peopleMet, logs, practiceLogs, excludedChallenges, preferredCategories } = state;
+        const { level, totalXp, completedChallenges, completedPractices, peopleMet, logs, practiceLogs, excludedChallenges, excludedPractices, preferredCategories } = state;
         localStorage.setItem(USER_PROGRESS_KEY, JSON.stringify({
             level,
             totalXp,
@@ -373,6 +375,7 @@ const saveUserProgress = (state: UserProgress) => {
             logs,
             practiceLogs,
             excludedChallenges,
+            excludedPractices,
             preferredCategories,
         }));
     } catch (error) {
@@ -418,5 +421,6 @@ export const useResetUserProgressStore = () => useUserProgressStore((s) => s.set
     completedPractices: [],
     logs: [],
     practiceLogs: [],
+    excludedPractices: [],
 }));
 

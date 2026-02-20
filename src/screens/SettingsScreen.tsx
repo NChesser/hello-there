@@ -8,9 +8,10 @@ import { useUserProgress, useSetUserProgressStore } from "../store/store";
 
 // Data
 import { CHALLENGES } from "../data/challenges";
+import { PRACTICES } from "../data/practices";
 
 // Icons
-import { ChevronRight, Info, ListChecks, Tag, Plus, Check, X, Moon, Sun } from "lucide-react";
+import { ChevronRight, Info, ListChecks, Tag, Plus, Check, Moon, Sun, Sparkles } from "lucide-react";
 
 // Types
 import type { Challenge } from "../types/types";
@@ -29,7 +30,7 @@ const CATEGORIES = [
     { id: 'assertiveness', name: 'Assertiveness', description: 'Setting boundaries and speaking up' },
 ] as const;
 
-type ExpandedSection = 'challenges' | 'categories' | 'custom' | null;
+type ExpandedSection = 'challenges' | 'practices' | 'categories' | 'custom' | 'about' | null;
 
 const SettingsScreen = () => {
     const { isDark, toggleTheme } = useTheme();
@@ -46,6 +47,7 @@ const SettingsScreen = () => {
     });
 
     const excludedChallenges = userProgress.excludedChallenges || [];
+    const excludedPractices = userProgress.excludedPractices || [];
     const preferredCategories = userProgress.preferredCategories || [];
 
     const toggleChallengeExclusion = (challengeId: string) => {
@@ -63,6 +65,15 @@ const SettingsScreen = () => {
             preferredCategories: isSelected
                 ? preferredCategories.filter(c => c !== categoryId)
                 : [...preferredCategories, categoryId],
+        });
+    };
+
+    const togglePracticeExclusion = (practiceId: string) => {
+        const isExcluded = excludedPractices.includes(practiceId);
+        setUserProgress({
+            excludedPractices: isExcluded
+                ? excludedPractices.filter((id) => id !== practiceId)
+                : [...excludedPractices, practiceId],
         });
     };
 
@@ -92,12 +103,12 @@ const SettingsScreen = () => {
                 <div className={`rounded-2xl p-5 shadow-sm border ${
                     isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
                 }`}>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                isDark ? 'bg-indigo-900/50' : 'bg-indigo-100'
+                            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                                isDark ? 'bg-amber-900/40' : 'bg-amber-100'
                             }`}>
-                                {isDark ? <Moon size={20} className="text-indigo-400" /> : <Sun size={20} className="text-indigo-600" />}
+                                {isDark ? <Moon size={20} className="text-amber-300" /> : <Sun size={20} className="text-amber-600" />}
                             </div>
                             <div>
                                 <h2 className={`text-base font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
@@ -110,45 +121,16 @@ const SettingsScreen = () => {
                         </div>
                         <button
                             onClick={toggleTheme}
-                            className={`relative w-12 h-7 rounded-full transition-colors ${
-                                isDark ? 'bg-indigo-500' : 'bg-gray-300'
+                            className={`relative flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400 ${
+                                isDark ? 'bg-amber-500' : 'bg-gray-300'
                             }`}
                             aria-label="Toggle dark mode"
                         >
-                            <div className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-sm transition-transform ${
+                            <span className="sr-only">Toggle dark mode</span>
+                            <div className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-sm transition-transform ${
                                 isDark ? 'translate-x-5' : 'translate-x-0.5'
                             }`} />
                         </button>
-                    </div>
-                </div>
-
-                {/* About Section - Always Visible */}
-                <div className={`rounded-2xl p-5 shadow-sm border ${
-                    isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                }`}>
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            isDark ? 'bg-blue-900/50' : 'bg-blue-100'
-                        }`}>
-                            <Info size={20} className={isDark ? 'text-blue-400' : 'text-blue-600'} />
-                        </div>
-                        <div className="flex-1">
-                            <h2 className={`text-base font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>About</h2>
-                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>App information</p>
-                        </div>
-                    </div>
-                    <div className="pl-13 space-y-3">
-                        <p className={`text-sm leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                            This app helps build social confidence gently, one tiny step at a time. 
-                            There are no streaks, no failures, just small moments of bravery.
-                        </p>
-                        <div className={`rounded-lg p-3 border ${
-                            isDark ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'
-                        }`}>
-                            <p className={`text-xs ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
-                                💙 Remember: Progress isn't linear. Rest is part of the journey.
-                            </p>
-                        </div>
                     </div>
                 </div>
 
@@ -166,9 +148,9 @@ const SettingsScreen = () => {
                         }`}
                     >
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isDark ? 'bg-amber-900/50' : 'bg-amber-100'
+                            isDark ? 'bg-amber-900/40' : 'bg-amber-100'
                         }`}>
-                            <ListChecks size={20} className={isDark ? 'text-amber-400' : 'text-amber-600'} />
+                            <ListChecks size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
                         </div>
                         <div className="flex-1 text-left">
                             <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Manage Challenges</p>
@@ -187,7 +169,7 @@ const SettingsScreen = () => {
                     {/* Challenges Expanded Content */}
                     {expandedSection === 'challenges' && (
                         <div className={`px-5 py-4 border-b ${
-                            isDark ? 'bg-gray-750 border-gray-700' : 'bg-gray-50 border-gray-100'
+                            isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-50 border-gray-100'
                         }`}>
                             <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                                 Tap to exclude challenges you don't want to see in your daily rotation.
@@ -263,9 +245,9 @@ const SettingsScreen = () => {
                         }`}
                     >
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isDark ? 'bg-purple-900/50' : 'bg-purple-100'
+                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
                         }`}>
-                            <Tag size={20} className={isDark ? 'text-purple-400' : 'text-purple-600'} />
+                            <Tag size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
                         </div>
                         <div className="flex-1 text-left">
                             <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Category Preferences</p>
@@ -284,7 +266,7 @@ const SettingsScreen = () => {
                     {/* Categories Expanded Content */}
                     {expandedSection === 'categories' && (
                         <div className={`px-5 py-4 border-b ${
-                            isDark ? 'bg-gray-750 border-gray-700' : 'bg-gray-50 border-gray-100'
+                            isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-50 border-gray-100'
                         }`}>
                             <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                                 Select categories you want to focus on. Leave empty for all.
@@ -341,6 +323,108 @@ const SettingsScreen = () => {
                         </div>
                     )}
 
+                    {/* Manage Practices */}
+                    <button
+                        onClick={() => setExpandedSection(expandedSection === 'practices' ? null : 'practices')}
+                        className={`w-full px-5 py-4 flex items-center gap-3 transition-colors border-b ${
+                            isDark 
+                                ? 'hover:bg-gray-700 border-gray-700' 
+                                : 'hover:bg-gray-50 border-gray-100'
+                        }`}
+                    >
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
+                        }`}>
+                            <Sparkles size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
+                        </div>
+                        <div className="flex-1 text-left">
+                            <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Manage Practices</p>
+                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                {excludedPractices.length > 0 
+                                    ? `${excludedPractices.length} hidden` 
+                                    : 'All practices visible'}
+                            </p>
+                        </div>
+                        <ChevronRight 
+                            size={20} 
+                            className={`transition-transform ${isDark ? 'text-gray-500' : 'text-gray-400'} ${expandedSection === 'practices' ? 'rotate-90' : ''}`}
+                        />
+                    </button>
+
+                    {/* Practices Expanded Content */}
+                    {expandedSection === 'practices' && (
+                        <div className={`px-5 py-4 border-b ${
+                            isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-50 border-gray-100'
+                        }`}>
+                            <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Hide practices you do not want to see on your daily list.
+                            </p>
+                            <div className="space-y-2">
+                                {PRACTICES.map((practice) => {
+                                    const isExcluded = excludedPractices.includes(practice.id);
+                                    return (
+                                        <div
+                                            key={practice.id}
+                                            className={`p-3 rounded-lg border transition-all ${
+                                                isExcluded
+                                                    ? isDark
+                                                        ? 'border-gray-600 bg-gray-700/50 opacity-70'
+                                                        : 'border-gray-300 bg-white/60 opacity-70'
+                                                    : isDark
+                                                        ? 'border-gray-600 bg-gray-700'
+                                                        : 'border-amber-200 bg-white'
+                                            }`}
+                                        >
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className={`font-medium text-xs ${
+                                                        isExcluded
+                                                            ? isDark ? 'text-gray-500 line-through' : 'text-gray-500 line-through'
+                                                            : isDark ? 'text-gray-200' : 'text-gray-900'
+                                                    }`}>
+                                                        {practice.title}
+                                                    </h3>
+                                                    <p className={`text-xs mt-0.5 line-clamp-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                        {practice.description}
+                                                    </p>
+                                                    <span className={`mt-1 inline-block text-[11px] px-1.5 py-0.5 rounded ${
+                                                        isDark ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700'
+                                                    }`}>
+                                                        {practice.category}
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    onClick={() => togglePracticeExclusion(practice.id)}
+                                                    className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors flex-shrink-0 ${
+                                                        isExcluded
+                                                            ? 'bg-green-500 text-white hover:bg-green-600'
+                                                            : isDark
+                                                                ? 'bg-red-900/50 text-red-400 hover:bg-red-900/70'
+                                                                : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                                    }`}
+                                                >
+                                                    {isExcluded ? 'Include' : 'Hide'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            {excludedPractices.length > 0 && (
+                                <button
+                                    onClick={() => setUserProgress({ excludedPractices: [] })}
+                                    className={`w-full mt-3 px-3 py-2 border rounded-lg text-xs font-medium transition-colors ${
+                                        isDark 
+                                            ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600' 
+                                            : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    Reset to All Practices
+                                </button>
+                            )}
+                        </div>
+                    )}
+
                     {/* Create Custom Challenge */}
                     <button
                         onClick={() => setExpandedSection(expandedSection === 'custom' ? null : 'custom')}
@@ -349,9 +433,9 @@ const SettingsScreen = () => {
                         }`}
                     >
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isDark ? 'bg-green-900/50' : 'bg-green-100'
+                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
                         }`}>
-                            <Plus size={20} className={isDark ? 'text-green-400' : 'text-green-600'} />
+                            <Plus size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
                         </div>
                         <div className="flex-1 text-left">
                             <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Create Custom Challenge</p>
@@ -365,7 +449,7 @@ const SettingsScreen = () => {
 
                     {/* Custom Challenge Expanded Content */}
                     {expandedSection === 'custom' && (
-                        <div className={`px-5 py-4 ${isDark ? 'bg-gray-750' : 'bg-gray-50'}`}>
+                        <div className={`px-5 py-4 ${isDark ? 'bg-gray-800/60' : 'bg-gray-50'}`}>
                             <div className="space-y-3">
                                 <div>
                                     <label className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -471,6 +555,50 @@ const SettingsScreen = () => {
                                 >
                                     Create Challenge
                                 </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* About Section */}
+                <div className={`rounded-2xl shadow-sm border overflow-hidden ${
+                    isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                }`}>
+                    <button
+                        onClick={() => setExpandedSection(expandedSection === 'about' ? null : 'about')}
+                        className={`w-full px-5 py-4 flex items-center gap-3 transition-colors ${
+                            isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                        }`}
+                    >
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
+                        }`}>
+                            <Info size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
+                        </div>
+                        <div className="flex-1 text-left">
+                            <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>About</p>
+                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>App information</p>
+                        </div>
+                        <ChevronRight
+                            size={20}
+                            className={`transition-transform ${isDark ? 'text-gray-500' : 'text-gray-400'} ${expandedSection === 'about' ? 'rotate-90' : ''}`}
+                        />
+                    </button>
+
+                    {expandedSection === 'about' && (
+                        <div className={`px-5 pb-5 ${isDark ? 'bg-gray-800/60' : 'bg-gray-50'}`}>
+                            <div className="pl-12 space-y-3">
+                                <p className={`text-sm leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                    This app helps build social confidence gently, one tiny step at a time. 
+                                    There are no streaks, no failures, just small moments of bravery.
+                                </p>
+                                <div className={`rounded-lg p-3 border ${
+                                    isDark ? 'bg-amber-900/20 border-amber-800/60' : 'bg-amber-50 border-amber-200'
+                                }`}>
+                                    <p className={`text-xs ${isDark ? 'text-amber-200' : 'text-amber-800'}`}>
+                                        💙 Remember: Progress isn't linear. Rest is part of the journey.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     )}
