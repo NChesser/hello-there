@@ -100,24 +100,24 @@ const SettingsScreen = () => {
         <ScreenContainer>
             <div className="space-y-3">
                 {/* Dark Mode Toggle */}
-                <div className={`rounded-2xl p-5 shadow-sm border ${
+                <div className={`rounded-2xl shadow-sm border overflow-hidden ${
                     isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
                 }`}>
-                    <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                                isDark ? 'bg-amber-900/40' : 'bg-amber-100'
-                            }`}>
-                                {isDark ? <Moon size={20} className="text-amber-300" /> : <Sun size={20} className="text-amber-600" />}
-                            </div>
-                            <div>
-                                <h2 className={`text-base font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
-                                    {isDark ? 'Dark Mode' : 'Light Mode'}
-                                </h2>
-                                <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                                    {isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-                                </p>
-                            </div>
+                    <div className={`w-full px-5 py-4 flex items-center gap-3 transition-colors ${
+                        isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                    }`}>
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                            isDark ? 'bg-amber-900/40' : 'bg-amber-100'
+                        }`}>
+                            {isDark ? <Moon size={20} className="text-amber-300" /> : <Sun size={20} className="text-amber-600" />}
+                        </div>
+                        <div className="flex-1">
+                            <h2 className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+                                {isDark ? 'Dark Mode' : 'Light Mode'}
+                            </h2>
+                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                {isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+                            </p>
                         </div>
                         <button
                             onClick={toggleTheme}

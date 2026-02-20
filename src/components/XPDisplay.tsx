@@ -1,5 +1,5 @@
 import { useUserProgress } from "../store/store";
-import { Trophy, Zap, Users } from "lucide-react";
+import { Users, Sparkles, Flower2 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 const XPDisplayCompact = () => {
@@ -45,7 +45,7 @@ const XPDisplayCompact = () => {
                 <div className={`rounded-lg p-2 border text-center ${
                     isDark ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'
                 }`}>
-                    <Zap size={16} className={`mx-auto mb-1 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                    <Sparkles size={16} className={`mx-auto mb-1 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
                     <p className={`text-lg font-bold ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>
                         {userProgress.completedChallenges.length}
                     </p>
@@ -55,7 +55,7 @@ const XPDisplayCompact = () => {
                 <div className={`rounded-lg p-2 border text-center ${
                     isDark ? 'bg-green-900/20 border-green-800' : 'bg-green-50 border-green-200'
                 }`}>
-                    <Trophy size={16} className={`mx-auto mb-1 ${isDark ? 'text-green-400' : 'text-green-600'}`} />
+                    <Flower2 size={16} className={`mx-auto mb-1 ${isDark ? 'text-green-400' : 'text-green-600'}`} />
                         <p className={`text-lg font-bold ${isDark ? 'text-green-300' : 'text-green-900'}`}>
                             {userProgress.completedPractices.length}
                     </p>
