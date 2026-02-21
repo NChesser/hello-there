@@ -1,14 +1,37 @@
 import type { LucideIcon } from "lucide-react";
 
 // Types
+export type ChallengeCategory = 'micro-social' | 'interaction' | 'vulnerability' | 'rejection' | 'exposure' | 'wellbeing' | 'growth' | 'assertiveness';
+
 export type Challenge = {
   id: string;
   title: string;
   description: string;
   exampleScript?: string[];
+  remember?: string;
   discomfortRating: 1 | 2 | 3 | 4 | 5;
-  category: 'micro-social' | 'interaction' | 'vulnerability' | 'rejection' | 'exposure' | 'wellbeing' | 'growth' | 'assertiveness';
+  category: ChallengeCategory;
   xpReward: number;
+};
+
+export type Mood = 'overwhelmed' | 'nervous' | 'okay' | 'good' | 'brave';
+
+export type Achievement = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  condition: (progress: UserProgress, extra?: { lastCompletedDiscomfort?: number }) => boolean;
+};
+
+export type TierRequirement = {
+  name: string;
+  emoji: string;
+  minLevel: number;
+  maxDiscomfort: number;
+  color: string;
+  bgColor: string;
+  darkBgColor: string;
 };
 
 export type CompletedChallenge = {
@@ -37,12 +60,17 @@ export type UserProgress = {
   totalXp: number;
   completedChallenges: string[];
   completedPractices: string[];
-  peopleMet: string[];
+  peopleMet: PersonMet[];
   logs: CompletionLog[];
   practiceLogs: PracticeLog[];
   excludedChallenges?: string[];
   excludedPractices?: string[];
-  preferredCategories?: ('micro-social' | 'interaction' | 'vulnerability' | 'rejection' | 'exposure' | 'wellbeing' | 'growth' | 'assertiveness')[];
+  preferredCategories?: ChallengeCategory[];
+  createdChallenges?: CreatedChallenge[];
+  currentStreak?: number;
+  longestStreak?: number;
+  achievements?: string[];           // IDs of unlocked achievements
+  moodLogs?: { date: string; mood: Mood }[];
 };
 
 export type Practice = {
@@ -65,7 +93,7 @@ export type CreatedChallenge = {
   title: string;
   description: string;
   discomfortRating: 1 | 2 | 3 | 4 | 5;
-  category: 'micro-social' | 'interaction' | 'vulnerability' | 'rejection';
+  category: ChallengeCategory;
   xpReward: number;
   createdAt: string;
 };
@@ -86,6 +114,7 @@ export type PersonMet = {
   name: string;
   meetDate: string;
   notes?: string;
+  somethingInteresting?: string;
 };
 
 /** Complete user data structure */
@@ -101,19 +130,6 @@ export type User = {
   peopleMet: PersonMet[];
   logs: CompletionLog[];
   practiceLogs: PracticeLog[];
-};
-
-/**
- * @deprecated Use User type instead. Kept for backwards compatibility during migration.
- */
-export type UserProgress = {
-  level: number;
-  xp: number;
-  totalXp: number;
-  completedChallenges: string[];
-  logs: CompletionLog[];
-  practiceLogs: PracticeLog[];
-  excludedPractices?: string[];
 };
 
 

@@ -1,10 +1,8 @@
 import { useMemo, useState } from "react";
 import { useUserProgress } from "../store/store";
 import { CHALLENGES } from "../data/challenges";
-import { useTheme } from "../context/ThemeContext";
 
 const CompletedChallenges = () => {
-    const { isDark } = useTheme();
     const userProgress = useUserProgress();
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -40,40 +38,34 @@ const CompletedChallenges = () => {
 
     return (
         <div>
-            <div className={`rounded-2xl p-4 shadow-sm border mt-4 h-70 overflow-y-auto ${
-                isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-amber-100'
-            }`}>
-                <h3 className={`text-sm font-medium mb-2 ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
+            <div className="rounded-2xl p-4 shadow-sm border mt-4 h-70 overflow-y-auto bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
+                <h3 className="text-sm font-medium mb-2 text-amber-800 dark:text-amber-300">
                     Completed Challenges
                 </h3>
-                <div className={`border mb-4 ${isDark ? 'border-gray-700' : 'border-amber-100'}`} />
+                <div className="border mb-4 border-amber-100 dark:border-gray-700" />
                 <div className="mb-3">
                     <input
                         type="search"
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
                         placeholder="Search completed challenges"
-                        className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300/60 ${
-                            isDark
-                                ? "bg-gray-900 border-gray-700 text-amber-100 placeholder:text-amber-500/70"
-                                : "bg-white border-amber-200 text-amber-900 placeholder:text-amber-500"
-                        }`}
+                        className="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300/60 bg-white border-amber-200 text-amber-900 placeholder:text-amber-500 dark:bg-gray-900 dark:border-gray-700 dark:text-amber-100 dark:placeholder:text-amber-500/70"
                         aria-label="Search completed challenges"
                     />
                 </div>
                 <div>
                     {completedLogs.length === 0 ? (
-                        <p className={`text-sm text-center py-4 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                        <p className="text-sm text-center py-4 text-amber-600 dark:text-amber-400">
                             No completed challenges yet. Start your journey!
                         </p>
                     ) : filteredLogs.length === 0 ? (
-                        <p className={`text-sm text-center py-4 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                        <p className="text-sm text-center py-4 text-amber-600 dark:text-amber-400">
                             No matches. Try a different search.
                         </p>
                     ) : (
                         dates.map((date) => (
                             <div key={date} className="mb-6">
-                                <div className={`text-xs mt-2 mb-2 ${isDark ? 'text-amber-500' : 'text-amber-500'}`}>
+                                <div className="text-xs mt-2 mb-2 text-amber-500">
                                     Completed on {date}
                                 </div>
                                 <>
@@ -95,26 +87,24 @@ const CompletedChallenges = () => {
                                             return (
                                                 <div
                                                     key={`${log.challengeId}-${log.date}-${index}`}
-                                                    className={`mb-4 p-3 rounded-lg border ${
-                                                        isDark ? 'bg-gray-700/50 border-gray-600' : 'bg-amber-50 border-amber-200'
-                                                    }`}
+                                                    className="mb-4 p-3 rounded-lg border bg-amber-50 border-amber-200 dark:bg-gray-700/50 dark:border-gray-600"
                                                 >
                                                     <div className="flex items-center justify-between ">
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-green-600 text-lg">
                                                                 ✓
                                                             </span>
-                                                            <span className={`text-sm font-medium ${isDark ? 'text-amber-200' : 'text-amber-900'}`}>
+                                                            <span className="text-sm font-medium text-amber-900 dark:text-amber-200">
                                                                 {challengeTitle}
                                                             </span>
                                                         </div>
-                                                        <span className={`text-xs ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                                                        <span className="text-xs text-amber-600 dark:text-amber-400">
                                                             +{log.xpEarned} XP
                                                         </span>
                                                     </div>
                                                     {/* Optional note below the date */}
                                                     {log.note && (
-                                                        <div className={`text-xs mt-1 italic ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
+                                                        <div className="text-xs mt-1 italic text-amber-700 dark:text-amber-400">
                                                             •{" "}
                                                             {log.note.substring(
                                                                 0,

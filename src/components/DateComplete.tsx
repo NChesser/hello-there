@@ -1,19 +1,15 @@
 import { useUserProgress } from "../store/store";
-import { useTheme } from "../context/ThemeContext";
 
 const DateComplete = () => {
-    const { isDark } = useTheme();
     const userProgress = useUserProgress();
     const last7Days = getLast7Days(userProgress.logs);
 
     return (
-        <div className={`rounded-2xl p-4 shadow-sm border ${
-            isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-amber-100'
-        }`}>
-            <h3 className={`text-sm font-medium mb-2 ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
+        <div className="rounded-2xl p-4 shadow-sm border bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
+            <h3 className="text-sm font-medium mb-2 text-amber-800 dark:text-amber-300">
                 Completion Streak
             </h3>
-            <div className={`border mb-4 ${isDark ? 'border-gray-700' : 'border-amber-100'}`} />
+            <div className="border mb-4 border-amber-100 dark:border-gray-700" />
             <div className="flex gap-2 justify-between">
                 {last7Days.map((day, index) => (
                     <div
@@ -24,14 +20,12 @@ const DateComplete = () => {
                             className={`w-10 h-10 rounded-lg flex items-center justify-center text-xs font-semibold transition-colors ${
                                 day.completed
                                     ? "bg-amber-400 text-amber-900 shadow-sm"
-                                    : isDark
-                                        ? "bg-gray-700 text-gray-500"
-                                        : "bg-gray-100 text-gray-400"
+                                    : "bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500"
                             }`}
                         >
                             {day.completed ? "✓" : "○"}
                         </div>
-                        <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
                             {day.dayName}
                         </span>
                     </div>

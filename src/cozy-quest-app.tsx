@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 // Store
-import { useSelectedScreen, useSetSelectedScreen, useTodayChallenge, useUserProgress, useSetUserProgressStore, useTodayChallengeStore } from "./store/store";
-
-// Types
-import type { Challenge, PracticeLog } from "./types/types";
+import { useSelectedScreen, useSetSelectedScreen, useTodayChallenge, useTodayChallengeStore } from "./store/store";
 
 // Data Imports
 import { CHALLENGES } from "./data/challenges";
@@ -25,46 +22,57 @@ import OnboardingScreen from "./screens/OnboardingScreen";
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNavigation";
 import ScreenTransition from "./components/ScreenTransition";
+import AchievementToast from "./components/AchievementToast";
 import { PRACTICES } from "./data/practices";
 
-// Theme & Hooks
-import { useTheme } from "./context/ThemeContext";
+// Hooks
 import { useOnboarding } from "./hooks/useFirstTime";
+import { usePracticeCompletion } from "./hooks/usePracticeCompletion";
+
+/** Thin wrapper that wires the usePracticeCompletion hook into PracticeDetailScreen */
+const PracticeDetailRoute = ({ practiceId }: { practiceId: string }) => {
+    const setSelectedScreen = useSetSelectedScreen();
+    const practice = PRACTICES.find(p => p.id === practiceId);
+    const { isCompletedToday, onComplete } = usePracticeCompletion(practiceId);
+
+    if (!practice) return null;
+
+    return (
+        <PracticeDetailScreen
+            practice={practice}
+            isCompleted={isCompletedToday}
+            onComplete={onComplete}
+            onBack={() => setSelectedScreen("practice")}
+        />
+    );
+};
 
 // Loading skeleton shimmer
 const LoadingSkeleton = () => {
-    const { isDark } = useTheme();
     return (
-        <div className={`w-full h-screen flex flex-col items-center justify-center gap-4 ${isDark ? 'bg-gray-900' : 'bg-amber-50'}`}>
+        <div className="w-full h-screen flex flex-col items-center justify-center gap-4 bg-amber-50 dark:bg-gray-900">
             <div className="relative w-16 h-16">
-                <div className={`absolute inset-0 rounded-full ${isDark ? 'bg-gray-700' : 'bg-amber-200'} animate-ping opacity-40`} />
-                <div className={`relative w-16 h-16 rounded-full ${isDark ? 'bg-gray-700' : 'bg-amber-100'} flex items-center justify-center text-3xl`}>
+                <div className="absolute inset-0 rounded-full bg-amber-200 dark:bg-gray-700 animate-ping opacity-40" />
+                <div className="relative w-16 h-16 rounded-full bg-amber-100 dark:bg-gray-700 flex items-center justify-center text-3xl">
                     🐨
                 </div>
             </div>
             <div className="space-y-3 w-48">
-                <div className={`h-3 rounded-full ${isDark ? 'bg-gray-700' : 'bg-amber-200'} animate-pulse`} />
-                <div className={`h-3 rounded-full ${isDark ? 'bg-gray-700' : 'bg-amber-200'} animate-pulse w-3/4 mx-auto`} />
+                <div className="h-3 rounded-full bg-amber-200 dark:bg-gray-700 animate-pulse" />
+                <div className="h-3 rounded-full bg-amber-200 dark:bg-gray-700 animate-pulse w-3/4 mx-auto" />
             </div>
         </div>
     );
 };
 
 const CozychallengeApp = () => {
-    // Theme
-    const { isDark } = useTheme();
 
     // Onboarding
     const { hasSeenOnboarding, completeOnboarding } = useOnboarding();
 
     // Global screen store Navigation state
     const selectedScreen = useSelectedScreen();
-    const setSelectedScreen = useSetSelectedScreen();
 	const todayChallenge = useTodayChallenge();
-
-    // User Progress Store
-    const userProgress = useUserProgress();
-    const setUserProgress = useSetUserProgressStore();
 
 	// Local State
     const [isLoading, setIsLoading] = useState(true);
@@ -81,6 +89,7 @@ const CozychallengeApp = () => {
 		setTimeout(() => {
 			setIsLoading(false);
 		}, 500);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
     // Show onboarding for first-time users
@@ -120,54 +129,18 @@ const CozychallengeApp = () => {
         }
         if (selectedScreen.startsWith("practice-detail-")) {
             const practiceId = selectedScreen.replace("practice-detail-", "");
-            const practice = PRACTICES.find(p => p.id === practiceId);
-            if (practice) {
-                const today = new Date().toDateString();
-                const practiceLogs = userProgress.practiceLogs || [];
-                const todaysLogIndex = practiceLogs.findIndex((log) => {
-                    const logDate = new Date(log.date).toDateString();
-                    return log.practiceId === practiceId && logDate === today;
-                });
-                const isCompletedToday = todaysLogIndex !== -1;
-                return (
-                    <PracticeDetailScreen
-                        practice={practice}
-                        isCompleted={isCompletedToday}
-                        onComplete={(note) => {
-                            if (isCompletedToday) {
-                                const updatedLogs = practiceLogs.map((log, index) =>
-                                    index === todaysLogIndex ? { ...log, note } : log
-                                );
-                                setUserProgress({ practiceLogs: updatedLogs });
-                                return;
-                            }
-                            const newLog: PracticeLog = {
-                                practiceId,
-                                date: new Date().toISOString(),
-                                note,
-                            };
-                            setUserProgress({
-                                practiceLogs: [...practiceLogs, newLog],
-                            });
-                        }}
-                        onBack={() => setSelectedScreen("practices")}
-                    />
-                );
-            }
+            return <PracticeDetailRoute practiceId={practiceId} />;
         }
         return null;
     };
 
     return (
-        <div className={`w-full min-h-3/4 max-h-3/4 font-sans flex items-center justify-center rounded-3xl ${
-            isDark 
-                ? 'bg-gradient-to-b from-gray-900 to-gray-800' 
-                : 'bg-gradient-to-b from-amber-50 to-orange-50'
-        }`}>
+        <div className="w-full min-h-3/4 max-h-3/4 font-sans flex items-center justify-center rounded-3xl bg-gradient-to-b from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
             {/* Mobile container */}
-            <div className={`fixed top-0 left-0 right-0 max-w-md mx-auto w-full shadow-xl mt-20 ${
-                isDark ? 'bg-gray-900' : 'bg-amber-50'
-            }`}>
+            <div className="fixed top-0 left-0 right-0 max-w-md mx-auto w-full shadow-xl mt-20 bg-amber-50 dark:bg-gray-900">
+                {/* Achievement notifications */}
+                <AchievementToast />
+
                 {/* Header */}
                 <Header title={selectedScreen} />
 

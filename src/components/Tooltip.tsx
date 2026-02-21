@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useTooltips } from '../hooks/useFirstTime';
-import { useTheme } from '../context/ThemeContext';
 
 interface TooltipProps {
     id: string;
@@ -12,7 +11,6 @@ interface TooltipProps {
 
 const Tooltip = ({ id, text, children, position = 'bottom' }: TooltipProps) => {
     const { isTooltipDismissed, dismissTooltip } = useTooltips();
-    const { isDark } = useTheme();
     const [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -20,7 +18,7 @@ const Tooltip = ({ id, text, children, position = 'bottom' }: TooltipProps) => {
             const timer = setTimeout(() => setShow(true), 800);
             return () => clearTimeout(timer);
         }
-    }, [id]);
+    }, [id, isTooltipDismissed]);
 
     const handleDismiss = () => {
         setShow(false);
@@ -36,18 +34,14 @@ const Tooltip = ({ id, text, children, position = 'bottom' }: TooltipProps) => {
                         position === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
                     }`}
                 >
-                    <div className={`rounded-xl px-4 py-3 shadow-lg max-w-[220px] ${
-                        isDark ? 'bg-gray-700 border border-gray-600' : 'bg-white border border-amber-200'
-                    }`}>
+                    <div className="rounded-xl px-4 py-3 shadow-lg max-w-[220px] bg-white border border-amber-200 dark:bg-gray-700 dark:border-gray-600">
                         <div className="flex items-start gap-2">
-                            <p className={`text-xs leading-relaxed flex-1 ${isDark ? 'text-gray-200' : 'text-amber-800'}`}>
+                            <p className="text-xs leading-relaxed flex-1 text-amber-800 dark:text-gray-200">
                                 {text}
                             </p>
                             <button
                                 onClick={handleDismiss}
-                                className={`flex-shrink-0 p-0.5 rounded-full transition-colors ${
-                                    isDark ? 'hover:bg-gray-600 text-gray-400' : 'hover:bg-amber-100 text-amber-500'
-                                }`}
+                                className="flex-shrink-0 p-0.5 rounded-full transition-colors hover:bg-amber-100 text-amber-500 dark:hover:bg-gray-600 dark:text-gray-400"
                                 aria-label="Dismiss tooltip"
                             >
                                 <X size={12} />
@@ -55,11 +49,10 @@ const Tooltip = ({ id, text, children, position = 'bottom' }: TooltipProps) => {
                         </div>
                     </div>
                     {/* Arrow */}
-                    <div className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 ${
-                        isDark ? 'bg-gray-700 border-gray-600' : 'bg-white border-amber-200'
-                    } ${position === 'top' 
-                        ? 'top-full -mt-1.5 border-b border-r' 
-                        : 'bottom-full -mb-1.5 border-t border-l'
+                    <div className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-white border-amber-200 dark:bg-gray-700 dark:border-gray-600 ${
+                        position === 'top' 
+                            ? 'top-full -mt-1.5 border-b border-r' 
+                            : 'bottom-full -mb-1.5 border-t border-l'
                     }`} />
                 </div>
             )}

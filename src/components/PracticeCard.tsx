@@ -1,7 +1,6 @@
 import { CheckCircle } from "lucide-react";
 import { useRef } from "react";
 import type { Practice } from "../types/types";
-import { useTheme } from "../context/ThemeContext";
 
 interface PracticeCardProps {
     practice: Practice;
@@ -16,25 +15,16 @@ const PracticeCard = ({
     onComplete,
     onClick,
 }: PracticeCardProps) => {
-    const { isDark } = useTheme();
     const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const didHoldRef = useRef(false);
     const color = isCompleted
         ? "text-green-600"
-        : isDark
-          ? "text-amber-400"
-          : "text-amber-600";
+        : "text-amber-600 dark:text-amber-400";
     const bgColor = isCompleted
-        ? isDark
-            ? "bg-green-900/20 border-green-700"
-            : "bg-green-50 border-green-200"
-        : isDark
-          ? "bg-gray-800 border-gray-700"
-          : "bg-white border-amber-200";
+        ? "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700"
+        : "bg-white border-amber-200 dark:bg-gray-800 dark:border-gray-700";
     const completionButtonClass = isCompleted
-        ? isDark
-            ? "bg-green-900/30 text-green-400 cursor-not-allowed"
-            : "bg-green-100 text-green-700 cursor-not-allowed"
+        ? "bg-green-100 text-green-700 cursor-not-allowed dark:bg-green-900/30 dark:text-green-400"
         : "bg-amber-500 hover:bg-amber-600 text-amber-50";
 
     const Icon = practice.icon;

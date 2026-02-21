@@ -1,6 +1,4 @@
 import { create } from "zustand";
-import type { User, CompletionLog, PracticeLog, CreatedChallenge, CreatedPractice, PersonMet } from "../types/types";
-import * as userService from "./userService";
 
 
 // Screen store for navigation state
@@ -13,31 +11,6 @@ interface ScreenStore {
     resetSelectedScreen: () => void;
 }
 
-interface UserStore {
-    user: User | null;
-    isLoading: boolean;
-    error: string | null;
-    
-    // Initialization
-    initializeUser: () => Promise<void>;
-    
-    // Challenge operations
-    logChallengeCompletion: (log: CompletionLog) => Promise<void>;
-    createChallenge: (challenge: Omit<CreatedChallenge, "id" | "createdAt">) => Promise<void>;
-    deleteCreatedChallenge: (challengeId: string) => Promise<void>;
-    
-    // Practice operations
-    logPracticeCompletion: (practiceLog: PracticeLog) => Promise<void>;
-    choosePractice: (practiceId: string) => Promise<void>;
-    unchoosePractice: (practiceId: string) => Promise<void>;
-    createPractice: (practice: Omit<CreatedPractice, "id" | "createdAt">) => Promise<void>;
-    deleteCreatedPractice: (practiceId: string) => Promise<void>;
-    
-    // People operations
-    addPersonMet: (person: Omit<PersonMet, "id">) => Promise<void>;
-    removePersonMet: (personId: string) => Promise<void>;
-}
-
 export const useScreenStore = create<ScreenStore>((set, get) => ({
     selectedScreen: "home",
     previouslySelectedScreen: "home",
@@ -45,182 +18,15 @@ export const useScreenStore = create<ScreenStore>((set, get) => ({
     resetSelectedScreen: () => set({ selectedScreen: "home", previouslySelectedScreen: "home" }),
 }));
 
-export const useUserStore = create<UserStore>((set) => ({
-    user: null,
-    isLoading: true,
-    error: null,
-
-    initializeUser: async () => {
-        try {
-            set({ isLoading: true, error: null });
-            const user = await userService.loadUser();
-            set({ user, isLoading: false });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to load user data";
-            set({ error: message, isLoading: false });
-        }
-    },
-
-    logChallengeCompletion: async (log: CompletionLog) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                const updatedUser = { ...state.user };
-                userService.logChallengeCompletion(updatedUser, log).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to log challenge completion";
-            set({ error: message });
-        }
-    },
-
-    createChallenge: async (challenge: Omit<CreatedChallenge, "id" | "createdAt">) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.createChallenge(state.user, challenge).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to create challenge";
-            set({ error: message });
-        }
-    },
-
-    deleteCreatedChallenge: async (challengeId: string) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.deleteCreatedChallenge(state.user, challengeId).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to delete challenge";
-            set({ error: message });
-        }
-    },
-
-    logPracticeCompletion: async (practiceLog: PracticeLog) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.logPracticeCompletion(state.user, practiceLog).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to log practice completion";
-            set({ error: message });
-        }
-    },
-
-    choosePractice: async (practiceId: string) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.choosePractice(state.user, practiceId).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to choose practice";
-            set({ error: message });
-        }
-    },
-
-    unchoosePractice: async (practiceId: string) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.unchoosePractice(state.user, practiceId).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to unchoose practice";
-            set({ error: message });
-        }
-    },
-
-    createPractice: async (practice: Omit<CreatedPractice, "id" | "createdAt">) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.createPractice(state.user, practice).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to create practice";
-            set({ error: message });
-        }
-    },
-
-    deleteCreatedPractice: async (practiceId: string) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.deleteCreatedPractice(state.user, practiceId).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to delete practice";
-            set({ error: message });
-        }
-    },
-
-    addPersonMet: async (person: Omit<PersonMet, "id">) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.addPersonMet(state.user, person).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to add person";
-            set({ error: message });
-        }
-    },
-
-    removePersonMet: async (personId: string) => {
-        try {
-            set((state) => {
-                if (!state.user) return state;
-                userService.removePersonMet(state.user, personId).then((user) => {
-                    set({ user });
-                });
-                return state;
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to remove person";
-            set({ error: message });
-        }
-    },
-}));
-
 // Convenience selectors
 export const useSelectedScreen = () => useScreenStore((s) => s.selectedScreen);
 export const useSetSelectedScreen = () => useScreenStore((s) => s.setSelectedScreen);
-export const usePreviouslySelectedScreen = () => useScreenStore((s) => s.previouslySelectedScreen);
 
 // Today's Challenge store
-import type { Challenge } from "../types/types";
+import type { Challenge, CompletionLog, Mood, UserProgress } from "../types/types";
 import { CHALLENGES } from "../data/challenges";
+import { calculateStreak, checkNewAchievements, getLevelFromTotalXp } from "../utils/helpers";
+import { getUserTier } from "../data/tiers";
 
 const TODAY_CHALLENGE_KEY = 'cozy-quest-today-challenge';
 const LAST_CHALLENGE_DATE_KEY = 'cozy-quest-last-challenge-date';
@@ -278,9 +84,20 @@ export const useSetTodayChallenge = () => {
         // Get user preferences
         const excludedChallenges = userProgress.excludedChallenges || [];
         const preferredCategories = userProgress.preferredCategories || [];
+        const createdChallenges = (userProgress.createdChallenges || []).map<Challenge>(c => ({
+            id: c.id,
+            title: c.title,
+            description: c.description,
+            discomfortRating: c.discomfortRating,
+            category: c.category,
+            xpReward: c.xpReward,
+        }));
+
+        // Combine built-in + custom challenges
+        const allChallenges = [...CHALLENGES, ...createdChallenges];
 
         // Filter challenges based on user preferences
-        let availableChallenges = CHALLENGES.filter(challenge => 
+        let availableChallenges = allChallenges.filter(challenge => 
             !excludedChallenges.includes(challenge.id)
         );
 
@@ -291,9 +108,19 @@ export const useSetTodayChallenge = () => {
             );
         }
 
+        // Filter by tier — only show challenges up to the user's tier max discomfort
+        const tier = getUserTier(userProgress.level);
+        const tierFiltered = availableChallenges.filter(
+            (c) => c.discomfortRating <= tier.maxDiscomfort,
+        );
+        // Fall back to unfiltered if tier filtering empties the pool
+        if (tierFiltered.length > 0) {
+            availableChallenges = tierFiltered;
+        }
+
         // If no challenges available after filtering, fall back to all challenges
         if (availableChallenges.length === 0) {
-            availableChallenges = CHALLENGES;
+            availableChallenges = allChallenges;
         }
 
         // Select random challenge
@@ -304,10 +131,18 @@ export const useSetTodayChallenge = () => {
 
 
 // User progress store
-import type { UserProgress } from "../types/types";
+
+/** Callback for when new achievements are unlocked */
+let achievementCallback: ((ids: string[]) => void) | null = null;
+export const onAchievementUnlocked = (cb: (ids: string[]) => void) => {
+    achievementCallback = cb;
+};
 
 interface UserProgressStore extends UserProgress {
     setUserProgress: (progress: Partial<UserProgress>) => void;
+    completeChallenge: (log: CompletionLog, discomfortRating: number) => void;
+    attemptChallenge: (challengeId: string, partialXp: number) => void;
+    logMood: (mood: Mood) => void;
 }
 
 // LocalStorage key
@@ -330,17 +165,38 @@ const loadUserProgress = (): UserProgress => {
                 note: log.note,
             }));
 
+            // Migrate peopleMet from old JSON-stringified string[] format
+            const rawPeople = parsed.peopleMet || [];
+            const peopleMet = (rawPeople as unknown[]).map((entry) => {
+                if (typeof entry === 'string') {
+                    try {
+                        return JSON.parse(entry);
+                    } catch {
+                        return { id: entry, name: entry, meetDate: new Date().toLocaleDateString() };
+                    }
+                }
+                // Normalise legacy "date" → "meetDate"
+                if (entry.date && !entry.meetDate) {
+                    return { ...entry, meetDate: entry.date };
+                }
+                return entry;
+            });
+
             return {
                 level: parsed.level ?? 1,
                 totalXp: parsed.totalXp ?? 0,
                 completedChallenges: parsed.completedChallenges || [],
                 completedPractices,
-                peopleMet: parsed.peopleMet || [],
+                peopleMet,
                 logs: parsed.logs || [],
                 practiceLogs,
                 excludedChallenges: parsed.excludedChallenges || [],
                 excludedPractices: parsed.excludedPractices || [],
                 preferredCategories: parsed.preferredCategories || [],
+                currentStreak: parsed.currentStreak ?? 0,
+                longestStreak: parsed.longestStreak ?? 0,
+                achievements: parsed.achievements || [],
+                moodLogs: parsed.moodLogs || [],
             };
         }
     } catch (error) {
@@ -358,14 +214,17 @@ const loadUserProgress = (): UserProgress => {
         excludedChallenges: [],
         excludedPractices: [],
         preferredCategories: [],
+        currentStreak: 0,
+        longestStreak: 0,
+        achievements: [],
+        moodLogs: [],
     };
 };
 
 // Save to localStorage
 const saveUserProgress = (state: UserProgress) => {
-    console.log("🚀 ~ saveUserProgress ~ state:", state)
     try {
-        const { level, totalXp, completedChallenges, completedPractices, peopleMet, logs, practiceLogs, excludedChallenges, excludedPractices, preferredCategories } = state;
+        const { level, totalXp, completedChallenges, completedPractices, peopleMet, logs, practiceLogs, excludedChallenges, excludedPractices, preferredCategories, currentStreak, longestStreak, achievements, moodLogs } = state;
         localStorage.setItem(USER_PROGRESS_KEY, JSON.stringify({
             level,
             totalXp,
@@ -377,6 +236,10 @@ const saveUserProgress = (state: UserProgress) => {
             excludedChallenges,
             excludedPractices,
             preferredCategories,
+            currentStreak,
+            longestStreak,
+            achievements,
+            moodLogs,
         }));
     } catch (error) {
         console.error('Failed to save user progress to localStorage:', error);
@@ -392,35 +255,80 @@ export const useUserProgressStore = create<UserProgressStore>((set) => ({
             ...state,
             ...progress,
         };
-        // Save to localStorage whenever state changes
+        saveUserProgress(newState);
+        return newState;
+    }),
+
+    completeChallenge: (log: CompletionLog, discomfortRating: number) => set((state) => {
+        const newLogs = [...state.logs, log];
+        const newTotalXp = state.totalXp + log.xpEarned;
+        const newLevel = getLevelFromTotalXp(newTotalXp);
+        const { current, longest } = calculateStreak(newLogs);
+
+        const draft: UserProgress = {
+            ...state,
+            logs: newLogs,
+            totalXp: newTotalXp,
+            level: newLevel,
+            completedChallenges: [...state.completedChallenges, log.challengeId],
+            currentStreak: current,
+            longestStreak: Math.max(longest, state.longestStreak ?? 0),
+        };
+
+        // Check achievements
+        const newAchievements = checkNewAchievements(draft, { lastCompletedDiscomfort: discomfortRating });
+        if (newAchievements.length > 0) {
+            draft.achievements = [...(draft.achievements ?? []), ...newAchievements];
+            achievementCallback?.(newAchievements);
+        }
+
+        saveUserProgress(draft);
+        return draft;
+    }),
+
+    attemptChallenge: (challengeId: string, partialXp: number) => set((state) => {
+        const log: CompletionLog = {
+            challengeId,
+            date: new Date().toISOString(),
+            beforeFeeling: 0,
+            afterFeeling: 0,
+            completed: false,
+            attempted: true,
+            xpEarned: partialXp,
+        };
+        const newLogs = [...state.logs, log];
+        const newTotalXp = state.totalXp + partialXp;
+        const newLevel = getLevelFromTotalXp(newTotalXp);
+
+        const draft: UserProgress = {
+            ...state,
+            logs: newLogs,
+            totalXp: newTotalXp,
+            level: newLevel,
+        };
+
+        const newAchievements = checkNewAchievements(draft);
+        if (newAchievements.length > 0) {
+            draft.achievements = [...(draft.achievements ?? []), ...newAchievements];
+            achievementCallback?.(newAchievements);
+        }
+
+        saveUserProgress(draft);
+        return draft;
+    }),
+
+    logMood: (mood: Mood) => set((state) => {
+        const entry = { date: new Date().toISOString(), mood };
+        const newState = {
+            ...state,
+            moodLogs: [...(state.moodLogs ?? []), entry],
+        };
         saveUserProgress(newState);
         return newState;
     }),
 }));
 
 // Convenience selectors
-export const useUserLevel = () => useUserProgressStore((s) => s.level);
-export const useUserTotalXp = () => useUserProgressStore((s) => s.totalXp);
-export const useUserCompletedChallenges = () => useUserProgressStore((s) => s.completedChallenges);
-export const useUserLogs = () => useUserProgressStore((s) => s.logs);
-export const useSetUserProgress = () => useUserProgressStore((s) => s.setUserProgress);
-export const useUserCompletedPractices = () => useUserProgressStore((s) => s.completedPractices);
 export const useUserPracticeLogs = () => useUserProgressStore((s) => s.practiceLogs);
-export const useSetUserPracticeLogs = () => useUserProgressStore((s) => s.practiceLogs);
-export const useSetUserCompletedChallenges = () => useUserProgressStore((s) => s.completedChallenges);
-export const useSetUserCompletedPractices = () => useUserProgressStore((s) => s.completedPractices);
-export const useSetUserLogs = () => useUserProgressStore((s) => s.logs);
-export const useSetUserTotalXp = () => useUserProgressStore((s) => s.totalXp);
-export const useSetUserLevel = () => useUserProgressStore((s) => s.level);
 export const useUserProgress = () => useUserProgressStore((s) => (s));
 export const useSetUserProgressStore = () => useUserProgressStore((s) => s.setUserProgress);
-export const useResetUserProgressStore = () => useUserProgressStore((s) => s.setUserProgress({
-    level: 1,
-    totalXp: 0,
-    completedChallenges: [],
-    completedPractices: [],
-    logs: [],
-    practiceLogs: [],
-    excludedPractices: [],
-}));
-

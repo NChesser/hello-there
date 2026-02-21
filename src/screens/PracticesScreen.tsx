@@ -4,10 +4,8 @@ import ScreenContainer from "../components/ScreenContainer";
 import PracticeCard from "../components/PracticeCard";
 import { Sparkles } from "lucide-react";
 import type { PracticeLog } from "../types/types";
-import { useTheme } from "../context/ThemeContext";
 
 const PracticesScreen = () => {
-    const { isDark } = useTheme();
     const setScreen = useScreenStore((state) => state.setSelectedScreen);
     const userProgress = useUserProgress();
     const setUserProgress = useSetUserProgressStore();
@@ -74,26 +72,22 @@ const PracticesScreen = () => {
 
     return (
         <ScreenContainer>
-            <div className={`mb-5 text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <div className="mb-5 text-xs font-medium text-gray-600 dark:text-gray-400">
                 Daily tracker • {completedTodayCount}/{practices.length} today • {daysTracked} days tracked
             </div>
 
             {/* Empty state for no practices tracked yet */}
             {daysTracked === 0 && completedTodayCount === 0 && (
-                <div className={`rounded-2xl p-6 mb-6 text-center border-2 border-dashed ${
-                    isDark ? 'border-gray-600 bg-gray-800/50' : 'border-amber-200 bg-amber-50/50'
-                }`}>
+                <div className="rounded-2xl p-6 mb-6 text-center border-2 border-dashed border-amber-200 bg-amber-50/50 dark:border-gray-600 dark:bg-gray-800/50">
                     <div className="flex justify-center mb-3">
-                        <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                            isDark ? 'bg-gray-700' : 'bg-amber-100'
-                        }`}>
-                            <Sparkles size={28} className={isDark ? 'text-amber-400' : 'text-amber-500'} />
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-amber-100 dark:bg-gray-700">
+                            <Sparkles size={28} className="text-amber-500 dark:text-amber-400" />
                         </div>
                     </div>
-                    <h3 className={`font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-amber-900'}`}>
+                    <h3 className="font-semibold mb-2 text-amber-900 dark:text-gray-200">
                         Start building your daily practices!
                     </h3>
-                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-amber-700'}`}>
+                    <p className="text-sm text-amber-700 dark:text-gray-400">
                         Tap the checkmark on any practice below to track it for today. Small steps lead to big changes. 💛
                     </p>
                 </div>

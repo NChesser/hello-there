@@ -1,35 +1,56 @@
 // Store
-import { useScreenStore } from "../store/store";
-import { useTheme } from "../context/ThemeContext";
+import { useScreenStore, useUserProgressStore } from "../store/store";
 
 // Components
 import ScreenContainer from "../components/ScreenContainer";
 
 // Icons
-import { Heart, MessageCircle, Sparkles } from "lucide-react";
+import { HandHeart, Heart, MessageCircle, Sparkles } from "lucide-react";
+
+// Types
+import type { Challenge } from "../types/types";
 
 // Helpers
 import { capitalizeFirstLetter } from "../utils/helpers";
 
-const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
+// Data
+import { getUserTier } from "../data/tiers";
+
+const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );
-    const { isDark } = useTheme();
+    const attemptChallenge = useUserProgressStore(
+        (state) => state.attemptChallenge,
+    );
+    const level = useUserProgressStore((state) => state.level);
+
+    const tier = getUserTier(level);
+    const partialXp = Math.floor(todayChallenge.xpReward * 0.3);
+
+    const handleITried = () => {
+        attemptChallenge(todayChallenge.id, partialXp);
+        setSelectedScreen("home");
+    };
 
     return (
         <ScreenContainer>
             <div className="space-y-3">
                 {/* Category + difficulty tag line */}
                 <div className="flex items-center justify-between">
-                    <span
-                        className={`text-xs font-semibold uppercase tracking-wide ${isDark ? "text-amber-400" : "text-amber-600"}`}
-                    >
-                        {capitalizeFirstLetter(
-                            todayChallenge.category?.replace("-", " ") ??
-                                "General",
-                        )}
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">
+                            {capitalizeFirstLetter(
+                                todayChallenge.category?.replace("-", " ") ??
+                                    "General",
+                            )}
+                        </span>
+                        <span
+                            className={`text-xs px-2 py-0.5 rounded-full font-medium ${tier.bgColor} dark:${tier.darkBgColor} ${tier.color}`}
+                        >
+                            {tier.emoji} {tier.name}
+                        </span>
+                    </div>
                     <div
                         className="flex items-center gap-1"
                         aria-label={`Difficulty ${todayChallenge.discomfortRating} out of 5`}
@@ -41,57 +62,35 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                                 className={
                                     i < todayChallenge.discomfortRating
                                         ? "fill-orange-400 text-orange-400"
-                                        : isDark
-                                          ? "text-gray-600"
-                                          : "text-amber-200"
+                                        : "text-amber-200 dark:text-gray-600"
                                 }
                             />
                         ))}
                     </div>
                 </div>
 
-                <div
-                    className={`space-y-5 rounded-2xl p-6 shadow-md border-2 ${
-                        isDark
-                            ? "bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600"
-                            : "bg-gradient-to-br from-white to-amber-50 border-amber-200"
-                    }`}
-                >
+                <div className="space-y-5 rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600">
                     {/* Title + description */}
                     <div>
-                        <h2
-                            className={`text-2xl font-bold tracking-tight mb-2 ${isDark ? "text-gray-100" : "text-amber-900"}`}
-                        >
+                        <h2 className="text-2xl font-bold tracking-tight mb-2 text-amber-900 dark:text-gray-100">
                             {todayChallenge.title}
                         </h2>
-                        <div
-                            className={`border mb-4 ${isDark ? "border-gray-600" : "border-amber-100"}`}
-                        />
+                        <div className="border mb-4 border-amber-100 dark:border-gray-600" />
 
-                        <p
-                            className={`leading-relaxed ${isDark ? "text-gray-300" : "text-amber-700"}`}
-                        >
+                        <p className="leading-relaxed text-amber-700 dark:text-gray-300">
                             {todayChallenge.description}
                         </p>
                     </div>
 
                     {/* Example scripts */}
                     {todayChallenge.exampleScript && (
-                        <div
-                            className={`rounded-xl p-4 border ${isDark ? "bg-gray-800 border-gray-700" : "bg-amber-50/70 border-amber-200"}`}
-                        >
+                        <div className="rounded-xl p-4 border bg-amber-50/70 border-amber-200 dark:bg-gray-800 dark:border-gray-700">
                             <div className="flex items-center gap-2 mb-2.5">
                                 <MessageCircle
                                     size={14}
-                                    className={
-                                        isDark
-                                            ? "text-amber-400"
-                                            : "text-amber-600"
-                                    }
+                                    className="text-amber-600 dark:text-amber-400"
                                 />
-                                <p
-                                    className={`text-xs font-semibold uppercase tracking-wide ${isDark ? "text-amber-400" : "text-amber-600"}`}
-                                >
+                                <p className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">
                                     You could say
                                 </p>
                             </div>
@@ -105,7 +104,7 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                                 ).map((ex: string, i: number) => (
                                     <p
                                         key={i}
-                                        className={`text-sm italic ${isDark ? "text-gray-300" : "text-amber-700"}`}
+                                        className="text-sm italic text-amber-700 dark:text-gray-300"
                                     >
                                         "{ex.replace(/^[""]|[""]$/g, "")}"
                                     </p>
@@ -115,12 +114,8 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                     )}
 
                     {/* Encouragement */}
-                    <div
-                        className={`rounded-xl p-4 border ${isDark ? "bg-blue-900/20 border-blue-800" : "bg-blue-50 border-blue-200"}`}
-                    >
-                        <p
-                            className={`text-sm leading-relaxed ${isDark ? "text-blue-300" : "text-blue-800"}`}
-                        >
+                    <div className="rounded-xl p-4 border bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800">
+                        <p className="text-sm leading-relaxed text-blue-800 dark:text-blue-300">
                             💙{" "}
                             {todayChallenge?.remember
                                 ? todayChallenge.remember
@@ -138,12 +133,23 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                             <Sparkles size={18} />I Did It!
                         </button>
 
-                        {/* XP reward hint */}
-                        <p
-                            className={`text-center text-xs ${isDark ? "text-gray-500" : "text-amber-400"}`}
+                        <button
+                            onClick={handleITried}
+                            className="w-full py-3 rounded-xl font-medium border-2 transition-all active:scale-[0.97] flex items-center justify-center gap-2 border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
+                            aria-label="Mark challenge as attempted but not fully completed"
                         >
-                            +{todayChallenge.xpReward ?? 0} XP on completion
-                        </p>
+                            <HandHeart size={18} />I Tried Today
+                        </button>
+
+                        {/* XP reward hint */}
+                        <div className="text-center space-y-0.5">
+                            <p className="text-xs text-amber-400 dark:text-gray-500">
+                                +{todayChallenge.xpReward ?? 0} XP on completion
+                            </p>
+                            <p className="text-xs text-amber-300 dark:text-gray-600">
+                                +{partialXp} XP for trying
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

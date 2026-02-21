@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 
 // Store
-import { useScreenStore, useSetTodayChallenge, useTodayChallenge, useUserProgress } from "../store/store";
-import { useTheme } from "../context/ThemeContext";
-
-// Types
-import type { Challenge } from "../types/types";
-
-// Data
-import { CHALLENGES } from "../data/challenges";
+import { useScreenStore, useSetTodayChallenge, useTodayChallenge } from "../store/store";
 
 // Icons
 import { Heart, RefreshCw } from "lucide-react";
@@ -19,10 +12,7 @@ import { capitalizeFirstLetter } from "../utils/helpers";
 // Component
 const ChallengeCard = () => {
     // Store
-    const selectedScreen = useScreenStore((state) => state.selectedScreen);
     const setSelectedScreen = useScreenStore((state) => state.setSelectedScreen);
-    const userProgress = useUserProgress();
-    const { isDark } = useTheme();
 
     // Challenge Store
     const challenge = useTodayChallenge();
@@ -51,10 +41,7 @@ const ChallengeCard = () => {
     return (
         <div style={{ perspective: "1500px" }}>
             <div
-                className={`rounded-2xl p-6 shadow-md border-2 ${isDark
-                    ? 'bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600'
-                    : 'bg-gradient-to-br from-white to-amber-50 border-amber-200'
-                    }`}
+                className="rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600"
                 style={{
                     transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease",
                     transformStyle: "preserve-3d",
@@ -66,7 +53,7 @@ const ChallengeCard = () => {
             >
                 <div style={{ backfaceVisibility: "hidden" }}>
                     <div className="flex items-start justify-between pb-2">
-                        <h2 className={`text-xl font-semibold ${isDark ? 'text-gray-100' : 'text-amber-900'}`}>
+                        <h2 className="text-xl font-semibold text-amber-900 dark:text-gray-100">
                             {capitalizeFirstLetter(challenge.category)} Challenge
                         </h2>
                         <div className="flex gap-2 mt-2 mb-2" role="group" aria-label="Discomfort rating - tap to filter by difficulty">
@@ -79,19 +66,19 @@ const ChallengeCard = () => {
                                     className={
                                         i < challenge.discomfortRating
                                             ? "fill-orange-300 text-orange-300"
-                                            : isDark ? "text-gray-600" : "text-amber-200"
+                                            : "text-amber-200 dark:text-gray-600"
                                     }
                                 />
                             ))}
                         </div>
                     </div>
 
-                    <div className={`border mb-4 ${isDark ? 'border-gray-600' : 'border-amber-100'}`} />
+                    <div className="border mb-4 border-amber-100 dark:border-gray-600" />
 
-                    <h3 className={`text-lg font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-amber-800'}`}>
+                    <h3 className="text-lg font-medium mb-2 text-amber-800 dark:text-gray-200">
                         {challenge.title}
                     </h3>
-                    <p className={`mb-4 leading-relaxed ${isDark ? 'text-gray-300' : 'text-amber-700'}`}>
+                    <p className="mb-4 leading-relaxed text-amber-700 dark:text-gray-300">
                         {challenge.description}
                     </p>
                     <button
@@ -105,8 +92,7 @@ const ChallengeCard = () => {
                     <button
                         onClick={handleSkip}
                         disabled={isSkipping}
-                        className={`w-full mt-2 py-2 text-sm transition-all flex items-center justify-center gap-2 ${isDark ? 'text-gray-400 hover:text-gray-300' : 'text-amber-600 hover:text-amber-700'
-                            } disabled:opacity-50`}
+                        className="w-full mt-2 py-2 text-sm transition-all flex items-center justify-center gap-2 text-amber-600 hover:text-amber-700 dark:text-gray-400 dark:hover:text-gray-300 disabled:opacity-50"
                         aria-label="Skip this challenge and get another one"
                     >
                         <RefreshCw className={`w-3.5 h-3.5 ${isSkipping ? 'animate-spin' : ''}`} />

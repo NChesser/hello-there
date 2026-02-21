@@ -16,7 +16,7 @@ import { ChevronRight, Info, ListChecks, Tag, Plus, Check, Moon, Sun, Sparkles }
 // Types
 import type { Challenge } from "../types/types";
 
-// Theme
+// Theme (toggleTheme only — styling uses Tailwind dark: variant)
 import { useTheme } from "../context/ThemeContext";
 
 const CATEGORIES = [
@@ -80,11 +80,23 @@ const SettingsScreen = () => {
     const createCustomChallenge = () => {
         if (!newChallenge.title.trim()) return;
 
-        // Create a unique ID
         const customId = `custom-${Date.now()}`;
+        const existingCustom = userProgress.createdChallenges || [];
         
-        // For now, we'll just show a message since we need to add custom challenges to the store
-        alert('Custom challenge creation will be implemented with the createdChallenges field in the store!');
+        setUserProgress({
+            createdChallenges: [
+                ...existingCustom,
+                {
+                    id: customId,
+                    title: newChallenge.title.trim(),
+                    description: newChallenge.description.trim(),
+                    discomfortRating: newChallenge.discomfortRating,
+                    category: newChallenge.category,
+                    xpReward: newChallenge.xpReward,
+                    createdAt: new Date().toISOString(),
+                },
+            ],
+        });
         
         // Reset form
         setNewChallenge({
@@ -100,23 +112,20 @@ const SettingsScreen = () => {
         <ScreenContainer>
             <div className="space-y-3">
                 {/* Dark Mode Toggle */}
-                <div className={`rounded-2xl shadow-sm border overflow-hidden ${
-                    isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                }`}>
-                    <div className={`w-full px-5 py-4 flex items-center gap-3 transition-colors ${
-                        isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-                    }`}>
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                            isDark ? 'bg-amber-900/40' : 'bg-amber-100'
-                        }`}>
-                            {isDark ? <Moon size={20} className="text-amber-300" /> : <Sun size={20} className="text-amber-600" />}
+                <div className="rounded-2xl shadow-sm border overflow-hidden bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <div className="w-full px-5 py-4 flex items-center gap-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/40">
+                            <Sun size={20} className="text-amber-600 block dark:hidden" />
+                            <Moon size={20} className="text-amber-300 hidden dark:block" />
                         </div>
                         <div className="flex-1">
-                            <h2 className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
-                                {isDark ? 'Dark Mode' : 'Light Mode'}
+                            <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <span className="dark:hidden">Light Mode</span>
+                                <span className="hidden dark:inline">Dark Mode</span>
                             </h2>
-                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                                {isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                <span className="dark:hidden">Switch to dark theme</span>
+                                <span className="hidden dark:inline">Switch to light theme</span>
                             </p>
                         </div>
                         <button
@@ -135,26 +144,18 @@ const SettingsScreen = () => {
                 </div>
 
                 {/* Settings List - Mobile App Style */}
-                <div className={`rounded-2xl shadow-sm border overflow-hidden ${
-                    isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                }`}>
+                <div className="rounded-2xl shadow-sm border overflow-hidden bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                     {/* Manage Challenges */}
                     <button
                         onClick={() => setExpandedSection(expandedSection === 'challenges' ? null : 'challenges')}
-                        className={`w-full px-5 py-4 flex items-center gap-3 transition-colors border-b ${
-                            isDark 
-                                ? 'hover:bg-gray-700 border-gray-700' 
-                                : 'hover:bg-gray-50 border-gray-100'
-                        }`}
+                        className="w-full px-5 py-4 flex items-center gap-3 transition-colors border-b hover:bg-gray-50 border-gray-100 dark:hover:bg-gray-700 dark:border-gray-700"
                     >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isDark ? 'bg-amber-900/40' : 'bg-amber-100'
-                        }`}>
-                            <ListChecks size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-amber-100 dark:bg-amber-900/40">
+                            <ListChecks size={20} className="text-amber-600 dark:text-amber-300" />
                         </div>
                         <div className="flex-1 text-left">
-                            <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Manage Challenges</p>
-                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Manage Challenges</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {excludedChallenges.length > 0 
                                     ? `${excludedChallenges.length} excluded` 
                                     : 'All challenges active'}
@@ -162,16 +163,14 @@ const SettingsScreen = () => {
                         </div>
                         <ChevronRight 
                             size={20} 
-                            className={`transition-transform ${isDark ? 'text-gray-500' : 'text-gray-400'} ${expandedSection === 'challenges' ? 'rotate-90' : ''}`}
+                            className={`transition-transform text-gray-400 dark:text-gray-500 ${expandedSection === 'challenges' ? 'rotate-90' : ''}`}
                         />
                     </button>
 
                     {/* Challenges Expanded Content */}
                     {expandedSection === 'challenges' && (
-                        <div className={`px-5 py-4 border-b ${
-                            isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-50 border-gray-100'
-                        }`}>
-                            <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <div className="px-5 py-4 border-b bg-gray-50 border-gray-100 dark:bg-gray-800/60 dark:border-gray-700">
+                            <p className="text-xs mb-3 text-gray-600 dark:text-gray-400">
                                 Tap to exclude challenges you don't want to see in your daily rotation.
                             </p>
                             <div className="space-y-2 max-h-80 overflow-y-auto">
@@ -182,35 +181,27 @@ const SettingsScreen = () => {
                                             key={challenge.id}
                                             className={`p-3 rounded-lg border transition-all ${
                                                 isExcluded
-                                                    ? isDark
-                                                        ? 'border-gray-600 bg-gray-700/50 opacity-60'
-                                                        : 'border-gray-300 bg-white/50 opacity-60'
-                                                    : isDark
-                                                        ? 'border-gray-600 bg-gray-700'
-                                                        : 'border-amber-200 bg-white'
+                                                    ? 'border-gray-300 bg-white/50 opacity-60 dark:border-gray-600 dark:bg-gray-700/50'
+                                                    : 'border-amber-200 bg-white dark:border-gray-600 dark:bg-gray-700'
                                             }`}
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex-1 min-w-0">
                                                     <h3 className={`font-medium text-xs ${
                                                         isExcluded 
-                                                            ? isDark ? 'text-gray-500 line-through' : 'text-gray-500 line-through'
-                                                            : isDark ? 'text-gray-200' : 'text-gray-900'
+                                                            ? 'text-gray-500 line-through'
+                                                            : 'text-gray-900 dark:text-gray-200'
                                                     }`}>
                                                         {challenge.title}
                                                     </h3>
-                                                    <p className={`text-xs mt-0.5 line-clamp-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                    <p className="text-xs mt-0.5 line-clamp-1 text-gray-500 dark:text-gray-400">
                                                         {challenge.description}
                                                     </p>
                                                     <div className="flex gap-1.5 mt-1.5">
-                                                        <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                                            isDark ? 'bg-amber-900/50 text-amber-400' : 'bg-amber-100 text-amber-700'
-                                                        }`}>
+                                                        <span className="text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400">
                                                             {challenge.category}
                                                         </span>
-                                                        <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                                            isDark ? 'bg-green-900/50 text-green-400' : 'bg-green-100 text-green-700'
-                                                        }`}>
+                                                        <span className="text-xs px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400">
                                                             {challenge.xpReward} XP
                                                         </span>
                                                     </div>
@@ -220,9 +211,7 @@ const SettingsScreen = () => {
                                                     className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors flex-shrink-0 ${
                                                         isExcluded
                                                             ? 'bg-green-500 text-white hover:bg-green-600'
-                                                            : isDark
-                                                                ? 'bg-red-900/50 text-red-400 hover:bg-red-900/70'
-                                                                : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                                            : 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900/70'
                                                     }`}
                                                 >
                                                     {isExcluded ? 'Include' : 'Hide'}
@@ -238,20 +227,14 @@ const SettingsScreen = () => {
                     {/* Category Preferences */}
                     <button
                         onClick={() => setExpandedSection(expandedSection === 'categories' ? null : 'categories')}
-                        className={`w-full px-5 py-4 flex items-center gap-3 transition-colors border-b ${
-                            isDark 
-                                ? 'hover:bg-gray-700 border-gray-700' 
-                                : 'hover:bg-gray-50 border-gray-100'
-                        }`}
+                        className="w-full px-5 py-4 flex items-center gap-3 transition-colors border-b hover:bg-gray-50 border-gray-100 dark:hover:bg-gray-700 dark:border-gray-700"
                     >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
-                        }`}>
-                            <Tag size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-amber-100 dark:bg-amber-900/30">
+                            <Tag size={20} className="text-amber-600 dark:text-amber-300" />
                         </div>
                         <div className="flex-1 text-left">
-                            <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Category Preferences</p>
-                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Category Preferences</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {preferredCategories.length > 0 
                                     ? `${preferredCategories.length} selected` 
                                     : 'All categories'}
@@ -259,16 +242,14 @@ const SettingsScreen = () => {
                         </div>
                         <ChevronRight 
                             size={20} 
-                            className={`transition-transform ${isDark ? 'text-gray-500' : 'text-gray-400'} ${expandedSection === 'categories' ? 'rotate-90' : ''}`}
+                            className={`transition-transform text-gray-400 dark:text-gray-500 ${expandedSection === 'categories' ? 'rotate-90' : ''}`}
                         />
                     </button>
 
                     {/* Categories Expanded Content */}
                     {expandedSection === 'categories' && (
-                        <div className={`px-5 py-4 border-b ${
-                            isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-50 border-gray-100'
-                        }`}>
-                            <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <div className="px-5 py-4 border-b bg-gray-50 border-gray-100 dark:bg-gray-800/60 dark:border-gray-700">
+                            <p className="text-xs mb-3 text-gray-600 dark:text-gray-400">
                                 Select categories you want to focus on. Leave empty for all.
                             </p>
                             <div className="space-y-2">
@@ -281,25 +262,21 @@ const SettingsScreen = () => {
                                             onClick={() => toggleCategory(category.id)}
                                             className={`w-full p-3 rounded-lg border text-left transition-all ${
                                                 isExplicitlySelected
-                                                    ? isDark
-                                                        ? 'border-amber-500 bg-amber-900/30'
-                                                        : 'border-amber-400 bg-amber-50'
-                                                    : isDark
-                                                        ? 'border-gray-600 bg-gray-700 hover:border-gray-500'
-                                                        : 'border-gray-200 bg-white hover:border-gray-300'
+                                                    ? 'border-amber-400 bg-amber-50 dark:border-amber-500 dark:bg-amber-900/30'
+                                                    : 'border-gray-200 bg-white hover:border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500'
                                             }`}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-2">
-                                                        <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>
+                                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-200">
                                                             {category.name}
                                                         </p>
                                                         {isExplicitlySelected && (
-                                                            <Check size={14} className={isDark ? 'text-amber-400' : 'text-amber-600'} />
+                                                            <Check size={14} className="text-amber-600 dark:text-amber-400" />
                                                         )}
                                                     </div>
-                                                    <p className={`text-xs mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                    <p className="text-xs mt-0.5 text-gray-500 dark:text-gray-400">
                                                         {category.description}
                                                     </p>
                                                 </div>
@@ -311,11 +288,7 @@ const SettingsScreen = () => {
                             {preferredCategories.length > 0 && (
                                 <button
                                     onClick={() => setUserProgress({ preferredCategories: [] })}
-                                    className={`w-full mt-3 px-3 py-2 border rounded-lg text-xs font-medium transition-colors ${
-                                        isDark 
-                                            ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600' 
-                                            : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                                    }`}
+                                    className="w-full mt-3 px-3 py-2 border rounded-lg text-xs font-medium transition-colors bg-white border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
                                 >
                                     Reset to All Categories
                                 </button>
@@ -326,20 +299,14 @@ const SettingsScreen = () => {
                     {/* Manage Practices */}
                     <button
                         onClick={() => setExpandedSection(expandedSection === 'practices' ? null : 'practices')}
-                        className={`w-full px-5 py-4 flex items-center gap-3 transition-colors border-b ${
-                            isDark 
-                                ? 'hover:bg-gray-700 border-gray-700' 
-                                : 'hover:bg-gray-50 border-gray-100'
-                        }`}
+                        className="w-full px-5 py-4 flex items-center gap-3 transition-colors border-b hover:bg-gray-50 border-gray-100 dark:hover:bg-gray-700 dark:border-gray-700"
                     >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
-                        }`}>
-                            <Sparkles size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-amber-100 dark:bg-amber-900/30">
+                            <Sparkles size={20} className="text-amber-600 dark:text-amber-300" />
                         </div>
                         <div className="flex-1 text-left">
-                            <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Manage Practices</p>
-                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Manage Practices</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {excludedPractices.length > 0 
                                     ? `${excludedPractices.length} hidden` 
                                     : 'All practices visible'}
@@ -347,16 +314,14 @@ const SettingsScreen = () => {
                         </div>
                         <ChevronRight 
                             size={20} 
-                            className={`transition-transform ${isDark ? 'text-gray-500' : 'text-gray-400'} ${expandedSection === 'practices' ? 'rotate-90' : ''}`}
+                            className={`transition-transform text-gray-400 dark:text-gray-500 ${expandedSection === 'practices' ? 'rotate-90' : ''}`}
                         />
                     </button>
 
                     {/* Practices Expanded Content */}
                     {expandedSection === 'practices' && (
-                        <div className={`px-5 py-4 border-b ${
-                            isDark ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-50 border-gray-100'
-                        }`}>
-                            <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <div className="px-5 py-4 border-b bg-gray-50 border-gray-100 dark:bg-gray-800/60 dark:border-gray-700">
+                            <p className="text-xs mb-3 text-gray-600 dark:text-gray-400">
                                 Hide practices you do not want to see on your daily list.
                             </p>
                             <div className="space-y-2">
@@ -367,29 +332,23 @@ const SettingsScreen = () => {
                                             key={practice.id}
                                             className={`p-3 rounded-lg border transition-all ${
                                                 isExcluded
-                                                    ? isDark
-                                                        ? 'border-gray-600 bg-gray-700/50 opacity-70'
-                                                        : 'border-gray-300 bg-white/60 opacity-70'
-                                                    : isDark
-                                                        ? 'border-gray-600 bg-gray-700'
-                                                        : 'border-amber-200 bg-white'
+                                                    ? 'border-gray-300 bg-white/60 opacity-70 dark:border-gray-600 dark:bg-gray-700/50'
+                                                    : 'border-amber-200 bg-white dark:border-gray-600 dark:bg-gray-700'
                                             }`}
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex-1 min-w-0">
                                                     <h3 className={`font-medium text-xs ${
                                                         isExcluded
-                                                            ? isDark ? 'text-gray-500 line-through' : 'text-gray-500 line-through'
-                                                            : isDark ? 'text-gray-200' : 'text-gray-900'
+                                                            ? 'text-gray-500 line-through'
+                                                            : 'text-gray-900 dark:text-gray-200'
                                                     }`}>
                                                         {practice.title}
                                                     </h3>
-                                                    <p className={`text-xs mt-0.5 line-clamp-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                    <p className="text-xs mt-0.5 line-clamp-1 text-gray-500 dark:text-gray-400">
                                                         {practice.description}
                                                     </p>
-                                                    <span className={`mt-1 inline-block text-[11px] px-1.5 py-0.5 rounded ${
-                                                        isDark ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700'
-                                                    }`}>
+                                                    <span className="mt-1 inline-block text-[11px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
                                                         {practice.category}
                                                     </span>
                                                 </div>
@@ -398,9 +357,7 @@ const SettingsScreen = () => {
                                                     className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors flex-shrink-0 ${
                                                         isExcluded
                                                             ? 'bg-green-500 text-white hover:bg-green-600'
-                                                            : isDark
-                                                                ? 'bg-red-900/50 text-red-400 hover:bg-red-900/70'
-                                                                : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                                            : 'bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900/70'
                                                     }`}
                                                 >
                                                     {isExcluded ? 'Include' : 'Hide'}
@@ -413,11 +370,7 @@ const SettingsScreen = () => {
                             {excludedPractices.length > 0 && (
                                 <button
                                     onClick={() => setUserProgress({ excludedPractices: [] })}
-                                    className={`w-full mt-3 px-3 py-2 border rounded-lg text-xs font-medium transition-colors ${
-                                        isDark 
-                                            ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600' 
-                                            : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                                    }`}
+                                    className="w-full mt-3 px-3 py-2 border rounded-lg text-xs font-medium transition-colors bg-white border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
                                 >
                                     Reset to All Practices
                                 </button>
@@ -428,31 +381,27 @@ const SettingsScreen = () => {
                     {/* Create Custom Challenge */}
                     <button
                         onClick={() => setExpandedSection(expandedSection === 'custom' ? null : 'custom')}
-                        className={`w-full px-5 py-4 flex items-center gap-3 transition-colors ${
-                            isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-                        }`}
+                        className="w-full px-5 py-4 flex items-center gap-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
-                        }`}>
-                            <Plus size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-amber-100 dark:bg-amber-900/30">
+                            <Plus size={20} className="text-amber-600 dark:text-amber-300" />
                         </div>
                         <div className="flex-1 text-left">
-                            <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Create Custom Challenge</p>
-                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Design your own challenge</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Create Custom Challenge</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Design your own challenge</p>
                         </div>
                         <ChevronRight 
                             size={20} 
-                            className={`transition-transform ${isDark ? 'text-gray-500' : 'text-gray-400'} ${expandedSection === 'custom' ? 'rotate-90' : ''}`}
+                            className={`transition-transform text-gray-400 dark:text-gray-500 ${expandedSection === 'custom' ? 'rotate-90' : ''}`}
                         />
                     </button>
 
                     {/* Custom Challenge Expanded Content */}
                     {expandedSection === 'custom' && (
-                        <div className={`px-5 py-4 ${isDark ? 'bg-gray-800/60' : 'bg-gray-50'}`}>
+                        <div className="px-5 py-4 bg-gray-50 dark:bg-gray-800/60">
                             <div className="space-y-3">
                                 <div>
-                                    <label className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <label className="block text-xs font-medium mb-1.5 text-gray-700 dark:text-gray-300">
                                         Challenge Title *
                                     </label>
                                     <input
@@ -460,43 +409,31 @@ const SettingsScreen = () => {
                                         value={newChallenge.title}
                                         onChange={(e) => setNewChallenge({ ...newChallenge, title: e.target.value })}
                                         placeholder="e.g., Say hello to a neighbor"
-                                        className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 ${
-                                            isDark 
-                                                ? 'border-gray-600 bg-gray-700 text-gray-200 focus:border-amber-500 focus:ring-amber-500 placeholder-gray-500' 
-                                                : 'border-gray-300 bg-white focus:border-amber-400 focus:ring-amber-400'
-                                        }`}
+                                        className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 border-gray-300 bg-white focus:border-amber-400 focus:ring-amber-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-amber-500 dark:focus:ring-amber-500 dark:placeholder-gray-500"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <label className="block text-xs font-medium mb-1.5 text-gray-700 dark:text-gray-300">
                                         Description *
                                     </label>
                                     <textarea
                                         value={newChallenge.description}
                                         onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })}
                                         placeholder="Describe what this challenge involves..."
-                                        className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 resize-none ${
-                                            isDark 
-                                                ? 'border-gray-600 bg-gray-700 text-gray-200 focus:border-amber-500 focus:ring-amber-500 placeholder-gray-500' 
-                                                : 'border-gray-300 bg-white focus:border-amber-400 focus:ring-amber-400'
-                                        }`}
+                                        className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 resize-none border-gray-300 bg-white focus:border-amber-400 focus:ring-amber-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-amber-500 dark:focus:ring-amber-500 dark:placeholder-gray-500"
                                         rows={3}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <label className="block text-xs font-medium mb-1.5 text-gray-700 dark:text-gray-300">
                                         Category
                                     </label>
                                     <select
                                         value={newChallenge.category}
                                         onChange={(e) => setNewChallenge({ ...newChallenge, category: e.target.value as Challenge['category'] })}
-                                        className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 ${
-                                            isDark 
-                                                ? 'border-gray-600 bg-gray-700 text-gray-200 focus:border-amber-500 focus:ring-amber-500' 
-                                                : 'border-gray-300 bg-white focus:border-amber-400 focus:ring-amber-400'
-                                        }`}
+                                        className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 border-gray-300 bg-white focus:border-amber-400 focus:ring-amber-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-amber-500 dark:focus:ring-amber-500"
                                     >
                                         {CATEGORIES.map(cat => (
                                             <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -505,7 +442,7 @@ const SettingsScreen = () => {
                                 </div>
 
                                 <div>
-                                    <label className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <label className="block text-xs font-medium mb-1.5 text-gray-700 dark:text-gray-300">
                                         Discomfort Level: {newChallenge.discomfortRating}/5
                                     </label>
                                     <div className="flex gap-1.5">
@@ -515,12 +452,8 @@ const SettingsScreen = () => {
                                                 onClick={() => setNewChallenge({ ...newChallenge, discomfortRating: val as 1 | 2 | 3 | 4 | 5 })}
                                                 className={`flex-1 py-1.5 rounded-lg border text-sm transition-all ${
                                                     newChallenge.discomfortRating === val
-                                                        ? isDark
-                                                            ? 'border-amber-500 bg-amber-900/40 text-amber-200 font-medium'
-                                                            : 'border-amber-400 bg-amber-50 text-amber-900 font-medium'
-                                                        : isDark
-                                                            ? 'border-gray-600 text-gray-400 hover:border-gray-500 bg-gray-700'
-                                                            : 'border-gray-300 text-gray-600 hover:border-gray-400 bg-white'
+                                                        ? 'border-amber-400 bg-amber-50 text-amber-900 font-medium dark:border-amber-500 dark:bg-amber-900/40 dark:text-amber-200'
+                                                        : 'border-gray-300 text-gray-600 hover:border-gray-400 bg-white dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500 dark:bg-gray-700'
                                                 }`}
                                             >
                                                 {val}
@@ -530,7 +463,7 @@ const SettingsScreen = () => {
                                 </div>
 
                                 <div>
-                                    <label className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    <label className="block text-xs font-medium mb-1.5 text-gray-700 dark:text-gray-300">
                                         XP Reward: {newChallenge.xpReward}
                                     </label>
                                     <input
@@ -542,7 +475,7 @@ const SettingsScreen = () => {
                                         onChange={(e) => setNewChallenge({ ...newChallenge, xpReward: parseInt(e.target.value) })}
                                         className="w-full accent-amber-500"
                                     />
-                                    <div className={`flex justify-between text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    <div className="flex justify-between text-xs mt-1 text-gray-500 dark:text-gray-400">
                                         <span>25</span>
                                         <span>250</span>
                                     </div>
@@ -561,41 +494,33 @@ const SettingsScreen = () => {
                 </div>
 
                 {/* About Section */}
-                <div className={`rounded-2xl shadow-sm border overflow-hidden ${
-                    isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                }`}>
+                <div className="rounded-2xl shadow-sm border overflow-hidden bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                     <button
                         onClick={() => setExpandedSection(expandedSection === 'about' ? null : 'about')}
-                        className={`w-full px-5 py-4 flex items-center gap-3 transition-colors ${
-                            isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-                        }`}
+                        className="w-full px-5 py-4 flex items-center gap-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            isDark ? 'bg-amber-900/30' : 'bg-amber-100'
-                        }`}>
-                            <Info size={20} className={isDark ? 'text-amber-300' : 'text-amber-600'} />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-amber-100 dark:bg-amber-900/30">
+                            <Info size={20} className="text-amber-600 dark:text-amber-300" />
                         </div>
                         <div className="flex-1 text-left">
-                            <p className={`text-sm font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>About</p>
-                            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>App information</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">About</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">App information</p>
                         </div>
                         <ChevronRight
                             size={20}
-                            className={`transition-transform ${isDark ? 'text-gray-500' : 'text-gray-400'} ${expandedSection === 'about' ? 'rotate-90' : ''}`}
+                            className={`transition-transform text-gray-400 dark:text-gray-500 ${expandedSection === 'about' ? 'rotate-90' : ''}`}
                         />
                     </button>
 
                     {expandedSection === 'about' && (
-                        <div className={`px-5 pb-5 ${isDark ? 'bg-gray-800/60' : 'bg-gray-50'}`}>
+                        <div className="px-5 pb-5 bg-gray-50 dark:bg-gray-800/60">
                             <div className="pl-12 space-y-3">
-                                <p className={`text-sm leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                                     This app helps build social confidence gently, one tiny step at a time. 
                                     There are no streaks, no failures, just small moments of bravery.
                                 </p>
-                                <div className={`rounded-lg p-3 border ${
-                                    isDark ? 'bg-amber-900/20 border-amber-800/60' : 'bg-amber-50 border-amber-200'
-                                }`}>
-                                    <p className={`text-xs ${isDark ? 'text-amber-200' : 'text-amber-800'}`}>
+                                <div className="rounded-lg p-3 border bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800/60">
+                                    <p className="text-xs text-amber-800 dark:text-amber-200">
                                         💙 Remember: Progress isn't linear. Rest is part of the journey.
                                     </p>
                                 </div>

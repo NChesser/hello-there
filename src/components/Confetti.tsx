@@ -1,38 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface ConfettiProps {
     show: boolean;
     onComplete?: () => void;
 }
 
-const Confetti = ({ show, onComplete }: ConfettiProps) => {
-    const [particles, setParticles] = useState<Array<{
-        id: number;
-        left: number;
-        delay: number;
-        duration: number;
-        color: string;
-    }>>([]);
+// Pre-generate a pool of particles once at module level (deterministic during render)
+const PARTICLE_COUNT = 30;
+const COLORS = ['#fb923c', '#fbbf24', '#f59e0b', '#f97316', '#ea580c'];
 
+const Confetti = ({ show, onComplete }: ConfettiProps) => {
     useEffect(() => {
         if (show) {
-            const colors = ['#fb923c', '#fbbf24', '#f59e0b', '#f97316', '#ea580c'];
-            const newParticles = Array.from({ length: 30 }, (_, i) => ({
-                id: i,
-                left: Math.random() * 100,
-                delay: Math.random() * 0.3,
-                duration: 1.5 + Math.random() * 1,
-                color: colors[Math.floor(Math.random() * colors.length)],
-            }));
-            setParticles(newParticles);
-
             const timer = setTimeout(() => {
                 onComplete?.();
             }, 2500);
 
             return () => clearTimeout(timer);
-        } else {
-            setParticles([]);
         }
     }, [show, onComplete]);
 
@@ -40,16 +24,16 @@ const Confetti = ({ show, onComplete }: ConfettiProps) => {
 
     return (
         <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-            {particles.map((particle) => (
+            {Array.from({ length: PARTICLE_COUNT }, (_, i) => (
                 <div
-                    key={particle.id}
+                    key={i}
                     className="absolute w-2 h-2 rounded-full animate-confetti"
                     style={{
-                        left: `${particle.left}%`,
+                        left: `${(i * 37 + 13) % 100}%`,
                         top: '-10px',
-                        backgroundColor: particle.color,
-                        animationDelay: `${particle.delay}s`,
-                        animationDuration: `${particle.duration}s`,
+                        backgroundColor: COLORS[i % COLORS.length],
+                        animationDelay: `${(i * 0.07) % 0.5}s`,
+                        animationDuration: `${1.5 + (i % 5) * 0.3}s`,
                     }}
                 />
             ))}

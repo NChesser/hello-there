@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const ONBOARDING_KEY = 'cozy-quest-onboarding-seen';
 const TOOLTIPS_KEY = 'cozy-quest-tooltips-dismissed';

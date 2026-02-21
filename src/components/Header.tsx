@@ -1,5 +1,4 @@
 import { useScreenStore } from "../store/store";
-import { useTheme } from "../context/ThemeContext";
 import { ArrowLeft } from "lucide-react";
 
 interface HeaderProps {
@@ -10,7 +9,6 @@ interface HeaderProps {
 const MAIN_SCREENS = ["home", "practice", "people", "progress", "settings"];
 
 const Header = ({ title }: HeaderProps) => {
-    const { isDark } = useTheme();
     const selectedScreen = useScreenStore((s) => s.selectedScreen);
     const previousScreen = useScreenStore((s) => s.previouslySelectedScreen);
     const setSelectedScreen = useScreenStore((s) => s.setSelectedScreen);
@@ -28,24 +26,20 @@ const Header = ({ title }: HeaderProps) => {
 
     return (
         <div
-            className={`p-4 rounded-t-3xl shadow-sm transition-colors duration-300 ${
-                isDark
-                    ? "bg-gradient-to-r from-gray-800 to-gray-700"
-                    : "bg-gradient-to-r from-orange-200 to-amber-200"
-            }`}
+            className="p-4 rounded-t-3xl shadow-sm transition-colors duration-300 bg-gradient-to-r from-orange-200 to-amber-200 dark:from-gray-800 dark:to-gray-700"
         >
             <div className="flex items-center justify-between px-4">
                 {showBack ? (
                     <ArrowLeft
                         onClick={handleBack}
                         size={20}
-                        className={`hover:cursor-pointer ${isDark ? "text-amber-400" : "text-amber-600"}`}
+                        className="hover:cursor-pointer text-amber-600 dark:text-amber-400"
                     />
                 ) : (
                     <div className="w-8 h-8" />
                 )}
                 <h3
-                    className={`text-xl font-semibold ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                    className="text-xl font-semibold text-amber-900 dark:text-gray-100"
                 >
                     {formatScreenTitle(title || "Home")}
                 </h3>

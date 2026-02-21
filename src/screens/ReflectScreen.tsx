@@ -1,26 +1,26 @@
 import { useState } from "react";
 
 // Store
-import { useScreenStore, useUserProgress, useSetUserProgressStore } from "../store/store";
+import { useScreenStore, useUserProgressStore } from "../store/store";
 
 // Types
-import type { CompletionLog } from "../types/types";
+import type { Challenge, CompletionLog } from "../types/types";
 
 // Components
 import ScreenContainer from "../components/ScreenContainer";
 import Confetti from "../components/Confetti";
-import { useTheme } from "../context/ThemeContext";
 
-const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
-    // Theme
-    const { isDark } = useTheme();
+// Data
+import { CHALLENGES } from "../data/challenges";
 
+const ReflectScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
     // Store
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );
-    const userProgress = useUserProgress();
-    const setUserProgress = useSetUserProgressStore();
+    const completeChallenge = useUserProgressStore(
+        (state) => state.completeChallenge,
+    );
 
     // Local state
     const [beforeFeeling, setBeforeFeling] = useState<number>(3);
@@ -36,7 +36,7 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
             return;
         }
 
-        console.warn("🚀 ~ handleReflect ~ todayChallenge:", todayChallenge);
+
 
         const xpMultiplier = 1;
         const reflectionBonus = note.length > 0 ? 25 : 0;
@@ -59,16 +59,12 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
         setShowConfetti(true);
         setShowSuccess(true);
 
-        // Update user progress with the new log and XP
-        const newTotalXp = userProgress.totalXp + xpEarned;
-        const newLevel = Math.floor(newTotalXp / 100) + 1; // Simple leveling: 100 XP per level
-        
-        setUserProgress({
-            totalXp: newTotalXp,
-            level: newLevel,
-            logs: [...userProgress.logs, log],
-            completedChallenges: [...userProgress.completedChallenges, todayChallenge.id],
-        });
+        // Look up discomfort rating for achievement checking
+        const challenge = CHALLENGES.find((c) => c.id === todayChallenge.id);
+        const discomfortRating = challenge?.discomfortRating ?? todayChallenge.discomfortRating;
+
+        // Use the store action which handles XP, level, streak, and achievements
+        completeChallenge(log, discomfortRating);
 
         // Reset for next time
         setNote("");
@@ -85,13 +81,11 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
         <ScreenContainer>
             <Confetti show={showConfetti} onComplete={() => setShowConfetti(false)} />
             <div className="space-y-6">
-                <div className={`rounded-2xl p-6 shadow-sm border-2 ${
-                    isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-amber-100'
-                }`}>
+                <div className="rounded-2xl p-6 shadow-sm border-2 bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
                     <div className="flex gap-4 mb-6">
                         <div className="text-4xl">🐨</div>
                         <div className="flex-1">
-                            <p className={`leading-relaxed ${isDark ? 'text-amber-200' : 'text-amber-900'}`}>
+                            <p className="leading-relaxed text-amber-900 dark:text-amber-200">
                                 That was brave! How did it feel?
                             </p>
                         </div>
@@ -99,7 +93,7 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
 
                     <div className="space-y-6">
                         <div>
-                            <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
+                            <label className="block text-sm font-medium mb-3 text-amber-800 dark:text-amber-300">
                                 Before you tried (1 = calm, 5 = very nervous)
                             </label>
                             <div className="flex gap-2">
@@ -109,12 +103,8 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                                         onClick={() => setBeforeFeling(val)}
                                         className={`flex-1 py-3 rounded-lg border-2 transition-all active:scale-95 ${
                                             beforeFeeling === val
-                                                ? isDark
-                                                    ? 'border-amber-500 bg-amber-900/40 text-amber-200 font-medium'
-                                                    : 'border-amber-400 bg-amber-50 text-amber-900 font-medium'
-                                                : isDark
-                                                    ? 'border-gray-600 text-gray-400 hover:border-gray-500'
-                                                    : 'border-amber-200 text-amber-600 hover:border-amber-300'
+                                                ? 'border-amber-400 bg-amber-50 text-amber-900 font-medium dark:border-amber-500 dark:bg-amber-900/40 dark:text-amber-200'
+                                                : 'border-amber-200 text-amber-600 hover:border-amber-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500'
                                         }`}
                                         aria-label={`Before feeling ${val}`}
                                     >
@@ -125,7 +115,7 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                         </div>
 
                         <div>
-                            <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
+                            <label className="block text-sm font-medium mb-3 text-amber-800 dark:text-amber-300">
                                 After (1 = calm, 5 = very nervous)
                             </label>
                             <div className="flex gap-2">
@@ -135,12 +125,8 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                                         onClick={() => setAfterFeeling(val)}
                                         className={`flex-1 py-3 rounded-lg border-2 transition-all active:scale-95 ${
                                             afterFeeling === val
-                                                ? isDark
-                                                    ? 'border-amber-500 bg-amber-900/40 text-amber-200 font-medium'
-                                                    : 'border-amber-400 bg-amber-50 text-amber-900 font-medium'
-                                                : isDark
-                                                    ? 'border-gray-600 text-gray-400 hover:border-gray-500'
-                                                    : 'border-amber-200 text-amber-600 hover:border-amber-300'
+                                                ? 'border-amber-400 bg-amber-50 text-amber-900 font-medium dark:border-amber-500 dark:bg-amber-900/40 dark:text-amber-200'
+                                                : 'border-amber-200 text-amber-600 hover:border-amber-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500'
                                         }`}
                                         aria-label={`After feeling ${val}`}
                                     >
@@ -151,22 +137,18 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                         </div>
 
                         <div>
-                            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-amber-300' : 'text-amber-800'}`}>
+                            <label className="block text-sm font-medium mb-2 text-amber-800 dark:text-amber-300">
                                 Any thoughts? (optional)
                             </label>
                             <textarea
                                 value={note}
                                 onChange={(e) => setNote(e.target.value)}
                                 placeholder="How it went, what you noticed, how you feel..."
-                                className={`w-full p-3 border-2 rounded-lg focus:outline-none resize-none ${
-                                    isDark
-                                        ? 'border-gray-600 focus:border-amber-500 bg-gray-700 text-gray-200 placeholder-gray-500'
-                                        : 'border-amber-200 focus:border-amber-400 bg-white text-amber-900'
-                                }`}
+                                className="w-full p-3 border-2 rounded-lg focus:outline-none resize-none border-amber-200 focus:border-amber-400 bg-white text-amber-900 dark:border-gray-600 dark:focus:border-amber-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
                                 rows={4}
                             />
                             {note.length > 0 && (
-                                <p className={`text-xs mt-1 ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                                <p className="text-xs mt-1 text-amber-600 dark:text-amber-400">
                                     +25 XP bonus for reflecting
                                 </p>
                             )}
@@ -179,12 +161,8 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: any }) => {
                             {showSuccess ? "🎉 Amazing Work!" : "Save & Continue"}
                         </button>
                         {showSuccess && (
-                            <div className={`rounded-xl p-4 border-2 animate-pulse ${
-                                isDark 
-                                    ? 'bg-green-900/30 border-green-700' 
-                                    : 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200'
-                            }`}>
-                                <p className={`text-center font-semibold ${isDark ? 'text-green-300' : 'text-green-800'}`}>
+                            <div className="rounded-xl p-4 border-2 animate-pulse bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 dark:bg-none dark:bg-green-900/30 dark:border-green-700">
+                                <p className="text-center font-semibold text-green-800 dark:text-green-300">
                                     +{Math.floor(todayChallenge.xpReward) + (note.length > 0 ? 25 : 0)} XP earned! 🌟
                                 </p>
                             </div>

@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import ScreenContainer from "../components/ScreenContainer";
 import { PRACTICE_EXAMPLES } from "../data/practices";
 import type { Practice } from "../types/types";
-import { useTheme } from "../context/ThemeContext";
 import { useUserPracticeLogs } from "../store/store";
 
 interface PracticeDetailScreenProps {
@@ -23,24 +22,15 @@ const PracticeDetailScreen = ({
     isCompleted,
     onComplete,
 }: PracticeDetailScreenProps) => {
-    const { isDark } = useTheme();
     const practiceLogs = useUserPracticeLogs();
     const color = isCompleted
         ? "text-green-600"
-        : isDark
-          ? "text-amber-400"
-          : "text-amber-600";
+        : "text-amber-600 dark:text-amber-400";
     const bgColor = isCompleted
-        ? isDark
-            ? "bg-green-900/20 border-green-700"
-            : "bg-green-50 border-green-200"
-        : isDark
-          ? "bg-gray-800 border-gray-700"
-          : "bg-white border-amber-200";
+        ? "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700"
+        : "bg-white border-amber-200 dark:bg-gray-800 dark:border-gray-700";
     const completionButtonClass = isCompleted
-        ? isDark
-            ? "bg-green-900/30 text-green-400 cursor-not-allowed"
-            : "bg-green-100 text-green-700 cursor-not-allowed"
+        ? "bg-green-100 text-green-700 cursor-not-allowed dark:bg-green-900/30 dark:text-green-400"
         : "bg-amber-500 hover:bg-amber-600 text-amber-50";
 
     const Icon = practice.icon;
@@ -80,7 +70,7 @@ const PracticeDetailScreen = ({
                     <div className="flex items-center gap-2">
                         <Icon size={14} className={color} aria-hidden="true" />
                         <span
-                            className={`text-[11px] font-semibold uppercase tracking-wide ${isDark ? "text-amber-400" : "text-amber-600"}`}
+                            className="text-[11px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
                         >
                             {practice.category}
                         </span>
@@ -90,11 +80,7 @@ const PracticeDetailScreen = ({
                             <button
                                 type="button"
                                 onClick={() => setIsStatsOpen(true)}
-                                className={`flex items-center justify-center rounded-full border p-1.5 transition-colors ${
-                                    isDark
-                                        ? "border-gray-700 bg-gray-800 text-amber-200 hover:bg-gray-700"
-                                        : "border-amber-200 bg-white text-amber-700 hover:bg-amber-50"
-                                }`}
+                                className="flex items-center justify-center rounded-full border p-1.5 transition-colors border-amber-200 bg-white text-amber-700 hover:bg-amber-50 dark:border-gray-700 dark:bg-gray-800 dark:text-amber-200 dark:hover:bg-gray-700"
                                 aria-label="Open practice stats"
                             >
                                 <BarChart3 size={14} aria-hidden="true" />
@@ -103,11 +89,7 @@ const PracticeDetailScreen = ({
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setIsNoteOpen(true)}
-                                className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors ${
-                                    isDark
-                                        ? "border-gray-700 bg-gray-800 text-amber-200 hover:bg-gray-700"
-                                        : "border-amber-200 bg-white text-amber-700 hover:bg-amber-50"
-                                }`}
+                                className="rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors border-amber-200 bg-white text-amber-700 hover:bg-amber-50 dark:border-gray-700 dark:bg-gray-800 dark:text-amber-200 dark:hover:bg-gray-700"
                                 ria-label="Open daily note"
                             >
                                 <NotebookIcon size={14} aria-hidden="true" />
@@ -117,24 +99,20 @@ const PracticeDetailScreen = ({
                 </div>
 
                 <div
-                    className={`space-y-5 rounded-2xl p-6 shadow-md border-2 ${
-                        isDark
-                            ? "bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600"
-                            : "bg-gradient-to-br from-white to-amber-50 border-amber-200"
-                    }`}
+                    className="space-y-5 rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600"
                 >
                     <div>
                         <h2
-                            className={`text-2xl font-bold tracking-tight mb-2 ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                            className="text-2xl font-bold tracking-tight mb-2 text-amber-900 dark:text-gray-100"
                         >
                             {practice.title}
                         </h2>
 
                         <div
-                            className={`border mb-4 ${isDark ? "border-gray-600" : "border-amber-100"}`}
+                            className="border mb-4 border-amber-100 dark:border-gray-600"
                         />
                         <p
-                            className={`leading-relaxed ${isDark ? "text-gray-300" : "text-amber-700"}`}
+                            className="leading-relaxed text-amber-700 dark:text-gray-300"
                         >
                             {practice.description}
                         </p>
@@ -142,19 +120,15 @@ const PracticeDetailScreen = ({
 
                     {examples.length > 0 && (
                         <div
-                            className={`rounded-xl p-4 border ${isDark ? "bg-gray-800 border-gray-700" : "bg-amber-50/70 border-amber-200"}`}
+                            className="rounded-xl p-4 border bg-amber-50/70 border-amber-200 dark:bg-gray-800 dark:border-gray-700"
                         >
                             <div className="flex items-center gap-2 mb-2.5">
                                 <MessageCircle
                                     size={14}
-                                    className={
-                                        isDark
-                                            ? "text-amber-400"
-                                            : "text-amber-600"
-                                    }
+                                    className="text-amber-600 dark:text-amber-400"
                                 />
                                 <p
-                                    className={`text-xs font-semibold uppercase tracking-wide ${isDark ? "text-amber-400" : "text-amber-600"}`}
+                                    className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
                                 >
                                     You could say
                                 </p>
@@ -163,7 +137,7 @@ const PracticeDetailScreen = ({
                                 {examples.map((ex: string, i: number) => (
                                     <p
                                         key={i}
-                                        className={`text-sm italic ${isDark ? "text-gray-300" : "text-amber-700"}`}
+                                        className="text-sm italic text-amber-700 dark:text-gray-300"
                                     >
                                         "{ex}"
                                     </p>
@@ -207,19 +181,15 @@ const PracticeDetailScreen = ({
                         }}
                     />
                     <div
-                        className={`relative w-full max-w-sm rounded-2xl border p-5 shadow-xl ${
-                            isDark
-                                ? "border-gray-700 bg-gray-800"
-                                : "border-amber-200 bg-white"
-                        }`}
+                        className="relative w-full max-w-sm rounded-2xl border p-5 shadow-xl border-amber-200 bg-white dark:border-gray-700 dark:bg-gray-800"
                     >
                         <h3
-                            className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                            className="text-sm font-semibold text-amber-900 dark:text-gray-100"
                         >
                             Daily note
                         </h3>
                         <p
-                            className={`mt-1 text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                            className="mt-1 text-xs text-gray-500 dark:text-gray-400"
                         >
                             Capture how it went today.
                         </p>
@@ -230,11 +200,7 @@ const PracticeDetailScreen = ({
                                 setNoteDraft(event.target.value)
                             }
                             placeholder="How did it go today?"
-                            className={`mt-3 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 ${
-                                isDark
-                                    ? "border-gray-600 bg-gray-700 text-gray-200 focus:border-amber-500 focus:ring-amber-500 placeholder-gray-500"
-                                    : "border-amber-200 bg-white text-gray-800 focus:border-amber-400 focus:ring-amber-400 placeholder-amber-500/70"
-                            }`}
+                            className="mt-3 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 border-amber-200 bg-white text-gray-800 focus:border-amber-400 focus:ring-amber-400 placeholder-amber-500/70 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-amber-500 dark:focus:ring-amber-500 dark:placeholder-gray-500"
                         />
                         <div className="mt-4 flex gap-2">
                             <button
@@ -243,11 +209,7 @@ const PracticeDetailScreen = ({
                                     setNoteDraft(note);
                                     setIsNoteOpen(false);
                                 }}
-                                className={`flex-1 rounded-lg border px-3 py-2 text-xs font-semibold ${
-                                    isDark
-                                        ? "border-gray-600 text-gray-300 hover:bg-gray-700"
-                                        : "border-amber-200 text-amber-700 hover:bg-amber-50"
-                                }`}
+                                className="flex-1 rounded-lg border px-3 py-2 text-xs font-semibold border-amber-200 text-amber-700 hover:bg-amber-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                             >
                                 Cancel
                             </button>
@@ -259,11 +221,7 @@ const PracticeDetailScreen = ({
                                     onComplete(trimmed);
                                     setIsNoteOpen(false);
                                 }}
-                                className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${
-                                    isDark
-                                        ? "bg-amber-500 text-amber-50 hover:bg-amber-400"
-                                        : "bg-amber-500 text-amber-50 hover:bg-amber-600"
-                                }`}
+                                className="flex-1 rounded-lg px-3 py-2 text-xs font-semibold bg-amber-500 text-amber-50 hover:bg-amber-600 dark:hover:bg-amber-400"
                             >
                                 Save note
                             </button>
@@ -284,55 +242,51 @@ const PracticeDetailScreen = ({
                         onClick={() => setIsStatsOpen(false)}
                     />
                     <div
-                        className={`relative w-full max-w-sm rounded-2xl border p-5 shadow-xl ${
-                            isDark
-                                ? "border-gray-700 bg-gray-800"
-                                : "border-amber-200 bg-white"
-                        }`}
+                        className="relative w-full max-w-sm rounded-2xl border p-5 shadow-xl border-amber-200 bg-white dark:border-gray-700 dark:bg-gray-800"
                     >
                         <h3
-                            className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                            className="text-sm font-semibold text-amber-900 dark:text-gray-100"
                         >
                             Practice stats
                         </h3>
                         <p
-                            className={`mt-1 text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                            className="mt-1 text-xs text-gray-500 dark:text-gray-400"
                         >
                             Your completion history for this practice.
                         </p>
                         <div className="mt-4 space-y-3">
                             <div className="flex items-center justify-between">
                                 <span
-                                    className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                                    className="text-xs text-gray-500 dark:text-gray-400"
                                 >
                                     Total completions
                                 </span>
                                 <span
-                                    className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                                    className="text-sm font-semibold text-amber-900 dark:text-gray-100"
                                 >
                                     {totalCompletions}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span
-                                    className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                                    className="text-xs text-gray-500 dark:text-gray-400"
                                 >
                                     Days completed
                                 </span>
                                 <span
-                                    className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                                    className="text-sm font-semibold text-amber-900 dark:text-gray-100"
                                 >
                                     {uniqueDays.size}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span
-                                    className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                                    className="text-xs text-gray-500 dark:text-gray-400"
                                 >
                                     Last completed
                                 </span>
                                 <span
-                                    className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-amber-900"}`}
+                                    className="text-sm font-semibold text-amber-900 dark:text-gray-100"
                                 >
                                     {lastCompleted
                                         ? lastCompleted.toLocaleDateString(
@@ -349,11 +303,7 @@ const PracticeDetailScreen = ({
                         <button
                             type="button"
                             onClick={() => setIsStatsOpen(false)}
-                            className={`mt-4 w-full rounded-lg px-3 py-2 text-xs font-semibold ${
-                                isDark
-                                    ? "bg-gray-700 text-gray-100 hover:bg-gray-600"
-                                    : "bg-amber-100 text-amber-800 hover:bg-amber-200"
-                            }`}
+                            className="mt-4 w-full rounded-lg px-3 py-2 text-xs font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                         >
                             Close
                         </button>
