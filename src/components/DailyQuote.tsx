@@ -9,7 +9,7 @@ const DailyQuote = () => {
     return (
         <div className="rounded-2xl p-6 shadow-sm border-2 bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
             <div className="flex gap-4 items-center">
-                <div className="w-10 h-10 flex items-center justify-center text-2xl">
+                <div className="w-10 h-10 flex items-center justify-center text-4xl">
                     🐨
                 </div>
                 <p className="flex-1 leading-relaxed italic mb-0 text-amber-900 dark:text-gray-200">
