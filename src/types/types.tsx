@@ -78,7 +78,8 @@ export type Practice = {
   title: string;
   description: string;
   icon: LucideIcon;
-  category: 'social' | 'wellbeing' | 'growth';
+  category: 'social' | 'wellbeing' | 'growth' | 'mindset' | 'connection';
+  hint?: string;
 };
 
 export type PracticeLog = {
@@ -104,8 +105,21 @@ export type CreatedPractice = {
   title: string;
   description: string;
   icon: string;
-  category: 'social' | 'wellbeing' | 'growth';
+  category: 'social' | 'wellbeing' | 'growth' | 'mindset' | 'connection';
   createdAt: string;
+};
+
+/** Interaction log entry */
+export type Interaction = {
+  id: string;
+  text: string;
+  date: string;
+};
+
+/** Personal note entry (undated) */
+export type PersonalNote = {
+  id: string;
+  text: string;
 };
 
 /** Person met tracking */
@@ -113,9 +127,48 @@ export type PersonMet = {
   id: string;
   name: string;
   meetDate: string;
-  notes?: string;
+  personalNotes?: PersonalNote[];
   somethingInteresting?: string;
+  interactions?: Interaction[];
+  isFavorite?: boolean;
+  whereMet?: string;
+  thingsTheyLike?: string[];
+  tags?: string[];
+  birthday?: string;
 };
+
+/** Preset relationship tags */
+export const RELATIONSHIP_TAGS = [
+  'Friend',
+  'Coworker',
+  'Classmate',
+  'Neighbour',
+  'Acquaintance',
+  'Family',
+  'Online',
+  'Mentor',
+  'Study buddy',
+  'Gym buddy',
+] as const;
+
+/** Preset things they like options */
+export const THINGS_THEY_LIKE_OPTIONS = [
+  'Music',
+  'Movies',
+  'Gaming',
+  'Reading',
+  'Sports',
+  'Cooking',
+  'Travel',
+  'Art',
+  'Photography',
+  'Nature',
+  'Fitness',
+  'Coffee',
+  'Animals',
+  'Tech',
+  'Fashion',
+] as const;
 
 /** Complete user data structure */
 export type User = {

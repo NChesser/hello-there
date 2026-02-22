@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Sparkles, Heart, Shield } from 'lucide-react';
+import { Heart, PartyPopper, Shield } from 'lucide-react';
+import Button from '../components/Button';
+import koalaIcon from '../assets/images/KoalaIcon.png';
 
 interface OnboardingScreenProps {
     onComplete: () => void;
@@ -7,8 +9,8 @@ interface OnboardingScreenProps {
 
 const STEPS = [
     {
-        icon: <Sparkles size={48} className="text-amber-500" />,
-        title: "Welcome to Cozy Quest 🐨",
+        icon: <img src={koalaIcon} alt="Cozy Quest mascot" className="w-12 h-12" />,
+        title: "Welcome to Cozy Quest",
         description: "A gentle app to help you build social confidence, one tiny step at a time.",
         detail: "No pressure. No judgement. Just small moments of bravery.",
     },
@@ -78,20 +80,21 @@ const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
 
                 {/* Buttons */}
                 <div className="mt-8 space-y-3">
-                    <button
+                    <Button
                         onClick={handleNext}
-                        className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-3 rounded-xl font-medium shadow-sm hover:shadow-md transition-all"
+                        size="lg"
                     >
-                        {step < STEPS.length - 1 ? 'Next' : "Let's Go! 🎉"}
-                    </button>
+                        {step < STEPS.length - 1 ? 'Next' : <><>Let's Go! </><PartyPopper size={16} className="inline" /></>}
+                    </Button>
                     
                     {step < STEPS.length - 1 && (
-                        <button
+                        <Button
                             onClick={onComplete}
-                            className="w-full py-2 text-sm transition-colors text-amber-600 hover:text-amber-700 dark:text-gray-400 dark:hover:text-gray-300"
+                            variant="text"
+                            size="lg"
                         >
                             Skip intro
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>

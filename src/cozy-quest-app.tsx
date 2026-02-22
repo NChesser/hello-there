@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 
 // Store
 import { useSelectedScreen, useSetSelectedScreen, useTodayChallenge, useTodayChallengeStore } from "./store/store";
+import koalaIcon from "./assets/images/KoalaIcon.png";
 
 // Data Imports
 import { CHALLENGES } from "./data/challenges";
+import { PRACTICES } from "./data/practices";
 
 // Screens
 import HomeScreen from "./screens/HomeScreen";
@@ -17,13 +19,13 @@ import ChallengeScreen from "./screens/ChallengeScreen";
 import ReflectScreen from "./screens/ReflectScreen";
 import PracticeOverviewScreen from "./components/PracticeOverview";
 import OnboardingScreen from "./screens/OnboardingScreen";
+import PersonDetailScreen from "./screens/PersonDetailScreen";
 
 // Components
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNavigation";
 import ScreenTransition from "./components/ScreenTransition";
 import AchievementToast from "./components/AchievementToast";
-import { PRACTICES } from "./data/practices";
 
 // Hooks
 import { useOnboarding } from "./hooks/useFirstTime";
@@ -53,7 +55,7 @@ const LoadingSkeleton = () => {
         <div className="w-full h-screen flex flex-col items-center justify-center gap-4 bg-amber-50 dark:bg-gray-900">
             <div className="relative w-16 h-16">
                 <div className="absolute inset-0 rounded-full bg-amber-200 dark:bg-gray-700 animate-ping opacity-40" />
-                <div className="relative w-16 h-16 rounded-full bg-amber-100 dark:bg-gray-700 flex items-center justify-center text-3xl">
+                <div className="relative w-16 h-16 rounded-full bg-amber-100 dark:bg-gray-700 flex items-center justify-center">
                     🐨
                 </div>
             </div>
@@ -72,6 +74,7 @@ const CozychallengeApp = () => {
 
     // Global screen store Navigation state
     const selectedScreen = useSelectedScreen();
+    const setSelectedScreen = useSetSelectedScreen();
 	const todayChallenge = useTodayChallenge();
 
 	// Local State
@@ -130,6 +133,10 @@ const CozychallengeApp = () => {
         if (selectedScreen.startsWith("practice-detail-")) {
             const practiceId = selectedScreen.replace("practice-detail-", "");
             return <PracticeDetailRoute practiceId={practiceId} />;
+        }
+        if (selectedScreen.startsWith("person-detail-")) {
+            const personId = selectedScreen.replace("person-detail-", "");
+            return <PersonDetailScreen personId={personId} onBack={() => setSelectedScreen("people")} />;
         }
         return null;
     };

@@ -1,4 +1,4 @@
-import { Calendar, Zap, Users, TrendingUp } from "lucide-react";
+import { Calendar, Target, Zap, Users, TrendingUp } from "lucide-react";
 import type { UserProgress } from "../types/types";
 import { CHALLENGES } from "../data/challenges";
 
@@ -94,7 +94,7 @@ const WeeklyInsights = ({ userProgress }: WeeklyInsightsProps) => {
                 
                 <div className="rounded-lg p-3 border bg-white/60 border-blue-200 dark:bg-gray-700/60 dark:border-gray-600">
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-base">🎯</span>
+                        <Target size={16} className="text-amber-500" />
                         <p className="text-xs text-blue-700 dark:text-blue-400">Comfort Zone</p>
                     </div>
                     <p className="text-xs font-semibold capitalize text-blue-900 dark:text-blue-200">

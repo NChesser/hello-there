@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 // Components
 import ScreenContainer from "../components/ScreenContainer";
+import Button from "../components/Button";
 
 // Store
 import { useUserProgress, useSetUserProgressStore } from "../store/store";
@@ -11,7 +12,7 @@ import { CHALLENGES } from "../data/challenges";
 import { PRACTICES } from "../data/practices";
 
 // Icons
-import { ChevronRight, Info, ListChecks, Tag, Plus, Check, Moon, Sun, Sparkles } from "lucide-react";
+import { ChevronRight, Heart, Info, ListChecks, Tag, Plus, Check, Moon, Sun, Sparkles } from "lucide-react";
 
 // Types
 import type { Challenge } from "../types/types";
@@ -286,12 +287,14 @@ const SettingsScreen = () => {
                                 })}
                             </div>
                             {preferredCategories.length > 0 && (
-                                <button
+                                <Button
                                     onClick={() => setUserProgress({ preferredCategories: [] })}
-                                    className="w-full mt-3 px-3 py-2 border rounded-lg text-xs font-medium transition-colors bg-white border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
+                                    variant="cancel"
+                                    size="sm"
+                                    className="w-full mt-3"
                                 >
                                     Reset to All Categories
-                                </button>
+                                </Button>
                             )}
                         </div>
                     )}
@@ -368,12 +371,14 @@ const SettingsScreen = () => {
                                 })}
                             </div>
                             {excludedPractices.length > 0 && (
-                                <button
+                                <Button
                                     onClick={() => setUserProgress({ excludedPractices: [] })}
-                                    className="w-full mt-3 px-3 py-2 border rounded-lg text-xs font-medium transition-colors bg-white border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
+                                    variant="cancel"
+                                    size="sm"
+                                    className="w-full mt-3"
                                 >
                                     Reset to All Practices
-                                </button>
+                                </Button>
                             )}
                         </div>
                     )}
@@ -481,13 +486,13 @@ const SettingsScreen = () => {
                                     </div>
                                 </div>
 
-                                <button
+                                <Button
                                     onClick={createCustomChallenge}
                                     disabled={!newChallenge.title.trim() || !newChallenge.description.trim()}
-                                    className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-2.5 rounded-lg text-sm font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    size="lg"
                                 >
                                     Create Challenge
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}
@@ -521,7 +526,7 @@ const SettingsScreen = () => {
                                 </p>
                                 <div className="rounded-lg p-3 border bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800/60">
                                     <p className="text-xs text-amber-800 dark:text-amber-200">
-                                        💙 Remember: Progress isn't linear. Rest is part of the journey.
+                                        <Heart size={12} className="inline text-blue-400 fill-blue-400 mr-0.5" /> Remember: Progress isn't linear. Rest is part of the journey.
                                     </p>
                                 </div>
                             </div>

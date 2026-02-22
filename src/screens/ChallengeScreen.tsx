@@ -3,6 +3,7 @@ import { useScreenStore, useUserProgressStore } from "../store/store";
 
 // Components
 import ScreenContainer from "../components/ScreenContainer";
+import Button from "../components/Button";
 
 // Icons
 import { HandHeart, Heart, MessageCircle, Sparkles } from "lucide-react";
@@ -20,18 +21,10 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );
-    const attemptChallenge = useUserProgressStore(
-        (state) => state.attemptChallenge,
-    );
+
     const level = useUserProgressStore((state) => state.level);
-
     const tier = getUserTier(level);
-    const partialXp = Math.floor(todayChallenge.xpReward * 0.3);
 
-    const handleITried = () => {
-        attemptChallenge(todayChallenge.id, partialXp);
-        setSelectedScreen("home");
-    };
 
     return (
         <ScreenContainer>
@@ -116,7 +109,7 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                     {/* Encouragement */}
                     <div className="rounded-xl p-4 border bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800">
                         <p className="text-sm leading-relaxed text-blue-800 dark:text-blue-300">
-                            💙{" "}
+                            <Heart size={14} className="inline text-blue-400 fill-blue-400 mr-1" />{" "}
                             {todayChallenge?.remember
                                 ? todayChallenge.remember
                                 : `Remember you can stop anytime. Showing up is what matters.`}
@@ -125,29 +118,19 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
 
                     {/* Action area */}
                     <div className="pt-1 space-y-3">
-                        <button
+                        <Button
                             onClick={() => setSelectedScreen("reflect")}
-                            className="w-full bg-gradient-to-r from-green-400 to-emerald-500 text-white py-4 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-[0.97] flex items-center justify-center gap-2"
+                            variant="success"
+                            size="lg"
                             aria-label="Mark challenge as completed"
                         >
                             <Sparkles size={18} />I Did It!
-                        </button>
-
-                        <button
-                            onClick={handleITried}
-                            className="w-full py-3 rounded-xl font-medium border-2 transition-all active:scale-[0.97] flex items-center justify-center gap-2 border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
-                            aria-label="Mark challenge as attempted but not fully completed"
-                        >
-                            <HandHeart size={18} />I Tried Today
-                        </button>
+                        </Button>
 
                         {/* XP reward hint */}
                         <div className="text-center space-y-0.5">
                             <p className="text-xs text-amber-400 dark:text-gray-500">
                                 +{todayChallenge.xpReward ?? 0} XP on completion
-                            </p>
-                            <p className="text-xs text-amber-300 dark:text-gray-600">
-                                +{partialXp} XP for trying
                             </p>
                         </div>
                     </div>

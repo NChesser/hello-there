@@ -1,3 +1,5 @@
+import Button from './Button';
+
 interface ConfirmDialogProps {
     isOpen: boolean;
     title: string;
@@ -39,22 +41,22 @@ const ConfirmDialog = ({
                 </p>
                 
                 <div className="flex gap-3">
-                    <button
+                    <Button
                         onClick={onCancel}
-                        className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                        variant="cancel"
+                        size="md"
+                        className="flex-1"
                     >
                         {cancelLabel}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={onConfirm}
-                        className={`flex-1 py-2.5 rounded-xl text-sm font-medium text-white transition-colors ${
-                            variant === 'danger'
-                                ? 'bg-red-500 hover:bg-red-600'
-                                : 'bg-gradient-to-r from-orange-400 to-amber-400 hover:shadow-md'
-                        }`}
+                        variant={variant === 'danger' ? 'danger' : 'primary'}
+                        size="md"
+                        className="flex-1"
                     >
                         {confirmLabel}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

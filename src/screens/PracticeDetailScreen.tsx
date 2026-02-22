@@ -1,6 +1,7 @@
 import {
     BarChart3,
     CheckCircle,
+    Lightbulb,
     MessageCircle,
     NotebookIcon,
 } from "lucide-react";
@@ -26,12 +27,6 @@ const PracticeDetailScreen = ({
     const color = isCompleted
         ? "text-green-600"
         : "text-amber-600 dark:text-amber-400";
-    const bgColor = isCompleted
-        ? "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700"
-        : "bg-white border-amber-200 dark:bg-gray-800 dark:border-gray-700";
-    const completionButtonClass = isCompleted
-        ? "bg-green-100 text-green-700 cursor-not-allowed dark:bg-green-900/30 dark:text-green-400"
-        : "bg-amber-500 hover:bg-amber-600 text-amber-50";
 
     const Icon = practice.icon;
     const examples = PRACTICE_EXAMPLES[practice.id] ?? [];
@@ -68,9 +63,9 @@ const PracticeDetailScreen = ({
             <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Icon size={14} className={color} aria-hidden="true" />
+                        <Icon size={20} className={color} aria-hidden="true" />
                         <span
-                            className="text-[11px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
+                            className="font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
                         >
                             {practice.category}
                         </span>
@@ -80,7 +75,7 @@ const PracticeDetailScreen = ({
                             <button
                                 type="button"
                                 onClick={() => setIsStatsOpen(true)}
-                                className="flex items-center justify-center rounded-full border p-1.5 transition-colors border-amber-200 bg-white text-amber-700 hover:bg-amber-50 dark:border-gray-700 dark:bg-gray-800 dark:text-amber-200 dark:hover:bg-gray-700"
+                                className="rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors border-amber-200 bg-white text-amber-700 hover:bg-amber-50 dark:border-gray-700 dark:bg-gray-800 dark:text-amber-200 dark:hover:bg-gray-700"
                                 aria-label="Open practice stats"
                             >
                                 <BarChart3 size={14} aria-hidden="true" />
@@ -99,9 +94,19 @@ const PracticeDetailScreen = ({
                 </div>
 
                 <div
-                    className="space-y-5 rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600"
+                    className={`space-y-5 rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br ${
+                        isCompleted
+                            ? 'from-green-50 to-emerald-50 border-green-300 dark:from-green-900/20 dark:to-emerald-900/15 dark:border-green-700'
+                            : 'from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600'
+                    }`}
                 >
                     <div>
+                        {isCompleted && (
+                            <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-green-100 dark:bg-green-900/30">
+                                <CheckCircle size={16} className="text-green-600 dark:text-green-400 fill-current flex-shrink-0" />
+                                <span className="text-sm font-medium text-green-700 dark:text-green-300">Done for today — nice work!</span>
+                            </div>
+                        )}
                         <h2
                             className="text-2xl font-bold tracking-tight mb-2 text-amber-900 dark:text-gray-100"
                         >
@@ -117,6 +122,23 @@ const PracticeDetailScreen = ({
                             {practice.description}
                         </p>
                     </div>
+
+                    {practice.hint && (
+                        <div className="flex gap-3 rounded-xl p-4 border bg-sky-50/70 border-sky-200 dark:bg-sky-950/20 dark:border-sky-800">
+                            <Lightbulb
+                                size={16}
+                                className="mt-0.5 flex-shrink-0 text-sky-600 dark:text-sky-400"
+                            />
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-wide text-sky-600 dark:text-sky-400 mb-1">
+                                    How to approach it
+                                </p>
+                                <p className="text-sm leading-relaxed text-sky-800 dark:text-sky-200">
+                                    {practice.hint}
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
                     {examples.length > 0 && (
                         <div
@@ -149,7 +171,11 @@ const PracticeDetailScreen = ({
                     <button
                         onClick={() => onComplete(note.trim())}
                         disabled={isCompleted}
-                        className={`mt-5 flex items-center justify-center gap-2 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all active:scale-[0.98] ${completionButtonClass}`}
+                        className={`mt-5 flex items-center justify-center gap-2 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all active:scale-[0.98] ${
+                            isCompleted
+                                ? 'bg-green-100 text-green-700 border-2 border-green-300 cursor-not-allowed dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
+                                : 'bg-gradient-to-r from-orange-400 to-amber-400 text-white shadow-sm hover:shadow-md'
+                        }`}
                         aria-label={
                             isCompleted
                                 ? "Already completed today"
@@ -209,7 +235,7 @@ const PracticeDetailScreen = ({
                                     setNoteDraft(note);
                                     setIsNoteOpen(false);
                                 }}
-                                className="flex-1 rounded-lg border px-3 py-2 text-xs font-semibold border-amber-200 text-amber-700 hover:bg-amber-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-xs px-3 py-1.5 border border-amber-200 text-amber-700 hover:bg-amber-50 dark:border-gray-600 dark:text-amber-400 dark:hover:bg-gray-700"
                             >
                                 Cancel
                             </button>
@@ -221,7 +247,7 @@ const PracticeDetailScreen = ({
                                     onComplete(trimmed);
                                     setIsNoteOpen(false);
                                 }}
-                                className="flex-1 rounded-lg px-3 py-2 text-xs font-semibold bg-amber-500 text-amber-50 hover:bg-amber-600 dark:hover:bg-amber-400"
+                                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-xs px-3 py-1.5 bg-gradient-to-r from-orange-400 to-amber-400 text-white shadow-sm hover:shadow-md"
                             >
                                 Save note
                             </button>
@@ -303,7 +329,7 @@ const PracticeDetailScreen = ({
                         <button
                             type="button"
                             onClick={() => setIsStatsOpen(false)}
-                            className="mt-4 w-full rounded-lg px-3 py-2 text-xs font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+                            className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-sm px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                         >
                             Close
                         </button>

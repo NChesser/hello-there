@@ -31,7 +31,7 @@ const HomeScreen = () => {
         return todayLog?.mood ?? null;
     }, [userProgress.moodLogs]);
 
-    const [selectedMood, setSelectedMood] = useState<Mood | null>(todaysMood);
+    const [selectedMood, setSelectedMood] = useState < Mood | null > (todaysMood);
 
     const completedToday = userProgress.logs.filter(
         (l) =>
@@ -55,7 +55,7 @@ const HomeScreen = () => {
                 <DailyQuote />
 
                 {/* Tier + XP progress bar */}
-                <div className="rounded-2xl p-4 border bg-white border-amber-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
+                {/* <div className="rounded-2xl p-4 border bg-white border-amber-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                             <span className="text-lg">{tier.emoji}</span>
@@ -76,13 +76,13 @@ const HomeScreen = () => {
                     <p className="text-xs mt-1 text-amber-400 dark:text-gray-500">
                         {xpInLevel} / {xpNeeded} XP to next level
                     </p>
-                </div>
+                </div> */}
 
                 {/* The hero — today's challenge */}
                 <ChallengeCard />
 
                 {/* Compact stat pills */}
-                <div className="flex gap-2">
+                {/* <div className="flex gap-2">
                     <div className="flex-1 rounded-xl px-4 py-3 text-center bg-white border border-amber-100 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:shadow-none">
                         <p className="text-lg font-bold text-amber-700 dark:text-amber-400">
                             {userProgress.level}
@@ -107,7 +107,7 @@ const HomeScreen = () => {
                             Today
                         </p>
                     </div>
-                </div>
+                </div> */}
 
                 <MoodCheckIn
                     selectedMood={selectedMood}

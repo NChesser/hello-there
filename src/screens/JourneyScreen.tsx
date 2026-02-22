@@ -6,19 +6,21 @@ import DateComplete from "../components/DateComplete";
 import ScreenContainer from "../components/ScreenContainer";
 import XPDisplay from "../components/XPDisplay";
 import AchievementsGrid from "../components/AchievementsGrid";
+import TabBar from "../components/TabBar";
+import type { Tab } from "../components/TabBar";
 
 // Store
 import { useUserProgress } from "../store/store";
 
 // Icons
-import { BookOpen, Trophy, TrendingUp } from "lucide-react";
+import { BookOpen, Flame, Trophy, TrendingUp } from "lucide-react";
 
-type Tab = "journal" | "badges" | "insights";
+type JourneyTab = "journal" | "badges" | "insights";
 
-const TABS: { id: Tab; label: string; icon: typeof BookOpen }[] = [
+const TABS: Tab<JourneyTab>[] = [
     { id: "journal", label: "Journal", icon: BookOpen },
-    { id: "badges", label: "Badges", icon: Trophy },
     { id: "insights", label: "Insights", icon: TrendingUp },
+    { id: "badges", label: "Badges", icon: Trophy },
 ];
 
 // --- Insights helpers ---
@@ -68,45 +70,110 @@ const MoodTrends = () => {
 const WeeklyChart = () => {
     const userProgress = useUserProgress();
 
-    // Count completions per day for last 7 days
     const data = useMemo(() => {
-        const days: { label: string; count: number }[] = [];
+        const days: { label: string; challenges: number; practices: number; peopleMet: number }[] = [];
         for (let i = 6; i >= 0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const ds = d.toDateString();
-            const count = userProgress.logs.filter(
+            const isoDate = d.toISOString().split("T")[0];
+
+            const challenges = userProgress.logs.filter(
                 (l) => l.completed && new Date(l.date).toDateString() === ds,
             ).length;
+
+            const practices = userProgress.practiceLogs.filter(
+                (l) => l.date === isoDate || new Date(l.date).toDateString() === ds,
+            ).length;
+
+            const peopleMet = (userProgress.peopleMet ?? []).filter(
+                (p) => {
+                    try {
+                        return new Date(p.meetDate).toDateString() === ds;
+                    } catch {
+                        return false;
+                    }
+                },
+            ).length;
+
             days.push({
                 label: d.toLocaleDateString(undefined, { weekday: "short" }),
-                count,
+                challenges,
+                practices,
+                peopleMet,
             });
         }
         return days;
-    }, [userProgress.logs]);
+    }, [userProgress.logs, userProgress.practiceLogs, userProgress.peopleMet]);
 
-    const max = Math.max(1, ...data.map((d) => d.count));
+    const max = Math.max(1, ...data.map((d) => d.challenges + d.practices + d.peopleMet));
+
+    // Build scale ticks (0 to max, aiming for ~3-5 ticks)
+    const step = max <= 4 ? 1 : Math.ceil(max / 4);
+    const ticks: number[] = [];
+    for (let t = max; t >= 0; t -= step) {
+        ticks.push(t);
+    }
+    if (ticks[ticks.length - 1] !== 0) ticks.push(0);
+
+    const categories = [
+        { key: "challenges" as const, label: "Challenges", color: "bg-amber-400", darkColor: "dark:bg-amber-500" },
+        { key: "practices" as const, label: "Practices", color: "bg-blue-400", darkColor: "dark:bg-blue-500" },
+        { key: "peopleMet" as const, label: "People Met", color: "bg-green-400", darkColor: "dark:bg-green-500" },
+    ];
 
     return (
         <div className="rounded-xl p-4 border bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
             <h4 className="text-sm font-medium mb-3 text-amber-800 dark:text-amber-300">
                 This Week
             </h4>
-            <div className="flex items-end gap-2 h-24">
-                {data.map((day, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                        <div
-                            className={`w-full rounded-t-md transition-all ${
-                                day.count > 0
-                                    ? "bg-gradient-to-t from-amber-400 to-orange-300"
-                                    : "bg-gray-100 dark:bg-gray-700"
-                            }`}
-                            style={{ height: `${(day.count / max) * 100}%`, minHeight: 4 }}
-                        />
-                        <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                            {day.label}
+            <div className="flex gap-1">
+                {/* Y-axis scale */}
+                <div className="flex flex-col justify-between h-28 pr-1 pb-5">
+                    {ticks.map((tick) => (
+                        <span key={tick} className="text-[10px] leading-none text-gray-400 dark:text-gray-500 text-right min-w-[14px]">
+                            {tick}
                         </span>
+                    ))}
+                </div>
+                {/* Bars */}
+                <div className="flex-1 flex items-end gap-2 h-28">
+                    {data.map((day, i) => {
+                        const total = day.challenges + day.practices + day.peopleMet;
+                        return (
+                            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                                <div
+                                    className="w-full flex flex-col-reverse rounded-t-md overflow-hidden"
+                                    style={{ height: `${(total / max) * 100}%`, minHeight: 4 }}
+                                >
+                                    {total > 0 ? (
+                                        categories.map(({ key, color, darkColor }) =>
+                                            day[key] > 0 ? (
+                                                <div
+                                                    key={key}
+                                                    className={`w-full ${color} ${darkColor}`}
+                                                    style={{ flex: day[key] }}
+                                                />
+                                            ) : null,
+                                        )
+                                    ) : (
+                                        <div className="w-full h-full bg-gray-100 dark:bg-gray-700" />
+                                    )}
+                                </div>
+                                <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                                    {day.label}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-3 mt-3">
+                {categories.map(({ key, label, color }) => (
+                    <div key={key} className="flex items-center gap-1">
+                        <div className={`w-2 h-2 rounded-full ${color}`} />
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400">{label}</span>
                     </div>
                 ))}
             </div>
@@ -138,7 +205,7 @@ const InsightsTab = () => {
                             Current Streak
                         </p>
                         <p className="text-2xl font-bold text-amber-800 dark:text-amber-300">
-                            🔥 {userProgress.currentStreak ?? 0} days
+                            <Flame size={22} className="inline text-orange-500" /> {userProgress.currentStreak ?? 0} days
                         </p>
                     </div>
                     <div className="text-right">
@@ -174,26 +241,17 @@ const InsightsTab = () => {
 };
 
 const JourneyScreen = () => {
-    const [activeTab, setActiveTab] = useState<Tab>("journal");
+    const [activeTab, setActiveTab] = useState<JourneyTab>("journal");
 
     return (
         <ScreenContainer>
             {/* Tab bar */}
-            <div className="flex rounded-xl p-1 mb-4 gap-2.5 bg-amber-100 dark:bg-gray-800">
-                {TABS.map(({ id, label }) => (
-                    <button
-                        key={id}
-                        onClick={() => setActiveTab(id)}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
-                            activeTab === id
-                                ? "bg-amber-800 text-white-800 shadow-sm dark:bg-gray-700 dark:text-amber-300"
-                                : "bg-amber-100 text-amber-600 hover:text-amber-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                        }`}
-                    >
-                        {label}
-                    </button>
-                ))}
-            </div>
+            <TabBar
+                tabs={TABS}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                className="mb-4"
+            />
 
             {/* Tab content */}
             {activeTab === "journal" && (

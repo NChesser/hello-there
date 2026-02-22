@@ -1,6 +1,7 @@
-import { CheckCircle } from "lucide-react";
-import { useRef } from "react";
+import { Flame } from "lucide-react";
+import { useMemo, useRef } from "react";
 import type { Practice } from "../types/types";
+import { useUserPracticeLogs } from "../store/store";
 
 interface PracticeCardProps {
     practice: Practice;
@@ -15,18 +16,53 @@ const PracticeCard = ({
     onComplete,
     onClick,
 }: PracticeCardProps) => {
-    const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const holdTimerRef = useRef < ReturnType < typeof setTimeout > | null > (null);
     const didHoldRef = useRef(false);
+    const practiceLogs = useUserPracticeLogs();
+
+    const streak = useMemo(() => {
+        const dates = practiceLogs
+            .filter((log) => log.practiceId === practice.id)
+            .map((log) => log.date);
+
+        const dateSet = new Set(dates);
+        if (dateSet.size === 0) return 0;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString().split("T")[0];
+
+        const checkDate = new Date(today);
+
+        // If today isn't logged yet, start from yesterday
+        if (!dateSet.has(todayStr)) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            const yesterdayStr = checkDate.toISOString().split("T")[0];
+            if (!dateSet.has(yesterdayStr)) return 0;
+        }
+
+        let count = 0;
+        while (true) {
+            const dateStr = checkDate.toISOString().split("T")[0];
+            if (dateSet.has(dateStr)) {
+                count++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+
+        return count;
+    }, [practiceLogs, practice.id]);
+
+
+    console.log("🚀 ~ PracticeCard ~ streak:", streak)
     const color = isCompleted
         ? "text-green-600"
         : "text-amber-600 dark:text-amber-400";
     const bgColor = isCompleted
         ? "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-700"
         : "bg-white border-amber-200 dark:bg-gray-800 dark:border-gray-700";
-    const completionButtonClass = isCompleted
-        ? "bg-green-100 text-green-700 cursor-not-allowed dark:bg-green-900/30 dark:text-green-400"
-        : "bg-amber-500 hover:bg-amber-600 text-amber-50";
-
     const Icon = practice.icon;
     const holdDurationMs = 250;
 
@@ -69,12 +105,19 @@ const PracticeCard = ({
             role="button"
             aria-label={`${practice.title} - ${isCompleted ? "completed" : "not completed"}`}
         >
+            {streak >= 0 && (
+                <div className="flex items-center justify-end gap-0.5 text-orange-500 dark:text-orange-400">
+                    <Flame size={12} />
+                    <span className="text-[10px] font-bold">{streak}</span>
+                </div>
+            )}
             <div className="flex flex-col items-center justify-center text-center gap-2 flex-1">
                 <Icon size={24} className={color} aria-hidden="true" />
                 <h3 className={`font-semibold text-xs ${color} line-clamp-2`}>
                     {practice.title}
                 </h3>
             </div>
+
         </div>
     );
 };

@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { PartyPopper, Sparkles } from "lucide-react";
 
 // Store
 import { useScreenStore, useUserProgressStore } from "../store/store";
+import koalaIcon from "../assets/images/KoalaIcon.png";
 
 // Types
 import type { Challenge, CompletionLog } from "../types/types";
@@ -9,6 +11,7 @@ import type { Challenge, CompletionLog } from "../types/types";
 // Components
 import ScreenContainer from "../components/ScreenContainer";
 import Confetti from "../components/Confetti";
+import Button from "../components/Button";
 
 // Data
 import { CHALLENGES } from "../data/challenges";
@@ -83,7 +86,7 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
             <div className="space-y-6">
                 <div className="rounded-2xl p-6 shadow-sm border-2 bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
                     <div className="flex gap-4 mb-6">
-                        <div className="text-4xl">🐨</div>
+                        <img src={koalaIcon} alt="Cozy Quest mascot" className="w-10 h-10" />
                         <div className="flex-1">
                             <p className="leading-relaxed text-amber-900 dark:text-amber-200">
                                 That was brave! How did it feel?
@@ -153,17 +156,17 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                                 </p>
                             )}
                         </div>
-                        <button
+                        <Button
                             onClick={handleReflect}
                             disabled={showSuccess}
-                            className="w-full bg-gradient-to-r from-orange-400 to-amber-400 text-white py-4 rounded-xl font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-75 disabled:cursor-not-allowed active:scale-[0.98]"
+                            size="lg"
                         >
-                            {showSuccess ? "🎉 Amazing Work!" : "Save & Continue"}
-                        </button>
+                            {showSuccess ? <><PartyPopper size={16} className="inline mr-1" /> Amazing Work!</> : "Save & Continue"}
+                        </Button>
                         {showSuccess && (
                             <div className="rounded-xl p-4 border-2 animate-pulse bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 dark:bg-none dark:bg-green-900/30 dark:border-green-700">
                                 <p className="text-center font-semibold text-green-800 dark:text-green-300">
-                                    +{Math.floor(todayChallenge.xpReward) + (note.length > 0 ? 25 : 0)} XP earned! 🌟
+                                    +{Math.floor(todayChallenge.xpReward) + (note.length > 0 ? 25 : 0)} XP earned! <Sparkles size={14} className="inline text-yellow-500" />
                                 </p>
                             </div>
                         )}

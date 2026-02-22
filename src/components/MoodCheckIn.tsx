@@ -70,16 +70,16 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
             <button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                className={`w-full rounded-2xl border-2 px-4 py-3 transition-all active:scale-[0.98] ${
+                className={`w-full rounded-2xl border-2 py-3 mr-4 transition-all active:scale-[0.98] ${
                     selectedMood
                         ? "border-amber-200 bg-white shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:shadow-none"
                         : "border-dashed border-amber-300 bg-amber-50/50 hover:bg-white dark:border-gray-600 dark:bg-gray-800/50 dark:hover:bg-gray-800"
                 }`}
             >
                 {selectedMood && selectedOption ? (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center gap-3">
                         <span className="text-2xl">{selectedOption.emoji}</span>
-                        <div className="text-left flex-1">
+                        <div>
                             <p className={`text-sm font-semibold ${selectedOption.color}`}>
                                 Feeling {selectedOption.label.toLowerCase()}
                             </p>
@@ -89,9 +89,9 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-3">
-                        <span className="text-xl opacity-60">🐨</span>
-                        <div className="text-left">
+                    <div className="flex items-center justify-center gap-3">
+                        {/* 🐨 */}
+                        <div>
                             <p className="text-sm font-medium text-amber-700 dark:text-gray-300">
                                 How are you feeling?
                             </p>
@@ -188,7 +188,7 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
                             <button
                                 type="button"
                                 onClick={() => setIsOpen(false)}
-                                className="mt-4 w-full rounded-xl py-2.5 text-sm font-semibold transition-all active:scale-[0.98] bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                                className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-sm px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                             >
                                 {selectedMood ? "Done" : "Skip for now"}
                             </button>
