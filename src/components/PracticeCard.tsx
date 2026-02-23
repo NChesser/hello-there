@@ -124,7 +124,6 @@ const PracticeCard = ({
                     {practice.title}
                 </Typography>
             </div>
-
         </div>
     );
 };

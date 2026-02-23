@@ -16,6 +16,7 @@ import { capitalizeFirstLetter } from "../utils/helpers";
 // Components
 import Button from "./Button";
 import Typography from "./Typography";
+import Card from "./Card";
 
 // Animation phases: idle → exiting (fade/slide out) → entering (fade/slide in) → idle
 type AnimPhase = "idle" | "exiting" | "entering";
@@ -89,8 +90,8 @@ const ChallengeCard = () => {
 
     return (
         <div className="overflow-hidden space-y-3">
-            <div
-                className="rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600"
+            <Card
+                variant="elevated"
                 style={{
                     transition:
                         "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease",
@@ -154,7 +155,7 @@ const ChallengeCard = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 };

@@ -1,10 +1,11 @@
+import Card from "../components/Card";
 import ScreenContainer from "../components/ScreenContainer";
 import { Heart } from "lucide-react";
 
 const SettingsAboutScreen = () => {
     return (
         <ScreenContainer>
-            <div className="space-y-4">
+            <Card variant="elevated" className="space-y-4">
                 <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                     This app builds social confidence gently, one small step at a time.
                     Try a daily challenge, explore practices, check in on your mood,
@@ -20,7 +21,7 @@ const SettingsAboutScreen = () => {
                         Remember: progress isn’t linear. Rest and reflection are part of the journey.
                     </p>
                 </div>
-            </div>
+            </Card>
         </ScreenContainer>
     );
 };

@@ -1,4 +1,8 @@
+// Data
 import { DAILY_QUOTES } from "../data/quotes";
+
+// Components
+import Card from "./Card";
 import Typography from "./Typography";
 
 // Daily Quote Component
@@ -8,18 +12,16 @@ const DailyQuote = () => {
     const dailyQuote = DAILY_QUOTES[dayIndex];
 
     return (
-        <div className="rounded-2xl p-6 shadow-sm border-2 bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
+        <Card variant="elevated">
             <div className="flex gap-4 items-center">
                 <div className="w-10 h-10 flex items-center justify-center text-4xl">
                     🐨
                 </div>
-                <Typography
-                    className="flex-1 italic mb-0 text-amber-900 dark:text-gray-200"
-                >
+                <Typography className="flex-1 italic mb-0 text-amber-900 dark:text-gray-200">
                     {dailyQuote}
                 </Typography>
             </div>
-        </div>
+        </Card>
     );
 };
 
