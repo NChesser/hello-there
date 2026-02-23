@@ -21,6 +21,7 @@ import ChallengeCard from "../components/ChallengeCard";
 import DailyQuote from "../components/DailyQuote";
 import MoodCheckIn from "../components/MoodCheckIn";
 import IntentionPrompt from "../components/IntentionPrompt";
+import Typography from "../components/Typography";
 
 const HomeScreen = () => {
     const userProgress = useUserProgress();
@@ -52,6 +53,12 @@ const HomeScreen = () => {
                 {/* ... (unchanged code) */}
 
                 <ChallengeCard />
+
+                <div className="flex justify-center items-center mt-2">
+                    <Typography variant="body" tone="subtle">
+                        Completed Today: 2
+                    </Typography>
+                </div>
 
                 {/* Compact stat pills */}
                 {/* ... (unchanged code) */}

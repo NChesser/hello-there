@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Focus } from "lucide-react";
+
+// Components
 import Button from "./Button";
 import Typography from "./Typography";
+
+// Icons
+import { Focus } from "lucide-react";
+
 
 const IntentionPrompt = () => {
     const [intention, setIntention] = useState("");
@@ -10,18 +15,18 @@ const IntentionPrompt = () => {
     const [selectedChoice, setSelectedChoice] = useState("");
 
     const INTENTIONS = [
-        "I will take one small social step today.",
-        "I will be kind to myself if things feel awkward.",
-        "I will listen fully in one conversation.",
-        "I will greet one person with a smile.",
-        "I will try one small challenge, even if it feels scary.",
-        "I will celebrate a tiny win today.",
-        "I will stay present for one interaction.",
-        "I will ask one simple question.",
-        "I will take a slow breath before I speak.",
-        "I will show up, not be perfect.",
-        "I will notice one kind moment.",
-        "I will be gentle with my energy today.",
+        "I will approach today with curiosity.",
+        "I will embrace challenges as opportunities.",
+        "I will practice gratitude for small moments.",
+        "I will focus on progress, not perfection.",
+        "I will be patient with myself and others.",
+        "I will cultivate a positive outlook.",
+        "I will let go of what I can't control.",
+        "I will trust my ability to handle what comes.",
+        "I will be open to learning something new.",
+        "I will treat myself and others with compassion.",
+        "I will stay present and mindful throughout the day.",
+        "I will celebrate growth, no matter how small.",
     ];
 
     const getRandomIntentions = (count: number) => {
@@ -53,7 +58,15 @@ const IntentionPrompt = () => {
 
     return (
         <>
-            <Button variant="icon" onClick={openModal}>
+            <Button
+                variant="icon"
+                onClick={openModal}
+                className={
+                    selectedChoice
+                        ? "text-amber-400 dark:text-gray-500"
+                        : "border-dotted text-amber-400 dark:text-gray-500"
+                }
+            >
                 <Focus />
             </Button>
 

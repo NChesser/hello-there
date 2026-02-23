@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 // Icons
 import {
     BarChart3,
+    Check,
     CheckCircle,
     Lightbulb,
     NotebookIcon,
+    Undo,
 } from "lucide-react";
 
 // Screens
@@ -19,6 +21,7 @@ import type { Practice } from "../types/types";
 // Components
 import Button from "../components/Button";
 import Typography from "../components/Typography";
+import Card from "../components/Card";
 
 interface PracticeDetailScreenProps {
     practice: Practice;
@@ -65,6 +68,44 @@ const PracticeDetailScreen = ({
     const uniqueDays = new Set(
         practiceEntries.map((log) => new Date(log.date).toDateString()),
     );
+    const currentStreak = (() => {
+        const dateSet = new Set(
+            practiceEntries.map(
+                (log) => new Date(log.date).toISOString().split("T")[0],
+            ),
+        );
+        if (dateSet.size === 0) return 0;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString().split("T")[0];
+
+        const checkDate = new Date(today);
+        if (!dateSet.has(todayStr)) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            const yesterdayStr = checkDate.toISOString().split("T")[0];
+            if (!dateSet.has(yesterdayStr)) return 0;
+        }
+
+        let count = 0;
+        while (true) {
+            const dateStr = checkDate.toISOString().split("T")[0];
+            if (dateSet.has(dateStr)) {
+                count++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+
+        return count;
+    })();
+    const lastCompletedLabel = lastCompleted
+        ? lastCompleted.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+          })
+        : "Not yet";
 
     return (
         <ScreenContainer>
@@ -79,7 +120,7 @@ const PracticeDetailScreen = ({
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-2">
                             <Button
-                                variant="secondary"
+                                variant="icon"
                                 onClick={() => setIsStatsOpen(true)}
                                 aria-label="Open practice stats"
                             >
@@ -88,7 +129,7 @@ const PracticeDetailScreen = ({
                         </div>
                         <div className="flex items-center gap-2">
                             <Button
-                                variant="secondary"
+                                variant="icon"
                                 onClick={() => setIsNoteOpen(true)}
                                 aria-label="Open daily note"
                             >
@@ -122,7 +163,11 @@ const PracticeDetailScreen = ({
                                     className="flex-shrink-0 text-sky-600 dark:text-sky-400"
                                 />
                                 <div>
-                                    <Typography as="p" variant="overline" tone="info">
+                                    <Typography
+                                        as="p"
+                                        variant="overline"
+                                        tone="info"
+                                    >
                                         How to approach it
                                     </Typography>
                                 </div>
@@ -132,12 +177,12 @@ const PracticeDetailScreen = ({
                             </Typography>
                         </div>
                     )}
-
                     <Button
                         onClick={() => onComplete(note.trim())}
                         disabled={isCompleted}
                         variant={isCompleted ? "success" : "primary"}
                         size="lg"
+                        // className="w-1/2"
                         aria-label={
                             isCompleted
                                 ? "Already completed today"
@@ -145,11 +190,32 @@ const PracticeDetailScreen = ({
                         }
                     >
                         <CheckCircle
-                            size={20}
+                            size={16}
                             className={isCompleted ? "fill-current" : ""}
                         />
-                        {isCompleted ? "Completed Today" : "Mark as Complete"}
+                        {isCompleted ? "Completed Today" : "Complete"}
                     </Button>
+                    {/* <div className="flex justify-start gap-3">
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onClick={() => setIsNoteOpen(true)}
+                            aria-label="Add or edit daily note"
+                        >
+                            <NotebookIcon size={16} aria-hidden="true" />
+                        </Button>
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onClick={() => {
+                                if (!isCompleted) return;
+                                onComplete("");
+                            }}
+                            aria-label="Undo last action"
+                        >
+                            <Undo size={16} aria-hidden="true" />
+                        </Button>
+                    </div> */}
                 </div>
             </div>
 
@@ -228,48 +294,53 @@ const PracticeDetailScreen = ({
                         onClick={() => setIsStatsOpen(false)}
                     />
                     <div className="relative w-full max-w-sm rounded-2xl border p-5 shadow-xl border-amber-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <Typography as="h2" variant="subtitle">
-                            Practice Stats
-                        </Typography>
-                        <Typography variant="caption" className="mt-1">
-                            Your completion history for this practice.
-                        </Typography>
-                        <div className="mt-4 space-y-3">
-                            <div className="flex items-center justify-between">
-                                <Typography as="span" variant="caption">
+                        <div className="flex items-center justify-between mb-3">
+                            <Typography as="h3" variant="label">
+                                Your stats
+                            </Typography>
+                            <Typography variant="caption">
+                                {lastCompletedLabel === "Not yet"
+                                    ? "No activity yet"
+                                    : `Last: ${lastCompletedLabel}`}
+                            </Typography>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="rounded-xl border p-3 border-amber-100 bg-amber-50/70 dark:border-gray-700 dark:bg-gray-700/40">
+                                <Typography variant="caption">
+                                    Current streak
+                                </Typography>
+                                <Typography variant="subtitle">
+                                    {currentStreak} day
+                                    {currentStreak === 1 ? "" : "s"}
+                                </Typography>
+                            </div>
+                            <div className="rounded-xl border p-3 border-amber-100 bg-amber-50/70 dark:border-gray-700 dark:bg-gray-700/40">
+                                <Typography variant="caption">
                                     Total completions
                                 </Typography>
-                                <Typography as="span" variant="label">
+                                <Typography variant="subtitle">
                                     {totalCompletions}
                                 </Typography>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <Typography as="span" variant="caption">
+                            <div className="rounded-xl border p-3 border-amber-100 bg-amber-50/70 dark:border-gray-700 dark:bg-gray-700/40">
+                                <Typography variant="caption">
                                     Days completed
                                 </Typography>
-                                <Typography as="span" variant="label">
+                                <Typography variant="subtitle">
                                     {uniqueDays.size}
                                 </Typography>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <Typography as="span" variant="caption">
+                            <div className="rounded-xl border p-3 border-amber-100 bg-amber-50/70 dark:border-gray-700 dark:bg-gray-700/40">
+                                <Typography variant="caption">
                                     Last completed
                                 </Typography>
-                                <Typography as="span" variant="label">
-                                    {lastCompleted
-                                        ? lastCompleted.toLocaleDateString(
-                                              "en-US",
-                                              {
-                                                  month: "short",
-                                                  day: "numeric",
-                                              },
-                                          )
-                                        : "Not yet"}
+                                <Typography variant="subtitle">
+                                    {lastCompletedLabel}
                                 </Typography>
                             </div>
                         </div>
                         <Button
-                            variant="secondary"
+                            variant="cancel"
                             size="sm"
                             className="mt-4 w-full"
                             aria-label="Close practice stats"

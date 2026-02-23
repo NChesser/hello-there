@@ -289,7 +289,10 @@ const PeopleScreen = () => {
 
             {/* ── Add Person Modal ── */}
             {showAddModal && (
-                <Card variant="elevated" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <Card
+                    variant="elevated"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                >
                     <div
                         className="absolute inset-0 bg-black/40 dark:bg-black/60"
                         onClick={() => setShowAddModal(false)}
@@ -499,9 +502,9 @@ const PeopleScreen = () => {
                                 </p>
                             </div>
                             <div className="flex items-center gap-1">
-                                <button
+                                <Button
                                     onClick={() => setIsCompact(!isCompact)}
-                                    className="p-1.5 rounded-lg transition-colors text-amber-600 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-gray-700"
+                                    variant="icon"
                                     title={
                                         isCompact
                                             ? "Expanded view"
@@ -514,18 +517,18 @@ const PeopleScreen = () => {
                                     }
                                 >
                                     {isCompact ? (
-                                        <LayoutList size={16} />
+                                        <LayoutList size={12} />
                                     ) : (
-                                        <List size={16} />
+                                        <List size={12} />
                                     )}
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                     onClick={() => setShowAddModal(true)}
-                                    className="p-1.5 rounded-lg transition-all active:scale-[0.97] bg-gradient-to-r from-orange-400 to-amber-400 text-white shadow-sm hover:shadow-md"
+                                    variant="icon"
                                     aria-label="Add person"
                                 >
-                                    <Plus size={16} />
-                                </button>
+                                    <Plus size={12} />
+                                </Button>
                             </div>
                         </div>
 
@@ -536,7 +539,8 @@ const PeopleScreen = () => {
                                 </p>
                             </Card>
                         ) : isCompact ? (
-                            <Card variant="elevated" className="overflow-hidden">
+                            <div>
+                                <div className="flex items-center gap-3 mb-3 px-2 bg-amber-50 border border-amber-200 rounded-lg dark:bg-gray-700/50 dark:border-gray-600" />
                                 {sortedPeople.map((person, index) => (
                                     <div
                                         key={person.id}
@@ -546,27 +550,6 @@ const PeopleScreen = () => {
                                                 : ""
                                         }`}
                                     >
-                                        {/* Favorite toggle */}
-                                        <button
-                                            onClick={() =>
-                                                toggleFavorite(person.id)
-                                            }
-                                            className="pl-3 pr-1 py-3 self-stretch flex items-center"
-                                            aria-label={
-                                                person.isFavorite
-                                                    ? `Unpin ${person.name}`
-                                                    : `Pin ${person.name}`
-                                            }
-                                        >
-                                            <Star
-                                                size={14}
-                                                className={
-                                                    person.isFavorite
-                                                        ? "fill-amber-400 text-amber-400"
-                                                        : "text-amber-200 dark:text-gray-600 hover:text-amber-400 dark:hover:text-amber-400"
-                                                }
-                                            />
-                                        </button>
                                         {/* Clickable row */}
                                         <button
                                             onClick={() =>
@@ -574,7 +557,7 @@ const PeopleScreen = () => {
                                                     `person-detail-${person.id}`,
                                                 )
                                             }
-                                            className="flex-1 flex items-center justify-between pr-4 py-3 text-left transition-colors hover:bg-amber-50 dark:hover:bg-gray-750"
+                                            className="flex-1 flex items-center justify-between pl-4 pr-4 py-3 text-left transition-colors hover:bg-amber-50 dark:hover:bg-gray-750"
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-amber-100 text-amber-700 dark:bg-gray-700 dark:text-amber-300">
@@ -654,14 +637,31 @@ const PeopleScreen = () => {
                                                         )}
                                                 </div>
                                             </div>
-                                            <ChevronRight
-                                                size={16}
-                                                className="text-amber-400 dark:text-gray-500"
-                                            />
+                                            {/* Favorite toggle */}
+                                            <button
+                                                onClick={() =>
+                                                    toggleFavorite(person.id)
+                                                }
+                                                className="pl-3 pr-1 py-3 self-stretch flex items-center"
+                                                aria-label={
+                                                    person.isFavorite
+                                                        ? `Unpin ${person.name}`
+                                                        : `Pin ${person.name}`
+                                                }
+                                            >
+                                                <Star
+                                                    size={14}
+                                                    className={
+                                                        person.isFavorite
+                                                            ? "fill-amber-400 text-amber-400"
+                                                            : "text-amber-200 dark:text-gray-600 hover:text-amber-400 dark:hover:text-amber-400"
+                                                    }
+                                                />
+                                            </button>
                                         </button>
                                     </div>
                                 ))}
-                            </Card>
+                            </div>
                         ) : (
                             sortedPeople.map((person) => (
                                 <div key={person.id}>

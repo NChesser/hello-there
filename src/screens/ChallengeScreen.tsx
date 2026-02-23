@@ -22,6 +22,7 @@ import { capitalizeFirstLetter } from "../utils/helpers";
 import { getUserTier } from "../data/tiers";
 
 const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
+    console.log("🚀 ~ ChallengeScreen ~ todayChallenge:", todayChallenge)
     const setSelectedScreen = useScreenStore(
         (state) => state.setSelectedScreen,
     );

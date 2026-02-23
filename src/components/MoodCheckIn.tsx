@@ -106,6 +106,7 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
                 variant="icon"
                 aria-label={`tap to update`}
                 onClick={() => setIsOpen(!isOpen)}
+                className={selectedMood ? "text-amber-400 dark:text-gray-500" : "border-dotted text-amber-400 dark:text-gray-500"}
             >
                 {selectedMood && selectedOption ? (
                     <MessageCircleHeart />
