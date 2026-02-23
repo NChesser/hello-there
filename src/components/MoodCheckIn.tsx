@@ -1,5 +1,15 @@
+// Mood check-in component for quick self-reflection and encouragement before challenges.
 import { useState } from "react";
+
+// Types
 import type { Mood } from "../types/types";
+
+// Components
+import Button from "./Button";
+import Typography from "./Typography";
+
+// Icons
+import { MessageCircleHeart } from "lucide-react";
 
 interface MoodCheckInProps {
     onMoodSelected: (mood: Mood) => void;
@@ -7,11 +17,36 @@ interface MoodCheckInProps {
 }
 
 const MOODS: { value: Mood; emoji: string; label: string; color: string }[] = [
-    { value: "overwhelmed", emoji: "😰", label: "Overwhelmed", color: "text-red-600 dark:text-red-400" },
-    { value: "nervous",     emoji: "😟", label: "Nervous",     color: "text-orange-600 dark:text-orange-400" },
-    { value: "okay",        emoji: "😊", label: "Okay",        color: "text-yellow-600 dark:text-yellow-400" },
-    { value: "good",        emoji: "😄", label: "Good",        color: "text-green-600 dark:text-green-400" },
-    { value: "brave",       emoji: "🦁", label: "Brave!",      color: "text-purple-600 dark:text-purple-400" },
+    {
+        value: "overwhelmed",
+        emoji: "😰",
+        label: "Overwhelmed",
+        color: "text-red-600 dark:text-red-400",
+    },
+    {
+        value: "nervous",
+        emoji: "😟",
+        label: "Nervous",
+        color: "text-orange-600 dark:text-orange-400",
+    },
+    {
+        value: "okay",
+        emoji: "😊",
+        label: "Okay",
+        color: "text-yellow-600 dark:text-yellow-400",
+    },
+    {
+        value: "good",
+        emoji: "😄",
+        label: "Good",
+        color: "text-green-600 dark:text-green-400",
+    },
+    {
+        value: "brave",
+        emoji: "🦁",
+        label: "Brave!",
+        color: "text-purple-600 dark:text-purple-400",
+    },
 ];
 
 const MOOD_MESSAGES: Record<Mood, string[]> = {
@@ -67,41 +102,57 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
     // --- Trigger button ---
     return (
         <>
-            <button
-                type="button"
-                onClick={() => setIsOpen(true)}
-                className={`w-full rounded-2xl border-2 py-3 mr-4 transition-all active:scale-[0.98] ${
-                    selectedMood
-                        ? "border-amber-200 bg-white shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:shadow-none"
-                        : "border-dashed border-amber-300 bg-amber-50/50 hover:bg-white dark:border-gray-600 dark:bg-gray-800/50 dark:hover:bg-gray-800"
-                }`}
+            <Button
+                variant="icon"
+                aria-label={`tap to update`}
+                onClick={() => setIsOpen(!isOpen)}
             >
                 {selectedMood && selectedOption ? (
-                    <div className="flex items-center justify-center gap-3">
-                        <span className="text-2xl">{selectedOption.emoji}</span>
-                        <div>
-                            <p className={`text-sm font-semibold ${selectedOption.color}`}>
-                                Feeling {selectedOption.label.toLowerCase()}
-                            </p>
-                            <p className="text-xs text-amber-400 dark:text-gray-500">
-                                Tap to update
-                            </p>
-                        </div>
-                    </div>
+                    <MessageCircleHeart />
                 ) : (
+                    // <div className="flex items-center justify-center gap-3">
+                    //     <MessageCircleHeart className="text-amber-400 dark:text-gray-500" aria-hidden="true" />
+
+                    //     <span className="text-2xl">{selectedOption.emoji}</span>
+                    //     <div>
+                    //         <Typography
+                    //             variant="label"
+                    //             className={selectedOption.color}
+                    //         >
+                    //             Feeling {selectedOption.label.toLowerCase()}
+                    //         </Typography>
+                    //         <Typography
+                    //             variant="caption"
+                    //             className="text-amber-400 dark:text-gray-500"
+                    //         >
+                    //             Tap to update
+                    //         </Typography>
+                    //     </div>
+                    // </div>
                     <div className="flex items-center justify-center gap-3">
                         {/* 🐨 */}
+
+                        <MessageCircleHeart
+                            className="text-amber-400 dark:text-gray-500"
+                            aria-hidden="true"
+                        />
                         <div>
-                            <p className="text-sm font-medium text-amber-700 dark:text-gray-300">
+                            <Typography
+                                variant="body-sm"
+                                className="font-medium text-amber-700 dark:text-gray-300"
+                            >
                                 How are you feeling?
-                            </p>
-                            <p className="text-xs text-amber-400 dark:text-gray-500">
+                            </Typography>
+                            <Typography
+                                variant="caption"
+                                className="text-amber-400 dark:text-gray-500"
+                            >
                                 Quick mood check-in
-                            </p>
+                            </Typography>
                         </div>
                     </div>
                 )}
-            </button>
+            </Button>
 
             {/* --- Modal --- */}
             {isOpen && (
@@ -126,12 +177,20 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
                     >
                         {/* Header */}
                         <div className="text-center mb-4">
-                            <p className="text-base font-bold text-amber-900 dark:text-gray-100">
+                            <Typography
+                                variant="body"
+                                tone="primary"
+                                className="font-bold"
+                            >
                                 How are you feeling right now?
-                            </p>
-                            <p className="text-xs mt-0.5 text-amber-500 dark:text-gray-400">
+                            </Typography>
+                            <Typography
+                                variant="caption"
+                                tone="accent-soft"
+                                className="mt-0.5"
+                            >
                                 No wrong answers — just check in with yourself
-                            </p>
+                            </Typography>
                         </div>
 
                         {/* Mood options — emoji + label */}
@@ -151,16 +210,22 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
                                         aria-label={`Feeling ${label}`}
                                         aria-pressed={isActive}
                                     >
-                                        <span className={`text-2xl transition-transform ${isActive ? "scale-110" : ""}`}>
+                                        <span
+                                            className={`text-2xl transition-transform ${isActive ? "scale-110" : ""}`}
+                                        >
                                             {emoji}
                                         </span>
-                                        <span className={`text-[10px] font-medium leading-tight ${
-                                            isActive
-                                                ? color
-                                                : "text-gray-500 dark:text-gray-400"
-                                        }`}>
+                                        <Typography
+                                            as="span"
+                                            variant="micro"
+                                            className={`font-medium ${
+                                                isActive
+                                                    ? color
+                                                    : "text-gray-500 dark:text-gray-400"
+                                            }`}
+                                        >
                                             {label}
-                                        </span>
+                                        </Typography>
                                     </button>
                                 );
                             })}
@@ -168,36 +233,46 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
 
                         {/* Encouragement message */}
                         {selectedMood && (
-                            <div className={`mt-4 rounded-xl px-4 py-3 border transition-all ${
-                                selectedMood === "overwhelmed"
-                                    ? "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800"
-                                    : "bg-amber-50 border-amber-200 dark:bg-gray-700/50 dark:border-gray-600"
-                            }`}>
-                                <p className={`text-sm leading-relaxed text-center ${
+                            <div
+                                className={`mt-4 rounded-xl px-4 py-3 border transition-all ${
                                     selectedMood === "overwhelmed"
-                                        ? "text-blue-700 dark:text-blue-300"
-                                        : "text-amber-700 dark:text-gray-300"
-                                }`}>
+                                        ? "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800"
+                                        : "bg-amber-50 border-amber-200 dark:bg-gray-700/50 dark:border-gray-600"
+                                }`}
+                            >
+                                <Typography
+                                    variant="body-sm"
+                                    className={`text-center ${
+                                        selectedMood === "overwhelmed"
+                                            ? "text-blue-700 dark:text-blue-300"
+                                            : "text-amber-700 dark:text-gray-300"
+                                    }`}
+                                >
                                     {getTodayMessage(selectedMood)}
-                                </p>
+                                </Typography>
                             </div>
                         )}
 
                         {/* Close / Done */}
                         {!justSelected && (
-                            <button
+                            <Button
                                 type="button"
                                 onClick={() => setIsOpen(false)}
-                                className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-sm px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                                variant="save"
+                                size="lg"
+                                className="mt-4 py-3 w-full"
                             >
                                 {selectedMood ? "Done" : "Skip for now"}
-                            </button>
+                            </Button>
                         )}
 
                         {justSelected && (
-                            <p className="mt-3 text-center text-xs text-amber-400 dark:text-gray-500">
+                            <Typography
+                                variant="caption"
+                                className="mt-3 text-center text-amber-400 dark:text-gray-500"
+                            >
                                 ✓ Mood logged
-                            </p>
+                            </Typography>
                         )}
                     </div>
                 </div>

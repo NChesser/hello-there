@@ -1,12 +1,16 @@
+// React
+import { useState } from "react";
+
 // Store
 import { useScreenStore, useUserProgressStore } from "../store/store";
 
 // Components
 import ScreenContainer from "../components/ScreenContainer";
 import Button from "../components/Button";
+import Typography from "../components/Typography";
 
 // Icons
-import { HandHeart, Heart, MessageCircle, Sparkles } from "lucide-react";
+import { Heart, Lightbulb, Sparkles, MessageCircle } from "lucide-react";
 
 // Types
 import type { Challenge } from "../types/types";
@@ -25,6 +29,8 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
     const level = useUserProgressStore((state) => state.level);
     const tier = getUserTier(level);
 
+    // State for "How to approach it" expandable section
+    const [showRemember, setShowRemember] = useState(false);
 
     return (
         <ScreenContainer>
@@ -32,12 +38,12 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                 {/* Category + difficulty tag line */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">
+                        <Typography as="span" variant="overline">
                             {capitalizeFirstLetter(
                                 todayChallenge.category?.replace("-", " ") ??
                                     "General",
                             )}
-                        </span>
+                        </Typography>
                         <span
                             className={`text-xs px-2 py-0.5 rounded-full font-medium ${tier.bgColor} dark:${tier.darkBgColor} ${tier.color}`}
                         >
@@ -65,55 +71,75 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                 <div className="space-y-5 rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600">
                     {/* Title + description */}
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight mb-2 text-amber-900 dark:text-gray-100">
+                        <Typography as="h2" variant="title" className="mb-2">
                             {todayChallenge.title}
-                        </h2>
+                        </Typography>
                         <div className="border mb-4 border-amber-100 dark:border-gray-600" />
 
-                        <p className="leading-relaxed text-amber-700 dark:text-gray-300">
-                            {todayChallenge.description}
-                        </p>
+                        <Typography>{todayChallenge.description}</Typography>
                     </div>
 
-                    {/* Example scripts */}
-                    {todayChallenge.exampleScript && (
-                        <div className="rounded-xl p-4 border bg-amber-50/70 border-amber-200 dark:bg-gray-800 dark:border-gray-700">
-                            <div className="flex items-center gap-2 mb-2.5">
-                                <MessageCircle
-                                    size={14}
-                                    className="text-amber-600 dark:text-amber-400"
-                                />
-                                <p className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">
-                                    You could say
-                                </p>
-                            </div>
-                            <div className="space-y-1.5">
-                                {(Array.isArray(todayChallenge.exampleScript)
-                                    ? todayChallenge.exampleScript
-                                    : todayChallenge.exampleScript
-                                          .split(/\r?\n|\|/)
-                                          .map((s: string) => s.trim())
-                                          .filter(Boolean)
-                                ).map((ex: string, i: number) => (
-                                    <p
-                                        key={i}
-                                        className="text-sm italic text-amber-700 dark:text-gray-300"
-                                    >
-                                        "{ex.replace(/^[""]|[""]$/g, "")}"
-                                    </p>
-                                ))}
-                            </div>
+                    {/* "How to approach it" expandable section */}
+                    <div
+                        className="rounded-xl p-4 border bg-sky-50/70 border-sky-200 dark:bg-sky-950/20 dark:border-sky-800 cursor-pointer transition-all"
+                        tabIndex={0}
+                        role="button"
+                        aria-expanded={showRemember}
+                        onClick={() => setShowRemember((prev) => !prev)}
+                    >
+                        <div className="flex items-center gap-2 mb-2.5">
+                            <Lightbulb
+                                size={16}
+                                className="flex-shrink-0 text-sky-600 dark:text-sky-400"
+                            />
+                            <Typography as="p" variant="overline" tone="info">
+                                How to approach it
+                            </Typography>
                         </div>
-                    )}
-
-                    {/* Encouragement */}
-                    <div className="rounded-xl p-4 border bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800">
-                        <p className="text-sm leading-relaxed text-blue-800 dark:text-blue-300">
-                            <Heart size={14} className="inline text-blue-400 fill-blue-400 mr-1" />{" "}
-                            {todayChallenge?.remember
-                                ? todayChallenge.remember
-                                : `Remember you can stop anytime. Showing up is what matters.`}
-                        </p>
+                        {todayChallenge.remember && (
+                            <Typography variant="body-sm" tone="info-strong">
+                                {todayChallenge.remember}
+                            </Typography>
+                        )}
+                        {showRemember && (
+                            <>
+                                {todayChallenge.exampleScript &&
+                                    todayChallenge.exampleScript.length > 0 && (
+                                        <div className="mt-4 border-t pt-4 border-sky-200 dark:border-sky-800">
+                                            <div className="flex items-center gap-2 mb-2.5">
+                                                <MessageCircle
+                                                    size={16}
+                                                    className="flex-shrink-0 text-sky-600 dark:text-sky-400"
+                                                />
+                                                <Typography
+                                                    as="p"
+                                                    variant="overline"
+                                                    tone="info"
+                                                >
+                                                    You Could Say
+                                                </Typography>
+                                            </div>
+                                            <ul className="space-y-2">
+                                                {todayChallenge.exampleScript.map(
+                                                    (
+                                                        script: string,
+                                                        idx: number,
+                                                    ) => (
+                                                        <li key={idx}>
+                                                            <Typography
+                                                                variant="body-sm"
+                                                                tone="info-strong"
+                                                            >
+                                                                {script}
+                                                            </Typography>
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
+                            </>
+                        )}
                     </div>
 
                     {/* Action area */}
@@ -124,14 +150,17 @@ const ChallengeScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                             size="lg"
                             aria-label="Mark challenge as completed"
                         >
-                            <Sparkles size={18} />I Did It!
+                            <Sparkles size={16} />I Did It!
                         </Button>
 
                         {/* XP reward hint */}
                         <div className="text-center space-y-0.5">
-                            <p className="text-xs text-amber-400 dark:text-gray-500">
+                            <Typography
+                                variant="caption"
+                                className="text-amber-400 dark:text-gray-500"
+                            >
                                 +{todayChallenge.xpReward ?? 0} XP on completion
-                            </p>
+                            </Typography>
                         </div>
                     </div>
                 </div>

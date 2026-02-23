@@ -1,5 +1,6 @@
 import { useScreenStore } from "../store/store";
 import { ArrowLeft } from "lucide-react";
+import Typography from "./Typography";
 
 interface HeaderProps {
     title?: string;
@@ -38,11 +39,9 @@ const Header = ({ title }: HeaderProps) => {
                 ) : (
                     <div className="w-8 h-8" />
                 )}
-                <h3
-                    className="text-xl font-semibold text-amber-900 dark:text-gray-100"
-                >
+                <Typography as="h3" variant="headline">
                     {formatScreenTitle(title || "Home")}
-                </h3>
+                </Typography>
                 <div className="w-8 h-8" />
             </div>
         </div>
@@ -58,6 +57,11 @@ const formatScreenTitle = (screen: string) => {
     if (screen === "practice-overview") return "Practice Overview";
     if (screen === "reflect") return "Reflect";
     if (screen === "challenge") return "Challenge";
+    if (screen === "settings-challenges") return "Manage Challenges";
+    if (screen === "settings-categories") return "Category Preferences";
+    if (screen === "settings-practices") return "Manage Practices";
+    if (screen === "settings-custom") return "Create Challenge";
+    if (screen === "settings-about") return "About";
 
     // Default: capitalise first letter
     return screen.charAt(0).toUpperCase() + screen.slice(1);

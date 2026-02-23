@@ -2,6 +2,7 @@ import React from "react";
 import ScreenContainer from "./ScreenContainer";
 import { CheckCircle } from "lucide-react";
 import type { Practice, PracticeLog } from "../types/types";
+import Typography from "./Typography";
 
 interface PracticeOverviewProps {
     practice: Practice;
@@ -11,19 +12,25 @@ interface PracticeOverviewProps {
 const PracticeOverview: React.FC<PracticeOverviewProps> = ({ practice, practiceLogs }) => {
     return (
         <ScreenContainer>
-            <h2 className="text-2xl font-bold mb-2 text-center text-amber-700 dark:text-amber-300">
+            <Typography
+                as="h2"
+                variant="title"
+                className="mb-2 text-center text-amber-700 dark:text-amber-300"
+            >
                 {practice.title}
-            </h2>
-            <p className="text-md mb-4 text-amber-900 dark:text-amber-200">{practice.description}</p>
+            </Typography>
+            <Typography className="mb-4 text-amber-900 dark:text-amber-200">
+                {practice.description}
+            </Typography>
             <div className="mb-6">
-                <span className="font-semibold text-amber-700 dark:text-amber-300">
+                <Typography as="span" variant="label" className="text-amber-700 dark:text-amber-300">
                     Completions:
-                </span>
+                </Typography>
                 <div className="mt-2 flex flex-col gap-2">
                     {practiceLogs.length === 0 && (
-                        <span className="text-amber-400 dark:text-amber-500">
+                        <Typography as="span" variant="body-sm" className="text-amber-400 dark:text-amber-500">
                             No completions yet.
-                        </span>
+                        </Typography>
                     )}
                     {practiceLogs.map((log) => (
                         <div
@@ -31,13 +38,13 @@ const PracticeOverview: React.FC<PracticeOverviewProps> = ({ practice, practiceL
                             className="flex items-center gap-2 rounded px-3 py-2 border bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800"
                         >
                             <CheckCircle className="text-green-600" size={18} />
-                            <span className="text-green-900 dark:text-green-300">
+                            <Typography as="span" variant="body-sm" className="text-green-900 dark:text-green-300">
                                 {new Date(log.date).toLocaleDateString()}
-                            </span>
+                            </Typography>
                             {log.note && (
-                                <span className="ml-2 text-xs italic text-amber-700 dark:text-amber-400">
+                                <Typography as="span" variant="caption" tone="warm" className="ml-2 italic">
                                     {log.note}
-                                </span>
+                                </Typography>
                             )}
                         </div>
                     ))}

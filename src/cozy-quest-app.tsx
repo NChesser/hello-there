@@ -14,6 +14,11 @@ import PracticesScreen from "./screens/PracticesScreen";
 import PracticeDetailScreen from "./screens/PracticeDetailScreen";
 import PeopleScreen from "./screens/PeopleScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import SettingsChallengesScreen from "./screens/SettingsChallengesScreen";
+import SettingsCategoriesScreen from "./screens/SettingsCategoriesScreen";
+import SettingsPracticesScreen from "./screens/SettingsPracticesScreen";
+import SettingsCustomChallengeScreen from "./screens/SettingsCustomChallengeScreen";
+import SettingsAboutScreen from "./screens/SettingsAboutScreen";
 import JourneyScreen from "./screens/JourneyScreen";
 import ChallengeScreen from "./screens/ChallengeScreen";
 import ReflectScreen from "./screens/ReflectScreen";
@@ -117,6 +122,21 @@ const CozychallengeApp = () => {
         }
         if (selectedScreen === "settings") {
             return <SettingsScreen />;
+        }
+        if (selectedScreen === "settings-challenges") {
+            return <SettingsChallengesScreen />;
+        }
+        if (selectedScreen === "settings-categories") {
+            return <SettingsCategoriesScreen />;
+        }
+        if (selectedScreen === "settings-practices") {
+            return <SettingsPracticesScreen />;
+        }
+        if (selectedScreen === "settings-custom") {
+            return <SettingsCustomChallengeScreen />;
+        }
+        if (selectedScreen === "settings-about") {
+            return <SettingsAboutScreen />;
         }
         if (selectedScreen === "practice") {
             return <PracticesScreen />;

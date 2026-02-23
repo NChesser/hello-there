@@ -1,6 +1,7 @@
 import { ACHIEVEMENTS } from "../data/achievements";
 import { useUserProgress } from "../store/store";
 import { Lock } from "lucide-react";
+import Typography from "./Typography";
 
 const AchievementsGrid = () => {
     const userProgress = useUserProgress();
@@ -29,24 +30,26 @@ const AchievementsGrid = () => {
                                 />
                             )}
                         </div>
-                        <p
-                            className={`text-xs font-semibold leading-tight ${
+                        <Typography
+                            variant="caption"
+                            className={`font-semibold leading-tight ${
                                 isUnlocked
                                     ? "text-gray-800 dark:text-gray-200"
                                     : "text-gray-400 dark:text-gray-500"
                             }`}
                         >
                             {achievement.title}
-                        </p>
-                        <p
-                            className={`text-[10px] mt-0.5 leading-tight ${
+                        </Typography>
+                        <Typography
+                            variant="micro"
+                            className={`mt-0.5 leading-tight ${
                                 isUnlocked
                                     ? "text-gray-500 dark:text-gray-400"
                                     : "text-gray-300 dark:text-gray-600"
                             }`}
                         >
                             {achievement.description}
-                        </p>
+                        </Typography>
                     </div>
                 );
             })}

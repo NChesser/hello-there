@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ACHIEVEMENTS } from "../data/achievements";
 import { onAchievementUnlocked } from "../store/store";
+import Typography from "./Typography";
 
 const AchievementToast = () => {
     const [queue, setQueue] = useState<string[]>([]);
@@ -50,16 +51,12 @@ const AchievementToast = () => {
             >
                 <span className="text-2xl">{achievement.icon}</span>
                 <div>
-                    <p
-                        className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
-                    >
+                    <Typography as="p" variant="overline">
                         Achievement Unlocked!
-                    </p>
-                    <p
-                        className="text-sm font-bold text-gray-900 dark:text-gray-100"
-                    >
+                    </Typography>
+                    <Typography variant="label" tone="neutral">
                         {achievement.title}
-                    </p>
+                    </Typography>
                 </div>
             </div>
         </div>

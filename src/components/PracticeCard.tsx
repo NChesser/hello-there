@@ -2,6 +2,7 @@ import { Flame } from "lucide-react";
 import { useMemo, useRef } from "react";
 import type { Practice } from "../types/types";
 import { useUserPracticeLogs } from "../store/store";
+import Typography from "./Typography";
 
 interface PracticeCardProps {
     practice: Practice;
@@ -108,14 +109,20 @@ const PracticeCard = ({
             {streak >= 0 && (
                 <div className="flex items-center justify-end gap-0.5 text-orange-500 dark:text-orange-400">
                     <Flame size={12} />
-                    <span className="text-[10px] font-bold">{streak}</span>
+                    <Typography as="span" variant="micro" className="font-bold">
+                        {streak}
+                    </Typography>
                 </div>
             )}
             <div className="flex flex-col items-center justify-center text-center gap-2 flex-1">
                 <Icon size={24} className={color} aria-hidden="true" />
-                <h3 className={`font-semibold text-xs ${color} line-clamp-2`}>
+                <Typography
+                    as="h3"
+                    variant="caption"
+                    className={`font-semibold ${color} line-clamp-2`}
+                >
                     {practice.title}
-                </h3>
+                </Typography>
             </div>
 
         </div>

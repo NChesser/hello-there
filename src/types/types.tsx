@@ -7,6 +7,7 @@ export type Challenge = {
   id: string;
   title: string;
   description: string;
+  hint?: string;
   exampleScript?: string[];
   remember?: string;
   discomfortRating: 1 | 2 | 3 | 4 | 5;

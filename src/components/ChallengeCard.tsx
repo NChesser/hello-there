@@ -1,7 +1,11 @@
 import React, { useState, useCallback } from "react";
 
 // Store
-import { useScreenStore, useSetTodayChallenge, useTodayChallenge } from "../store/store";
+import {
+    useScreenStore,
+    useSetTodayChallenge,
+    useTodayChallenge,
+} from "../store/store";
 
 // Icons
 import { Heart } from "lucide-react";
@@ -11,6 +15,7 @@ import { capitalizeFirstLetter } from "../utils/helpers";
 
 // Components
 import Button from "./Button";
+import Typography from "./Typography";
 
 // Animation phases: idle → exiting (fade/slide out) → entering (fade/slide in) → idle
 type AnimPhase = "idle" | "exiting" | "entering";
@@ -18,7 +23,9 @@ type AnimPhase = "idle" | "exiting" | "entering";
 // Component
 const ChallengeCard = () => {
     // Store
-    const setSelectedScreen = useScreenStore((state) => state.setSelectedScreen);
+    const setSelectedScreen = useScreenStore(
+        (state) => state.setSelectedScreen,
+    );
 
     // Challenge Store
     const challenge = useTodayChallenge();
@@ -81,45 +88,25 @@ const ChallengeCard = () => {
     };
 
     return (
-        <div className="overflow-hidden">
+        <div className="overflow-hidden space-y-3">
             <div
                 className="rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600"
                 style={{
-                    transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease",
+                    transition:
+                        "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease",
                     willChange: "transform, opacity",
                     ...getAnimStyle(),
                 }}
             >
                 <div>
-                    <div className="flex items-start justify-between pb-2">
-                        <h2 className="text-xl font-semibold text-amber-900 dark:text-gray-100">
-                            {capitalizeFirstLetter(challenge.category)} Challenge
-                        </h2>
-                        <div className="flex gap-2 mt-2 mb-2" role="group" aria-label="Discomfort rating - tap to filter by difficulty">
-                            {[...Array(5)].map((_, i) => (
-
-                                <Heart
-                                    key={i}
-
-                                    size={16}
-                                    className={
-                                        i < challenge.discomfortRating
-                                            ? "fill-orange-300 text-orange-300"
-                                            : "text-amber-200 dark:text-gray-600"
-                                    }
-                                />
-                            ))}
-                        </div>
-                    </div>
-
+                    <Typography as="h2" variant="title" className="mb-2">
+                        {challenge.title}
+                    </Typography>
                     <div className="border mb-4 border-amber-100 dark:border-gray-600" />
 
-                    <h3 className="text-lg font-medium mb-2 text-amber-800 dark:text-gray-200">
-                        {challenge.title}
-                    </h3>
-                    <p className="mb-4 leading-relaxed text-amber-700 dark:text-gray-300">
+                    <Typography className="mb-4">
                         {challenge.description}
-                    </p>
+                    </Typography>
                     <Button
                         onClick={handleStartQuest}
                         size="lg"
@@ -131,13 +118,41 @@ const ChallengeCard = () => {
                     <Button
                         onClick={handleSkip}
                         disabled={animPhase !== "idle"}
-                        variant="text"
+                        variant="secondary"
                         size="lg"
-                        className="mt-2"
+                        className="mt-3"
                         aria-label="Skip this challenge and get another one"
                     >
-                        Try another
+                        Try Another
                     </Button>
+
+                    <div className="border mt-6 mb-4 border-amber-100 dark:border-gray-600" />
+
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Typography as="span" variant="overline">
+                                {capitalizeFirstLetter(
+                                    challenge.category,
+                                ).replace("social", "Social")} {" "}
+                            </Typography>
+                        </div>
+                        <div
+                            className="flex items-center gap-1"
+                            aria-label={`Difficulty ${challenge.discomfortRating} out of 5`}
+                        >
+                            {[...Array(5)].map((_, i) => (
+                                <Heart
+                                    key={i}
+                                    size={14}
+                                    className={
+                                        i < challenge.discomfortRating
+                                            ? "fill-orange-400 text-orange-400"
+                                            : "text-amber-200 dark:text-gray-600"
+                                    }
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useUserProgress } from "../store/store";
 import { CHALLENGES } from "../data/challenges";
+import Typography from "./Typography";
 
 const CompletedChallenges = () => {
     const userProgress = useUserProgress();
@@ -39,9 +40,9 @@ const CompletedChallenges = () => {
     return (
         <div>
             <div className="rounded-2xl p-4 shadow-sm border mt-4 h-70 overflow-y-auto bg-white border-amber-100 dark:bg-gray-800 dark:border-gray-700">
-                <h3 className="text-sm font-medium mb-2 text-amber-800 dark:text-amber-300">
+                <Typography as="h3" variant="label" tone="primary-soft" className="mb-2">
                     Completed Challenges
-                </h3>
+                </Typography>
                 <div className="border mb-4 border-amber-100 dark:border-gray-700" />
                 <div className="mb-3">
                     <input
@@ -55,19 +56,31 @@ const CompletedChallenges = () => {
                 </div>
                 <div>
                     {completedLogs.length === 0 ? (
-                        <p className="text-sm text-center py-4 text-amber-600 dark:text-amber-400">
+                        <Typography
+                            variant="body-sm"
+                            tone="accent"
+                            className="text-center py-4"
+                        >
                             No completed challenges yet. Start your journey!
-                        </p>
+                        </Typography>
                     ) : filteredLogs.length === 0 ? (
-                        <p className="text-sm text-center py-4 text-amber-600 dark:text-amber-400">
+                        <Typography
+                            variant="body-sm"
+                            tone="accent"
+                            className="text-center py-4"
+                        >
                             No matches. Try a different search.
-                        </p>
+                        </Typography>
                     ) : (
                         dates.map((date) => (
                             <div key={date} className="mb-6">
-                                <div className="text-xs mt-2 mb-2 text-amber-500">
+                                <Typography
+                                    variant="caption"
+                                    tone="accent-soft"
+                                    className="mt-2 mb-2"
+                                >
                                     Completed on {date}
-                                </div>
+                                </Typography>
                                 <>
                                     {filteredLogs
                                         .filter(
@@ -94,17 +107,29 @@ const CompletedChallenges = () => {
                                                             <span className="text-green-600 text-lg">
                                                                 ✓
                                                             </span>
-                                                            <span className="text-sm font-medium text-amber-900 dark:text-amber-200">
+                                                            <Typography
+                                                                as="span"
+                                                                variant="label"
+                                                                tone="primary-soft"
+                                                            >
                                                                 {challengeTitle}
-                                                            </span>
+                                                            </Typography>
                                                         </div>
-                                                        <span className="text-xs text-amber-600 dark:text-amber-400">
+                                                        <Typography
+                                                            as="span"
+                                                            variant="caption"
+                                                            tone="accent"
+                                                        >
                                                             +{log.xpEarned} XP
-                                                        </span>
+                                                        </Typography>
                                                     </div>
                                                     {/* Optional note below the date */}
                                                     {log.note && (
-                                                        <div className="text-xs mt-1 italic text-amber-700 dark:text-amber-400">
+                                                        <Typography
+                                                            variant="caption"
+                                                            tone="warm"
+                                                            className="mt-1 italic"
+                                                        >
                                                             •{" "}
                                                             {log.note.substring(
                                                                 0,
@@ -114,7 +139,7 @@ const CompletedChallenges = () => {
                                                             80
                                                                 ? "..."
                                                                 : ""}
-                                                        </div>
+                                                        </Typography>
                                                     )}
                                                 </div>
                                             );

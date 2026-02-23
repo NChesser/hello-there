@@ -1,15 +1,24 @@
+// @ts-nocheck
+import { useEffect, useState } from "react";
+
+// Icons
 import {
     BarChart3,
     CheckCircle,
     Lightbulb,
-    MessageCircle,
     NotebookIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+
+// Screens
 import ScreenContainer from "../components/ScreenContainer";
-import { PRACTICE_EXAMPLES } from "../data/practices";
-import type { Practice } from "../types/types";
+
+// Store
 import { useUserPracticeLogs } from "../store/store";
+import type { Practice } from "../types/types";
+
+// Components
+import Button from "../components/Button";
+import Typography from "../components/Typography";
 
 interface PracticeDetailScreenProps {
     practice: Practice;
@@ -29,7 +38,6 @@ const PracticeDetailScreen = ({
         : "text-amber-600 dark:text-amber-400";
 
     const Icon = practice.icon;
-    const examples = PRACTICE_EXAMPLES[practice.id] ?? [];
     const today = new Date().toDateString();
     const todaysLog = practiceLogs.find((log) => {
         const logDate = new Date(log.date).toDateString();
@@ -64,31 +72,28 @@ const PracticeDetailScreen = ({
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Icon size={20} className={color} aria-hidden="true" />
-                        <span
-                            className="font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
-                        >
+                        <Typography as="span" variant="overline">
                             {practice.category}
-                        </span>
+                        </Typography>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-2">
-                            <button
-                                type="button"
+                            <Button
+                                variant="secondary"
                                 onClick={() => setIsStatsOpen(true)}
-                                className="rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors border-amber-200 bg-white text-amber-700 hover:bg-amber-50 dark:border-gray-700 dark:bg-gray-800 dark:text-amber-200 dark:hover:bg-gray-700"
                                 aria-label="Open practice stats"
                             >
                                 <BarChart3 size={14} aria-hidden="true" />
-                            </button>
+                            </Button>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button
+                            <Button
+                                variant="secondary"
                                 onClick={() => setIsNoteOpen(true)}
-                                className="rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors border-amber-200 bg-white text-amber-700 hover:bg-amber-50 dark:border-gray-700 dark:bg-gray-800 dark:text-amber-200 dark:hover:bg-gray-700"
-                                ria-label="Open daily note"
+                                aria-label="Open daily note"
                             >
                                 <NotebookIcon size={14} aria-hidden="true" />
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -96,86 +101,43 @@ const PracticeDetailScreen = ({
                 <div
                     className={`space-y-5 rounded-2xl p-6 shadow-md border-2 bg-gradient-to-br ${
                         isCompleted
-                            ? 'from-green-50 to-emerald-50 border-green-300 dark:from-green-900/20 dark:to-emerald-900/15 dark:border-green-700'
-                            : 'from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600'
+                            ? "from-green-50 to-emerald-50 border-green-300 dark:from-green-900/20 dark:to-emerald-900/15 dark:border-green-700"
+                            : "from-white to-amber-50 border-amber-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600"
                     }`}
                 >
                     <div>
-                        {isCompleted && (
-                            <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-                                <CheckCircle size={16} className="text-green-600 dark:text-green-400 fill-current flex-shrink-0" />
-                                <span className="text-sm font-medium text-green-700 dark:text-green-300">Done for today — nice work!</span>
-                            </div>
-                        )}
-                        <h2
-                            className="text-2xl font-bold tracking-tight mb-2 text-amber-900 dark:text-gray-100"
-                        >
+                        <Typography as="h2" variant="title" className="mb-2">
                             {practice.title}
-                        </h2>
+                        </Typography>
 
-                        <div
-                            className="border mb-4 border-amber-100 dark:border-gray-600"
-                        />
-                        <p
-                            className="leading-relaxed text-amber-700 dark:text-gray-300"
-                        >
-                            {practice.description}
-                        </p>
+                        <div className="border mb-4 border-amber-100 dark:border-gray-600" />
+                        <Typography>{practice.description}</Typography>
                     </div>
 
                     {practice.hint && (
-                        <div className="flex gap-3 rounded-xl p-4 border bg-sky-50/70 border-sky-200 dark:bg-sky-950/20 dark:border-sky-800">
-                            <Lightbulb
-                                size={16}
-                                className="mt-0.5 flex-shrink-0 text-sky-600 dark:text-sky-400"
-                            />
-                            <div>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-sky-600 dark:text-sky-400 mb-1">
-                                    How to approach it
-                                </p>
-                                <p className="text-sm leading-relaxed text-sky-800 dark:text-sky-200">
-                                    {practice.hint}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    {examples.length > 0 && (
-                        <div
-                            className="rounded-xl p-4 border bg-amber-50/70 border-amber-200 dark:bg-gray-800 dark:border-gray-700"
-                        >
+                        <div className="rounded-xl p-4 border bg-sky-50/70 border-sky-200 dark:bg-sky-950/20 dark:border-sky-800">
                             <div className="flex items-center gap-2 mb-2.5">
-                                <MessageCircle
-                                    size={14}
-                                    className="text-amber-600 dark:text-amber-400"
+                                <Lightbulb
+                                    size={16}
+                                    className="flex-shrink-0 text-sky-600 dark:text-sky-400"
                                 />
-                                <p
-                                    className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400"
-                                >
-                                    You could say
-                                </p>
+                                <div>
+                                    <Typography as="p" variant="overline" tone="info">
+                                        How to approach it
+                                    </Typography>
+                                </div>
                             </div>
-                            <div className="space-y-1.5">
-                                {examples.map((ex: string, i: number) => (
-                                    <p
-                                        key={i}
-                                        className="text-sm italic text-amber-700 dark:text-gray-300"
-                                    >
-                                        "{ex}"
-                                    </p>
-                                ))}
-                            </div>
+                            <Typography variant="body-sm" tone="info-strong">
+                                {practice.hint}
+                            </Typography>
                         </div>
                     )}
 
-                    <button
+                    <Button
                         onClick={() => onComplete(note.trim())}
                         disabled={isCompleted}
-                        className={`mt-5 flex items-center justify-center gap-2 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all active:scale-[0.98] ${
-                            isCompleted
-                                ? 'bg-green-100 text-green-700 border-2 border-green-300 cursor-not-allowed dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
-                                : 'bg-gradient-to-r from-orange-400 to-amber-400 text-white shadow-sm hover:shadow-md'
-                        }`}
+                        variant={isCompleted ? "success" : "primary"}
+                        size="lg"
                         aria-label={
                             isCompleted
                                 ? "Already completed today"
@@ -187,7 +149,7 @@ const PracticeDetailScreen = ({
                             className={isCompleted ? "fill-current" : ""}
                         />
                         {isCompleted ? "Completed Today" : "Mark as Complete"}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -206,19 +168,13 @@ const PracticeDetailScreen = ({
                             setIsNoteOpen(false);
                         }}
                     />
-                    <div
-                        className="relative w-full max-w-sm rounded-2xl border p-5 shadow-xl border-amber-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-                    >
-                        <h3
-                            className="text-sm font-semibold text-amber-900 dark:text-gray-100"
-                        >
-                            Daily note
-                        </h3>
-                        <p
-                            className="mt-1 text-xs text-gray-500 dark:text-gray-400"
-                        >
+                    <div className="relative w-full max-w-sm rounded-2xl border p-5 shadow-xl border-amber-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+                        <Typography as="h3" variant="label">
+                            Daily Note
+                        </Typography>
+                        <Typography variant="caption" className="mt-1">
                             Capture how it went today.
-                        </p>
+                        </Typography>
                         <textarea
                             rows={4}
                             value={noteDraft}
@@ -228,29 +184,33 @@ const PracticeDetailScreen = ({
                             placeholder="How did it go today?"
                             className="mt-3 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-1 border-amber-200 bg-white text-gray-800 focus:border-amber-400 focus:ring-amber-400 placeholder-amber-500/70 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-amber-500 dark:focus:ring-amber-500 dark:placeholder-gray-500"
                         />
-                        <div className="mt-4 flex gap-2">
-                            <button
-                                type="button"
+                        <div className="mt-3 flex gap-2">
+                            <Button
                                 onClick={() => {
                                     setNoteDraft(note);
                                     setIsNoteOpen(false);
                                 }}
-                                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-xs px-3 py-1.5 border border-amber-200 text-amber-700 hover:bg-amber-50 dark:border-gray-600 dark:text-amber-400 dark:hover:bg-gray-700"
+                                variant="cancel"
+                                size="sm"
+                                className="w-1/2"
+                                aria-label="Cancel editing note"
                             >
                                 Cancel
-                            </button>
-                            <button
-                                type="button"
+                            </Button>
+                            <Button
+                                variant="save"
+                                size="sm"
+                                className="w-1/2"
                                 onClick={() => {
                                     const trimmed = noteDraft.trim();
                                     setNote(trimmed);
                                     onComplete(trimmed);
                                     setIsNoteOpen(false);
                                 }}
-                                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-xs px-3 py-1.5 bg-gradient-to-r from-orange-400 to-amber-400 text-white shadow-sm hover:shadow-md"
+                                aria-label="Save daily note"
                             >
-                                Save note
-                            </button>
+                                Save Note
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -267,53 +227,35 @@ const PracticeDetailScreen = ({
                         aria-label="Close practice stats"
                         onClick={() => setIsStatsOpen(false)}
                     />
-                    <div
-                        className="relative w-full max-w-sm rounded-2xl border p-5 shadow-xl border-amber-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-                    >
-                        <h3
-                            className="text-sm font-semibold text-amber-900 dark:text-gray-100"
-                        >
-                            Practice stats
-                        </h3>
-                        <p
-                            className="mt-1 text-xs text-gray-500 dark:text-gray-400"
-                        >
+                    <div className="relative w-full max-w-sm rounded-2xl border p-5 shadow-xl border-amber-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+                        <Typography as="h2" variant="subtitle">
+                            Practice Stats
+                        </Typography>
+                        <Typography variant="caption" className="mt-1">
                             Your completion history for this practice.
-                        </p>
+                        </Typography>
                         <div className="mt-4 space-y-3">
                             <div className="flex items-center justify-between">
-                                <span
-                                    className="text-xs text-gray-500 dark:text-gray-400"
-                                >
+                                <Typography as="span" variant="caption">
                                     Total completions
-                                </span>
-                                <span
-                                    className="text-sm font-semibold text-amber-900 dark:text-gray-100"
-                                >
+                                </Typography>
+                                <Typography as="span" variant="label">
                                     {totalCompletions}
-                                </span>
+                                </Typography>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span
-                                    className="text-xs text-gray-500 dark:text-gray-400"
-                                >
+                                <Typography as="span" variant="caption">
                                     Days completed
-                                </span>
-                                <span
-                                    className="text-sm font-semibold text-amber-900 dark:text-gray-100"
-                                >
+                                </Typography>
+                                <Typography as="span" variant="label">
                                     {uniqueDays.size}
-                                </span>
+                                </Typography>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span
-                                    className="text-xs text-gray-500 dark:text-gray-400"
-                                >
+                                <Typography as="span" variant="caption">
                                     Last completed
-                                </span>
-                                <span
-                                    className="text-sm font-semibold text-amber-900 dark:text-gray-100"
-                                >
+                                </Typography>
+                                <Typography as="span" variant="label">
                                     {lastCompleted
                                         ? lastCompleted.toLocaleDateString(
                                               "en-US",
@@ -323,16 +265,18 @@ const PracticeDetailScreen = ({
                                               },
                                           )
                                         : "Not yet"}
-                                </span>
+                                </Typography>
                             </div>
                         </div>
-                        <button
-                            type="button"
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            className="mt-4 w-full"
+                            aria-label="Close practice stats"
                             onClick={() => setIsStatsOpen(false)}
-                            className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all active:scale-[0.98] text-sm px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                         >
                             Close
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}

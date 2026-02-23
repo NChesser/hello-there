@@ -1,6 +1,7 @@
 import { useUserProgress } from "../store/store";
 import { Users, Sparkles, Flower2 } from "lucide-react";
 import { getXpForLevel, getXpProgress } from "../utils/helpers";
+import Typography from "./Typography";
 
 const XPDisplayCompact = () => {
     const userProgress = useUserProgress();
@@ -17,15 +18,27 @@ const XPDisplayCompact = () => {
                         🐨
                     </div>
                     <div>
-                        <p className="text-xs font-medium uppercase text-amber-600 dark:text-amber-400">Level</p>
-                        <p className="text-2xl font-bold text-amber-900 dark:text-amber-200">{userProgress.level}</p>
+                        <Typography as="p" variant="overline">
+                            Level
+                        </Typography>
+                        <Typography
+                            variant="title"
+                            className="text-amber-900 dark:text-amber-200"
+                        >
+                            {userProgress.level}
+                        </Typography>
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-xs font-medium text-amber-600 dark:text-amber-400">XP</p>
-                    <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                    <Typography as="p" variant="overline">
+                        XP
+                    </Typography>
+                    <Typography
+                        variant="label"
+                        className="text-amber-900 dark:text-amber-200"
+                    >
                         {getXpProgress(userProgress.totalXp)} / {getXpForLevel(userProgress.level)}
-                    </p>
+                    </Typography>
                 </div>
             </div>
 
@@ -41,26 +54,41 @@ const XPDisplayCompact = () => {
             <div className="grid grid-cols-3 gap-2">
                 <div className="rounded-lg p-2 border text-center bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800">
                     <Sparkles size={16} className="mx-auto mb-1 text-blue-600 dark:text-blue-400" />
-                    <p className="text-lg font-bold text-blue-900 dark:text-blue-300">
+                    <Typography
+                        variant="subtitle"
+                        className="font-bold text-blue-900 dark:text-blue-300"
+                    >
                         {userProgress.completedChallenges.length}
-                    </p>
-                    <p className="text-xs text-blue-700 dark:text-blue-400">Challenges</p>
+                    </Typography>
+                    <Typography variant="caption" className="text-blue-700 dark:text-blue-400">
+                        Challenges
+                    </Typography>
                 </div>
 
                 <div className="rounded-lg p-2 border text-center bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800">
                     <Flower2 size={16} className="mx-auto mb-1 text-green-600 dark:text-green-400" />
-                        <p className="text-lg font-bold text-green-900 dark:text-green-300">
-                            {userProgress.completedPractices.length}
-                    </p>
-                        <p className="text-xs text-green-700 dark:text-green-400">Practices</p>
+                    <Typography
+                        variant="subtitle"
+                        className="font-bold text-green-900 dark:text-green-300"
+                    >
+                        {userProgress.completedPractices.length}
+                    </Typography>
+                    <Typography variant="caption" className="text-green-700 dark:text-green-400">
+                        Practices
+                    </Typography>
                 </div>
 
                 <div className="rounded-lg p-2 border text-center bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800">
                     <Users size={16} className="mx-auto mb-1 text-purple-600 dark:text-purple-400" />
-                    <p className="text-lg font-bold text-purple-900 dark:text-purple-300">
+                    <Typography
+                        variant="subtitle"
+                        className="font-bold text-purple-900 dark:text-purple-300"
+                    >
                         {userProgress.peopleMet.length}
-                    </p>
-                    <p className="text-xs text-purple-700 dark:text-purple-400">People</p>
+                    </Typography>
+                    <Typography variant="caption" className="text-purple-700 dark:text-purple-400">
+                        People
+                    </Typography>
                 </div>
             </div>
         </div>
