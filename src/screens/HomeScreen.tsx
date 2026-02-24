@@ -4,12 +4,6 @@ import { useMemo, useState } from "react";
 // Store
 import { useUserProgress, useUserProgressStore } from "../store/store";
 
-// Data
-import { getUserTier, getNextTier } from "../data/tiers";
-
-// Helpers
-import { getXpProgress, getXpForLevel } from "../utils/helpers";
-
 // Types
 import type { Mood } from "../types/types";
 

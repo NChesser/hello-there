@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 // Store
 import { useSelectedScreen, useSetSelectedScreen, useTodayChallenge, useTodayChallengeStore } from "./store/store";
-import koalaIcon from "./assets/images/KoalaIcon.png";
 
 // Data Imports
 import { CHALLENGES } from "./data/challenges";
@@ -72,7 +71,7 @@ const LoadingSkeleton = () => {
     );
 };
 
-const CozychallengeApp = () => {
+const Ascuas = () => {
 
     // Onboarding
     const { hasSeenOnboarding, completeOnboarding } = useOnboarding();
@@ -183,4 +182,4 @@ const CozychallengeApp = () => {
     );
 };
 
-export default CozychallengeApp;
+export default Ascuas;
