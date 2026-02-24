@@ -74,7 +74,7 @@ const HomeScreen: React.FC = () => {
             <DailyQuote />
 
             {/* Tier + XP */}
-            <Card variant="soft">
+            {/* <Card variant="soft">
                 <View style={styles.tierRow}>
                     <Text style={styles.tierEmoji}>{tier.emoji}</Text>
                     <View style={{ flex: 1 }}>
@@ -97,37 +97,16 @@ const HomeScreen: React.FC = () => {
                         </Typography>
                     </View>
                 </View>
-            </Card>
+            </Card> */}
 
             {/* Today's Challenge */}
             {todayChallenge && (
                 <Card variant="elevated">
-                    <View style={styles.challengeHeader}>
-                        <Typography variant="overline">
-                            Today's Challenge
-                        </Typography>
-                        <View style={styles.heartsRow}>
-                            {[...Array(5)].map((_, i) => (
-                                <Heart
-                                    key={i}
-                                    size={14}
-                                    color={
-                                        i < todayChallenge.discomfortRating
-                                            ? Colors.amber400
-                                            : Colors.amber200
-                                    }
-                                    fill={
-                                        i < todayChallenge.discomfortRating
-                                            ? Colors.amber400
-                                            : 'transparent'
-                                    }
-                                />
-                            ))}
-                        </View>
-                    </View>
+                    
                     <Typography variant="title" style={{ marginTop: 8 }}>
                         {todayChallenge.title}
                     </Typography>
+                    <View style={{ borderBottomWidth: 2, borderBottomColor: Colors.amber200, marginVertical: 8 }} />
                     <Typography variant="body" style={{ marginTop: 4 }}>
                         {todayChallenge.description}
                     </Typography>
@@ -156,6 +135,31 @@ const HomeScreen: React.FC = () => {
                         >
                             <Text style={styles.secondaryBtnText}>Try Another</Text>
                         </Button>
+                    </View>
+                    <View style={{ borderBottomWidth: 2, borderBottomColor: Colors.amber200, marginVertical: 16 }} />
+
+                    <View style={styles.challengeHeader}>
+                        <Typography variant="overline">
+                            {todayChallenge.category?.replace('-', ' ') ?? 'General'}
+                        </Typography>
+                        <View style={styles.heartsRow}>
+                            {[...Array(5)].map((_, i) => (
+                                <Heart
+                                    key={i}
+                                    size={14}
+                                    color={
+                                        i < todayChallenge.discomfortRating
+                                            ? Colors.amber400
+                                            : Colors.amber200
+                                    }
+                                    fill={
+                                        i < todayChallenge.discomfortRating
+                                            ? Colors.amber400
+                                            : 'transparent'
+                                    }
+                                />
+                            ))}
+                        </View>
                     </View>
                 </Card>
             )}

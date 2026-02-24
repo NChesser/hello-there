@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import { Animated } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Sparkles, Flower2, Users, BookOpen, Settings } from 'lucide-react-native';
@@ -17,6 +18,41 @@ import ReflectScreen from '../screens/ReflectScreen';
 import PracticeDetailScreen from '../screens/PracticeDetailScreen';
 import PersonDetailScreen from '../screens/PersonDetailScreen';
 
+// ── Fade-in wrapper for each tab screen ──────────────────────
+const FadeInScreen: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(12)).current;
+
+  useEffect(() => {
+    opacity.setValue(0);
+    translateY.setValue(12);
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [opacity, translateY]);
+
+  return (
+    <Animated.View style={{ flex: 1, opacity, transform: [{ translateY }] }}>
+      {children}
+    </Animated.View>
+  );
+};
+
+const withFade = (Screen: React.ComponentType) => () => (
+  <FadeInScreen>
+    <Screen />
+  </FadeInScreen>
+);
+
 // ── Bottom Tabs ──────────────────────────────────────────────
 const Tab = createBottomTabNavigator < BottomTabParamList > ();
 
@@ -27,6 +63,7 @@ const BottomTabs = () => (
             headerTintColor: Colors.amber900,
             headerTitleStyle: { fontWeight: '700', fontSize: 20, paddingBottom: 15 },
             headerShadowVisible: false,
+            lazy: false,
             tabBarActiveTintColor: Colors.amber600,
             tabBarInactiveTintColor: Colors.amber300,
             tabBarStyle: {
@@ -44,7 +81,7 @@ const BottomTabs = () => (
     >
         <Tab.Screen
             name="HomeTab"
-            component={HomeScreen}
+            component={withFade(HomeScreen)}
             options={{
                 title: 'Ascuas',
                 tabBarLabel: 'Home',
@@ -53,7 +90,7 @@ const BottomTabs = () => (
         />
         <Tab.Screen
             name="PracticeTab"
-            component={PracticesScreen}
+            component={withFade(PracticesScreen)}
             options={{
                 title: 'Practices',
                 tabBarLabel: 'Practice',
@@ -62,7 +99,7 @@ const BottomTabs = () => (
         />
         <Tab.Screen
             name="PeopleTab"
-            component={PeopleScreen}
+            component={withFade(PeopleScreen)}
             options={{
                 title: 'People',
                 tabBarLabel: 'People',
@@ -71,7 +108,7 @@ const BottomTabs = () => (
         />
         <Tab.Screen
             name="JourneyTab"
-            component={JourneyScreen}
+            component={withFade(JourneyScreen)}
             options={{
                 title: 'Journey',
                 tabBarLabel: 'Journey',
@@ -80,7 +117,7 @@ const BottomTabs = () => (
         />
         <Tab.Screen
             name="SettingsTab"
-            component={SettingsScreen}
+            component={withFade(SettingsScreen)}
             options={{
                 title: 'Settings',
                 tabBarLabel: 'Settings',
