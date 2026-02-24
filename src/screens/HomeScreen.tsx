@@ -64,11 +64,14 @@ const HomeScreen = () => {
                 {/* ... (unchanged code) */}
             </div>
             {/* Fixed bottom buttons */}
-            <div className="fixed bottom-0 left-0 w-full flex justify-between px-6 py-4">
+            <div className="fixed bottom-0 left-0 w-full flex px-6 py-4">
                 <MoodCheckIn
                     selectedMood={selectedMood}
                     onMoodSelected={handleMoodSelected}
                 />
+                <div className="flex-1" /> {/* Spacer */}
+                <IntentionPrompt />
+                <div className="w-3" /> {/* Spacer */}
                 <IntentionPrompt />
             </div>
         </ScreenContainer>

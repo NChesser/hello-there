@@ -119,7 +119,7 @@ const ChallengeCard = () => {
                     <Button
                         onClick={handleSkip}
                         disabled={animPhase !== "idle"}
-                        variant="secondary"
+                        variant="icon"
                         size="lg"
                         className="mt-3"
                         aria-label="Skip this challenge and get another one"

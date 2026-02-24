@@ -121,6 +121,7 @@ export type Interaction = {
 export type PersonalNote = {
   id: string;
   text: string;
+  createdAt?: string;
 };
 
 /** Person met tracking */
