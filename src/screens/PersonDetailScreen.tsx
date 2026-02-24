@@ -11,7 +11,6 @@ import TabBar from "../components/TabBar";
 import { useConfirmDialog } from "../hooks/useConfirmDialog";
 import Card from "../components/Card";
 
-
 // Icons
 import {
     Edit2,
@@ -29,11 +28,13 @@ import {
     Sprout,
     Calendar,
     Sparkles,
+    Notebook,
 } from "lucide-react";
 
 // Types
 import type { PersonMet, Interaction, PersonalNote } from "../types/types";
 import { RELATIONSHIP_TAGS, THINGS_THEY_LIKE_OPTIONS } from "../types/types";
+import Typography from "../components/Typography";
 
 interface PersonDetailScreenProps {
     personId: string;
@@ -57,8 +58,12 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
     const [editBirthday, setEditBirthday] = useState("");
     const [newInteractionText, setNewInteractionText] = useState("");
     const [isAddingInteraction, setIsAddingInteraction] = useState(false);
+    const [editingInteractionId, setEditingInteractionId] = useState<string | null>(null);
+    const [editingInteractionText, setEditingInteractionText] = useState("");
     const [newNoteText, setNewNoteText] = useState("");
     const [isAddingNote, setIsAddingNote] = useState(false);
+    const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+    const [editingNoteText, setEditingNoteText] = useState("");
     const [detailTab, setDetailTab] = useState<"about" | "moments" | "growth">(
         "about",
     );
@@ -165,11 +170,41 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
         });
     };
 
+    const startEditInteraction = (interaction: Interaction) => {
+        setEditingInteractionId(interaction.id);
+        setEditingInteractionText(interaction.text);
+    };
+
+    const cancelEditInteraction = () => {
+        setEditingInteractionId(null);
+        setEditingInteractionText("");
+    };
+
+    const saveEditInteraction = () => {
+        if (!editingInteractionId || !editingInteractionText.trim()) return;
+        setUserProgress({
+            peopleMet: people.map((p) =>
+                p.id === personId
+                    ? {
+                          ...p,
+                          interactions: (p.interactions || []).map((i) =>
+                              i.id === editingInteractionId
+                                  ? { ...i, text: editingInteractionText.trim() }
+                                  : i,
+                          ),
+                      }
+                    : p,
+            ),
+        });
+        cancelEditInteraction();
+    };
+
     const addNote = () => {
         if (!newNoteText.trim()) return;
         const note: PersonalNote = {
             id: Date.now().toString(),
             text: newNoteText.trim(),
+            createdAt: new Date().toISOString(),
         };
         setUserProgress({
             peopleMet: people.map((p) =>
@@ -200,6 +235,35 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
         });
     };
 
+    const startEditNote = (note: PersonalNote) => {
+        setEditingNoteId(note.id);
+        setEditingNoteText(note.text);
+    };
+
+    const cancelEditNote = () => {
+        setEditingNoteId(null);
+        setEditingNoteText("");
+    };
+
+    const saveEditNote = () => {
+        if (!editingNoteId || !editingNoteText.trim()) return;
+        setUserProgress({
+            peopleMet: people.map((p) =>
+                p.id === personId
+                    ? {
+                          ...p,
+                          personalNotes: (p.personalNotes || []).map((n) =>
+                              n.id === editingNoteId
+                                  ? { ...n, text: editingNoteText.trim() }
+                                  : n,
+                          ),
+                      }
+                    : p,
+            ),
+        });
+        cancelEditNote();
+    };
+
     const removePerson = async () => {
         const confirmed = await confirm({
             title: "Remove Person",
@@ -222,7 +286,7 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
             {/* Person header */}
             <Card variant="elevated" className="overflow-hidden">
                 {/* Top section: avatar, name, actions */}
-                <div className="flex items-start gap-3 p-5 pb-3">
+                <div className="flex items-start gap-3">
                     <div className="relative flex-shrink-0">
                         <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold bg-amber-100 text-amber-700 dark:bg-gray-700 dark:text-amber-300">
                             {person.name.charAt(0).toUpperCase()}
@@ -271,7 +335,7 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
                             </div>
                         )}
                         {/* Meta chips row */}
-                        <div className="flex items-center gap-3 flex-wrap mt-2">
+                        <div className="flex items-center gap-3 flex-wrap mt-2 w-full">
                             <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
                                 <Calendar size={11} /> {person.meetDate}
                             </span>
@@ -316,21 +380,21 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
 
                 {/* Something Interesting quote */}
                 {!isEditing && person.somethingInteresting && (
-                    <div className="mx-5 mb-4 rounded-lg px-4 py-3 border-l-4 border-blue-300 bg-blue-50/70 dark:bg-blue-900/15 dark:border-blue-600">
-                        <p className="text-xs font-medium mb-0.5 text-blue-600 dark:text-blue-400">
-                            <Sparkles size={11} className="inline mr-0.5" />{" "}
-                            Something Interesting
-                        </p>
-                        <p className="text-sm italic text-blue-800 dark:text-blue-300">
-                            "{person.somethingInteresting}"
-                        </p>
+                    <div className="mt-4 border-t border-amber-200 dark:border-gray-600 pt-3">
+                        <Typography
+                            variant="body-sm"
+                            tone="accent"
+                            className="flex items-center gap-2"
+                        >
+                            {person.somethingInteresting}
+                        </Typography>
                     </div>
                 )}
 
                 {/* Details section */}
                 {isEditing && (
-                    <div className="space-y-3 px-5 pb-5 pt-3 border-t border-amber-200 dark:border-gray-600">
-                        {/* Something Interesting + Where Met */}
+                    <div className="space-y-5 px-5 pb-5 pt-3 border-t mt-3 border-amber-200 dark:border-gray-600">
+                        {/* Something Interesting + Where You Met */}
                         <div>
                             <label className="block text-[11px] font-medium mb-1 text-amber-700 dark:text-amber-300">
                                 Something Interesting
@@ -352,7 +416,7 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
                                         size={11}
                                         className="inline mr-0.5"
                                     />{" "}
-                                    Where Met
+                                    Where You Met
                                 </label>
                                 <input
                                     type="text"
@@ -439,6 +503,7 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
                                 ))}
                             </div>
                         </div>
+                        <div className="border-t border-amber-200 dark:border-gray-600 mt-4" />
                         <div className="flex gap-2 justify-end pt-1">
                             <Button
                                 onClick={cancelEdit}
@@ -493,64 +558,151 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
             {/* ── About Them Tab ── */}
             {detailTab === "about" && (
                 <div className="border-2 rounded-2xl p-5 shadow-sm mt-3 bg-white border-amber-200 dark:bg-gray-800 dark:border-gray-700">
-                    <div className="space-y-3">
-                        {person.whereMet && (
-                            <div className="rounded-lg p-4 border bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800">
-                                <p className="text-xs font-medium mb-1.5 flex items-center gap-1 text-green-700 dark:text-green-400">
-                                    <MapPin size={12} /> Where You Met
-                                </p>
-                                <p className="text-sm text-green-900 dark:text-green-300">
-                                    {person.whereMet}
-                                </p>
-                            </div>
-                        )}
-
-                        {person.thingsTheyLike &&
-                            person.thingsTheyLike.length > 0 && (
-                                <div className="rounded-lg p-4 border bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800">
-                                    <p className="text-xs font-medium mb-1.5 flex items-center gap-1 text-purple-700 dark:text-purple-400">
-                                        <Heart size={12} /> Things They Like
-                                    </p>
-                                    <div className="flex flex-wrap gap-1.5 mt-1">
-                                        {person.thingsTheyLike.map((like) => (
-                                            <span
-                                                key={like}
-                                                className="text-xs px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-800/40 dark:text-purple-300 font-medium"
-                                            >
-                                                {like}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-base font-semibold text-amber-900 dark:text-amber-200 flex items-center gap-2">
+                            <Notebook
+                                size={16}
+                                className="text-green-600 dark:text-green-400"
+                            />
+                            Notes & Reflections
+                            {(person.personalNotes?.length ?? 0) > 0 && (
+                                <span className="text-xs font-normal text-amber-500 dark:text-gray-400">
+                                    ({person.personalNotes!.length})
+                                </span>
                             )}
-
-                        {person.birthday && (
-                            <div className="rounded-lg p-4 border bg-pink-50 border-pink-200 dark:bg-pink-900/20 dark:border-pink-800">
-                                <p className="text-xs font-medium mb-1.5 flex items-center gap-1 text-pink-700 dark:text-pink-400">
-                                    <Cake size={12} /> Birthday
-                                </p>
-                                <p className="text-sm text-pink-900 dark:text-pink-300">
-                                    {new Date(
-                                        person.birthday + "T00:00",
-                                    ).toLocaleDateString("en-US", {
-                                        month: "long",
-                                        day: "numeric",
-                                    })}
-                                </p>
-                            </div>
+                        </h3>
+                        {!isAddingNote && (
+                            <Button
+                                onClick={() => setIsAddingNote(true)}
+                                variant="ghost"
+                                size="sm"
+                            >
+                                <Plus size={14} />
+                                Add
+                            </Button>
                         )}
-
-                        {!person.whereMet &&
-                            !person.birthday &&
-                            (!person.thingsTheyLike ||
-                                person.thingsTheyLike.length === 0) && (
-                                <div className="rounded-lg p-4 border border-dashed border-amber-200 dark:border-gray-600">
-                                    <p className="text-sm text-amber-500 dark:text-gray-500 text-center">
-                                        No details yet — tap Edit to add some
-                                    </p>
-                                </div>
-                            )}
                     </div>
+
+                    {/* Add note input */}
+                    {isAddingNote && (
+                        <div className="mb-4 flex gap-2">
+                            <textarea
+                                rows={3}
+                                value={newNoteText}
+                                onChange={(e) => setNewNoteText(e.target.value)}
+                                placeholder="Add a personal note or reflection…"
+                                className="flex-1 p-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 resize-none border-amber-200 focus:ring-amber-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:ring-amber-500 dark:placeholder-gray-500"
+                                autoFocus
+                            />
+                            <button
+                                onClick={addNote}
+                                disabled={!newNoteText.trim()}
+                                className="p-2.5 rounded-lg transition-colors disabled:opacity-40 bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-500"
+                                aria-label="Save note"
+                            >
+                                <Send size={16} />
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsAddingNote(false);
+                                    setNewNoteText("");
+                                }}
+                                className="p-2.5 rounded-lg transition-colors text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                aria-label="Cancel"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Notes list */}
+                    {!person.personalNotes ||
+                    person.personalNotes.length === 0 ? (
+                        <div className="rounded-lg p-6 text-center border border-dashed border-amber-200 dark:border-gray-600">
+                            <p className="text-sm text-amber-500 dark:text-gray-500">
+                                No notes yet
+                            </p>
+                            <p className="text-xs mt-1 text-amber-400 dark:text-gray-600">
+                                Tap "Add" to jot down a thought or reflection
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="space-y-2">
+                            {person.personalNotes.map((note) => (
+                                <div key={note.id} className="flex gap-2 group">
+                                    <div className="flex-1 rounded-lg p-3 border transition-colors bg-green-50/50 border-green-100 dark:bg-gray-700/30 dark:border-gray-600">
+                                        {editingNoteId === note.id ? (
+                                            <textarea
+                                                rows={3}
+                                                value={editingNoteText}
+                                                onChange={(e) =>
+                                                    setEditingNoteText(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="w-full px-2 py-1 text-sm border rounded-md focus:outline-none focus:ring-2 resize-none border-amber-200 focus:ring-amber-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:ring-amber-500"
+                                                autoFocus
+                                            />
+                                        ) : (
+                                            <>
+                                                <p className="text-sm text-amber-900 dark:text-gray-200">
+                                                    {note.text}
+                                                </p>
+                                                {note.createdAt && (
+                                                    <p className="text-xs mt-1 text-amber-400 dark:text-gray-500">
+                                                        {new Date(
+                                                            note.createdAt,
+                                                        ).toLocaleDateString(
+                                                            "en-US",
+                                                            {
+                                                                month: "short",
+                                                                day: "numeric",
+                                                            },
+                                                        )}
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+                                    {editingNoteId === note.id ? (
+                                        <div className="self-center flex gap-1">
+                                            <button
+                                                onClick={saveEditNote}
+                                                className="p-1 rounded text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20"
+                                                aria-label="Save note"
+                                            >
+                                                <Save size={12} />
+                                            </button>
+                                            <button
+                                                onClick={cancelEditNote}
+                                                className="p-1 rounded text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                aria-label="Cancel edit note"
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="self-center flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                onClick={() => startEditNote(note)}
+                                                className="p-1 rounded text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-gray-700"
+                                                aria-label="Edit note"
+                                            >
+                                                <Edit2 size={12} />
+                                            </button>
+                                            <button
+                                                onClick={() => removeNote(note.id)}
+                                                className="p-1 rounded text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                aria-label="Remove note"
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -647,25 +799,73 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
                                         </div>
                                         {/* Content */}
                                         <div className="flex-1 rounded-lg p-3 border transition-colors bg-amber-50/50 border-amber-100 dark:bg-gray-700/30 dark:border-gray-600">
-                                            <p className="text-sm text-amber-900 dark:text-gray-200">
-                                                {interaction.text}
-                                            </p>
+                                            {editingInteractionId === interaction.id ? (
+                                                <input
+                                                    value={editingInteractionText}
+                                                    onChange={(e) =>
+                                                        setEditingInteractionText(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) =>
+                                                        e.key === "Enter" &&
+                                                        saveEditInteraction()
+                                                    }
+                                                    className="w-full px-2 py-1 text-sm border rounded-md focus:outline-none focus:ring-2 border-amber-200 focus:ring-amber-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:ring-amber-500"
+                                                    autoFocus
+                                                />
+                                            ) : (
+                                                <p className="text-sm text-amber-900 dark:text-gray-200">
+                                                    {interaction.text}
+                                                </p>
+                                            )}
                                             <p className="text-xs mt-1 text-amber-400 dark:text-gray-500">
                                                 {interaction.date}
                                             </p>
                                         </div>
-                                        {/* Remove button (on hover) */}
-                                        <button
-                                            onClick={() =>
-                                                removeInteraction(
-                                                    interaction.id,
-                                                )
-                                            }
-                                            className="self-center p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                            aria-label="Remove interaction"
-                                        >
-                                            <X size={12} />
-                                        </button>
+                                        {editingInteractionId === interaction.id ? (
+                                            <div className="self-center flex gap-1">
+                                                <button
+                                                    onClick={saveEditInteraction}
+                                                    className="p-1 rounded text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20"
+                                                    aria-label="Save interaction"
+                                                >
+                                                    <Save size={12} />
+                                                </button>
+                                                <button
+                                                    onClick={cancelEditInteraction}
+                                                    className="p-1 rounded text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                    aria-label="Cancel edit interaction"
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="self-center flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={() =>
+                                                        startEditInteraction(
+                                                            interaction,
+                                                        )
+                                                    }
+                                                    className="p-1 rounded text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-gray-700"
+                                                    aria-label="Edit interaction"
+                                                >
+                                                    <Edit2 size={12} />
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        removeInteraction(
+                                                            interaction.id,
+                                                        )
+                                                    }
+                                                    className="p-1 rounded text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                    aria-label="Remove interaction"
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -677,97 +877,26 @@ const PersonDetailScreen = ({ personId, onBack }: PersonDetailScreenProps) => {
             {/* ── Growth Tab ── */}
             {detailTab === "growth" && (
                 <div className="border-2 rounded-2xl p-5 shadow-sm mt-3 bg-white border-amber-200 dark:bg-gray-800 dark:border-gray-700">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-base font-semibold text-amber-900 dark:text-amber-200 flex items-center gap-2">
-                            <Sprout
-                                size={16}
-                                className="text-green-600 dark:text-green-400"
-                            />
-                            Growth
-                            {(person.personalNotes?.length ?? 0) > 0 && (
-                                <span className="text-xs font-normal text-amber-500 dark:text-gray-400">
-                                    ({person.personalNotes!.length})
-                                </span>
-                            )}
-                        </h3>
-                        {!isAddingNote && (
-                            <Button
-                                onClick={() => setIsAddingNote(true)}
-                                variant="ghost"
-                                size="sm"
-                            >
-                                <Plus size={14} />
-                                Add
-                            </Button>
-                        )}
+                    <div className="flex items-center gap-2 mb-2">
+                        <Typography variant="subtitle">AI Relationship Insights</Typography>
                     </div>
-
-                    {/* Add note input */}
-                    {isAddingNote && (
-                        <div className="mb-4 flex gap-2">
-                            <input
-                                type="text"
-                                value={newNoteText}
-                                onChange={(e) => setNewNoteText(e.target.value)}
-                                onKeyDown={(e) =>
-                                    e.key === "Enter" && addNote()
-                                }
-                                placeholder="Add a personal note or reflection…"
-                                className="flex-1 p-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 border-amber-200 focus:ring-amber-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:ring-amber-500 dark:placeholder-gray-500"
-                                autoFocus
-                            />
-                            <button
-                                onClick={addNote}
-                                disabled={!newNoteText.trim()}
-                                className="p-2.5 rounded-lg transition-colors disabled:opacity-40 bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-500"
-                                aria-label="Save note"
-                            >
-                                <Send size={16} />
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setIsAddingNote(false);
-                                    setNewNoteText("");
-                                }}
-                                className="p-2.5 rounded-lg transition-colors text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                aria-label="Cancel"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Notes list */}
-                    {!person.personalNotes ||
-                    person.personalNotes.length === 0 ? (
-                        <div className="rounded-lg p-6 text-center border border-dashed border-amber-200 dark:border-gray-600">
-                            <p className="text-sm text-amber-500 dark:text-gray-500">
-                                No notes yet
-                            </p>
-                            <p className="text-xs mt-1 text-amber-400 dark:text-gray-600">
-                                Tap "Add" to jot down a thought or reflection
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="space-y-2">
-                            {person.personalNotes.map((note) => (
-                                <div key={note.id} className="flex gap-2 group">
-                                    <div className="flex-1 rounded-lg p-3 border transition-colors bg-green-50/50 border-green-100 dark:bg-gray-700/30 dark:border-gray-600">
-                                        <p className="text-sm text-amber-900 dark:text-gray-200">
-                                            {note.text}
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={() => removeNote(note.id)}
-                                        className="self-center p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                        aria-label="Remove note"
-                                    >
-                                        <X size={12} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* Example: You would call your AI API here and show the result below */}
+                    <div>
+                        {/* Placeholder for AI summary */}
+                        <Typography
+                            variant="body-sm"
+                            tone="accent"
+                            className="mb-3"
+                        >
+                            {/* 
+                                Example: 
+                                "Based on your notes and moments, you seem to connect with {person.name} over {summary of shared interests or frequent topics}. 
+                                Consider asking about {suggested topic} next time, or planning an activity around {shared interest}."
+                            */}
+                            (AI-generated insights about your relationship with{" "}
+                            {person.name} will appear here.)
+                        </Typography>
+                    </div>
                 </div>
             )}
         </ScreenContainer>

@@ -104,6 +104,7 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
         <>
             <Button
                 variant="icon"
+                size="xl"
                 aria-label={`tap to update`}
                 onClick={() => setIsOpen(!isOpen)}
                 className={selectedMood ? "text-amber-400 dark:text-gray-500" : "border-dotted text-amber-400 dark:text-gray-500"}
@@ -143,12 +144,6 @@ const MoodCheckIn = ({ onMoodSelected, selectedMood }: MoodCheckInProps) => {
                                 className="font-medium text-amber-700 dark:text-gray-300"
                             >
                                 How are you feeling?
-                            </Typography>
-                            <Typography
-                                variant="caption"
-                                className="text-amber-400 dark:text-gray-500"
-                            >
-                                Quick mood check-in
                             </Typography>
                         </div>
                     </div>

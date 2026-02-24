@@ -4,6 +4,7 @@ import ScreenContainer from "../components/ScreenContainer";
 import PracticeCard from "../components/PracticeCard";
 import { Sparkles } from "lucide-react";
 import type { PracticeLog } from "../types/types";
+import Typography from "../components/Typography";
 
 const PracticesScreen = () => {
     const setScreen = useScreenStore((state) => state.setSelectedScreen);
@@ -11,6 +12,30 @@ const PracticesScreen = () => {
     const setUserProgress = useSetUserProgressStore();
     const excludedPractices = userProgress.excludedPractices || [];
     const practices = PRACTICES.filter((practice) => !excludedPractices.includes(practice.id));
+
+    const CATEGORY_ORDER = [
+        "social",
+        "connection",
+        "growth",
+        "mindset",
+        "wellbeing",
+        "avoidance",
+    ] as const;
+
+    const CATEGORY_LABELS: Record<(typeof CATEGORY_ORDER)[number], string> = {
+        social: "Social",
+        connection: "Connection",
+        growth: "Growth",
+        mindset: "Mindset",
+        wellbeing: "Wellbeing",
+        avoidance: "Avoidance",
+    };
+
+    const practicesByCategory = CATEGORY_ORDER.map((category) => ({
+        category,
+        label: CATEGORY_LABELS[category],
+        items: practices.filter((practice) => practice.category === category),
+    })).filter((group) => group.items.length > 0);
 
     // Get today's date string for comparison
     const today = new Date().toDateString();
@@ -94,15 +119,28 @@ const PracticesScreen = () => {
             )}
 
             {/* Practices List */}
-            <div className="grid grid-cols-3 gap-4">
-                {practices.map((practice) => (
-                    <PracticeCard
-                        key={practice.id}
-                        practice={practice}
-                        isCompleted={isPracticeCompletedToday(practice.id)}
-                        onComplete={() => handlePracticeComplete(practice.id)}
-                        onClick={() => handlePracticeClick(practice.id)}
-                    />
+            <div className="space-y-6">
+                {practicesByCategory.map((group) => (
+                    <div key={group.category} className="space-y-3">
+                        <Typography as="h3" variant="label">
+                            {group.label}
+                        </Typography>
+                        <div className="grid grid-cols-3 gap-4">
+                            {group.items.map((practice) => (
+                                <PracticeCard
+                                    key={practice.id}
+                                    practice={practice}
+                                    isCompleted={isPracticeCompletedToday(practice.id)}
+                                    onComplete={() =>
+                                        handlePracticeComplete(practice.id)
+                                    }
+                                    onClick={() =>
+                                        handlePracticeClick(practice.id)
+                                    }
+                                />
+                            ))}
+                        </div>
+                    </div>
                 ))}
             </div>
         </ScreenContainer>
