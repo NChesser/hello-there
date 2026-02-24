@@ -26,11 +26,11 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
     );
 
     // Local state
-    const [beforeFeeling, setBeforeFeling] = useState<number>(3);
-    const [afterFeeling, setAfterFeeling] = useState<number>(3);
-    const [note, setNote] = useState<string>("");
-    const [showConfetti, setShowConfetti] = useState<boolean>(false);
-    const [showSuccess, setShowSuccess] = useState<boolean>(false);
+    const [beforeFeeling, setBeforeFeling] = useState < number > (3);
+    const [afterFeeling, setAfterFeeling] = useState < number > (3);
+    const [note, setNote] = useState < string > ("");
+    const [showConfetti, setShowConfetti] = useState < boolean > (false);
+    const [showSuccess, setShowSuccess] = useState < boolean > (false);
 
     // Functions
     const handleReflect = async () => {
@@ -104,11 +104,10 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                                     <button
                                         key={val}
                                         onClick={() => setBeforeFeling(val)}
-                                        className={`flex-1 py-3 rounded-lg border-2 transition-all active:scale-95 ${
-                                            beforeFeeling === val
-                                                ? 'border-amber-400 bg-amber-50 text-amber-900 font-medium dark:border-amber-500 dark:bg-amber-900/40 dark:text-amber-200'
-                                                : 'border-amber-200 text-amber-600 hover:border-amber-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500'
-                                        }`}
+                                        className={`flex-1 py-3 rounded-lg border-2 transition-all active:scale-95 ${beforeFeeling === val
+                                            ? 'border-amber-400 bg-amber-50 text-amber-900 font-medium dark:border-amber-500 dark:bg-amber-900/40 dark:text-amber-200'
+                                            : 'border-amber-200 text-amber-600 hover:border-amber-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500'
+                                            }`}
                                         aria-label={`Before feeling ${val}`}
                                     >
                                         {val}
@@ -126,11 +125,10 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                                     <button
                                         key={val}
                                         onClick={() => setAfterFeeling(val)}
-                                        className={`flex-1 py-3 rounded-lg border-2 transition-all active:scale-95 ${
-                                            afterFeeling === val
-                                                ? 'border-amber-400 bg-amber-50 text-amber-900 font-medium dark:border-amber-500 dark:bg-amber-900/40 dark:text-amber-200'
-                                                : 'border-amber-200 text-amber-600 hover:border-amber-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500'
-                                        }`}
+                                        className={`flex-1 py-3 rounded-lg border-2 transition-all active:scale-95 ${afterFeeling === val
+                                            ? 'border-amber-400 bg-amber-50 text-amber-900 font-medium dark:border-amber-500 dark:bg-amber-900/40 dark:text-amber-200'
+                                            : 'border-amber-200 text-amber-600 hover:border-amber-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500'
+                                            }`}
                                         aria-label={`After feeling ${val}`}
                                     >
                                         {val}
@@ -161,8 +159,37 @@ const ReflectScreen = ({ todayChallenge }: { todayChallenge: Challenge }) => {
                             disabled={showSuccess}
                             size="lg"
                         >
-                            {showSuccess ? <><PartyPopper size={16} className="inline mr-1" /> Amazing Work!</> : "Save & Continue"}
+                            {showSuccess ? <><PartyPopper size={16} className="in-line mr1" /> Amazing Work!</> : "Save & Continue"}
                         </Button>
+                        {!showSuccess && (
+                            <Button
+                                variant="icon"
+                                size="lg"
+                                onClick={() => {
+                                    const xpEarned = Math.floor(todayChallenge.xpReward);
+                                    const log: CompletionLog = {
+                                        challengeId: todayChallenge.id,
+                                        date: new Date().toISOString(),
+                                        beforeFeeling: 3,
+                                        afterFeeling: 3,
+                                        note: '',
+                                        completed: true,
+                                        attempted: true,
+                                        xpEarned,
+                                    };
+                                    const challenge = CHALLENGES.find((c) => c.id === todayChallenge.id);
+                                    const discomfortRating = challenge?.discomfortRating ?? todayChallenge.discomfortRating;
+                                    setShowConfetti(true);
+                                    setShowSuccess(true);
+                                    completeChallenge(log, discomfortRating);
+                                    setTimeout(() => {
+                                        setSelectedScreen('home');
+                                    }, 2000);
+                                }}
+                            >
+                                Skip reflection
+                            </Button>
+                        )}
                         {showSuccess && (
                             <div className="rounded-xl p-4 border-2 animate-pulse bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 dark:bg-none dark:bg-green-900/30 dark:border-green-700">
                                 <p className="text-center font-semibold text-green-800 dark:text-green-300">

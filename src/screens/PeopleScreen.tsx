@@ -12,6 +12,8 @@ import ScreenContainer from "../components/ScreenContainer";
 import Button from "../components/Button";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useConfirmDialog } from "../hooks/useConfirmDialog";
+import Card from "../components/Card";
+
 
 // Icons
 import {
@@ -40,7 +42,6 @@ import {
 // Types
 import type { PersonMet } from "../types/types";
 import { RELATIONSHIP_TAGS, THINGS_THEY_LIKE_OPTIONS } from "../types/types";
-import Card from "../components/Card";
 
 // Screen Component
 const PeopleScreen = () => {
@@ -86,7 +87,6 @@ const PeopleScreen = () => {
             ) ||
             person.somethingInteresting?.toLowerCase().includes(q) ||
             person.whereMet?.toLowerCase().includes(q) ||
-            person.thingsTheyLike?.some((t) => t.toLowerCase().includes(q)) ||
             person.tags?.some((t) => t.toLowerCase().includes(q)) ||
             person.interactions?.some((i) => i.text.toLowerCase().includes(q))
         );
